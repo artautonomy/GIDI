@@ -1,0 +1,192 @@
+body{margin:0;    overflow: hidden;}
+
+h1,h2,h3,p,label,button,span,select,input{font-family: 'Oxanium', cursive;font-weight:bold;text-shadow: 1px 1px 6px BLACK;text-align:center;}
+
+h2{margin:0.25vh 0 1vh 0}
+
+h3{font-size:1.1em;padding-top: 1vh;text-decoration:underline}
+
+p{font-size: 0.833em;}
+
+label{display:block;position:relative;z-index:-1;font-size: 0.85em;margin: 0.5vh 0 0.5vh 0}
+
+.knobOption label{   display:inline-block;position: relative;
+    z-index: -1;
+    font-size: 0.8em;
+    margin: 0.5vh 0 0.5vh 0;}
+	
+button{cursor: pointer;opacity: 0;font-size: 0.8vw;border-style: none;background-color: darkseagreen;width: 10vw;height: 5vh;animation: fadeIn 1s ease-in-out forwards;}
+
+img{        width: 5%;
+    height: auto;
+    padding: 0 3% 1vh 3%;
+    vertical-align: middle;}
+
+.buttons:hover{background-color:grey;box-shadow:inset #0dff00 0px 0px 0px 1px}
+
+input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
+
+#knob{float: right;}
+
+#socials{text-align:center;    padding: 0;}
+
+#hide{
+	font-family: 'Handjet', cursive;
+	display:none;position: absolute;
+	width: 2vw;
+	height: 2.5vh;
+	background-color:rgb(0, 0, 61);
+	font-size: 1.3em;
+
+}
+
+
+#deviceType{position: absolute;
+    display: block;
+    text-align: center;
+    width: 100vw;margin-top: 50vh;}
+
+
+#remap{display: block;margin: 1vh 0 1vh 0;width:100%}
+	
+#proceed{display:none}
+
+#settings{display:none;    
+	color:white;
+	background-color: rgba(0,0,0,0.5);
+    position: absolute;
+    width: 20vw;
+    margin: 2.5vh 0 0 0;
+    padding: 0px 15px 0 15px;
+	background-image: linear-gradient(-45deg, #000000, #1b1a34, #ffb060, #5ab172,#ffffff);
+    background-size: 600% 600%;
+	animation: moveLeftOffScreen 0.1s linear forwards,gradientAnimation 45s infinite; 
+}
+
+#settings.hide{
+	
+	animation: moveRightOnScreen 0.33s linear forwards,gradientAnimation 45s infinite; 
+	
+}
+
+#mapToOption{display: none;margin-top: 0.5vh;width: 100%;}
+
+
+.knobOption{
+	
+    display: block;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1vh;
+    width: 50%;
+        background-color: rgba(0,0,0,0.2);
+    cursor: pointer;
+    margin-left: 23%;
+    padding: 2%;
+}
+
+.option{
+	
+	display: block;
+	margin-bottom:1vh;
+	text-align:center;
+	
+}
+
+.clr-field input {
+	color:white;
+	text-align:initial;
+	border-style: solid;
+    border-color: white;
+    border-width: 1px;
+    background: rgba(0,0,0,0);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+	
+}
+
+.options{padding-bottom:3vh}
+
+
+
+input[type="checkbox"] {
+	
+	-webkit-appearance: none !important;
+    height: 15px;
+    width: 15px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+	
+}
+
+input[type="checkbox"]:checked {
+	
+    background-color: #b6ff90;
+	
+}
+
+input[type="range"] {
+	-webkit-appearance: none !important;
+
+	border-style: solid;
+    color: white;
+    border-width: 1px;
+    background: rgba(0,0,0,0);
+	height: 10px;
+	width: 75%;
+	outline: none;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+
+}
+
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background:white;
+    height:10px;
+    width:10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes moveLeftOffScreen {
+	
+	from{
+		transform: translateX(0%); 
+
+	}
+	to {
+		transform: translateX(-105%); 
+	}
+
+}
+
+@keyframes moveRightOnScreen {
+  
+	from{
+		transform: translateX(-105%);
+		
+	}
+	to {
+		transform: translateX(0%); 
+	}
+}
+
+@keyframes gradientAnimation {
+      0% {
+        background-position:  100% 90%;
+      }
+      50% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 90%;
+      }
+    }

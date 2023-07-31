@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GIDI</title>
+	
+	<!-- Metadata -->
+	<meta charset='utf-8'>
+	<meta name='description' content='GIDI is a free, open source animation system connected to MIDI for use in live events and exhibitions'>
+	<meta name='author' content='William Thomas Kilroy'>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Handjet:wght@300&display=swap" rel="stylesheet">
+	
+	<!-- Coloris -->
+	<link rel="stylesheet" href="stylesheets/coloris.min.css"/>
+	
+	<!-- Stylesheets -->
+	<link rel='stylesheet' type='text/css' href='stylesheets/style.min.css'/>
+	
+  </head>
+  <body>
+	
+	<div id='deviceType'>
+	
+		<button id='synth' class='buttons'>Synth</button>
+		<button id='pad' class='buttons'>Pad</button>
+		
+	</div>
+	
+
+	<button id='hide'>></button>
+	
+	<div id='settings'>
+	
+		<div id='knobs' class='options'>
+			<h2>Knobs</h2>
+			<label id='knobsHelp'>No knobs configured, play any to connect and map</label>
+
+			<select name="" id='mapToOption'>
+				<option disabled selected value=' - Select - '> - Select - </option>
+				<option value="Attack">Attack</option>
+				<option value="Release">Release</option>
+				<option value="Autorotate">AutoRotate</option>
+				<option value="Remap">Remap</option>
+				<option value='Remove'>Remove</option>
+			</select>
+			
+		</div>
+		
+		<div id='keys' class='options'>
+			<h2>Keys</h2>
+			
+			<div class='option'>
+				<label>Attack</label>
+				<input type="range" min="0" max="10" value="1" id="attack">
+			</div>
+			
+			<div class='option'>
+				<label>Release</label>
+				<input type="range" min="0" max="10" value="7" id="release">
+			</div>
+		</div>
+		
+		<div id='scene' class='options'>
+			<h2>Scene</h2>
+			
+			<div class='option'>
+				<label>Autorotate</label>
+				<input id='autoRotate' type="checkbox">
+			</div>
+			
+			<div class='option'>
+				<label>Keys Colour</label>
+				<input id='keysColour' type="text" data-coloris>
+			</div>
+			
+			<div class='option'>
+				<label>Keys Expression Blend Colour</label>
+				<input id='KeysExpressionColour' type="text" data-coloris>
+			</div>
+			
+			<div class='option'>
+				<label>Scene Background Colour</label>
+				<input id='backgroundColour' type="text" data-coloris>
+			</div>
+			
+		</div>
+		
+		<div id='mapping' class='options'>
+			<h2>MIDI Mapping</h2>
+			
+			<button id='remap' class='buttons'>Remap Device</button>
+		</div>	
+		
+		<div id='help' class='options'>
+			<h2>Tips</h2>
+			<p>You can control the camera position by clicking and dragging the mouse</p>
+			<p>To zoom use the mousewheel</p>
+			
+			<h3>Keyboard Shortcuts</h3>
+			<p>H - Toggle Settings</p>
+			<p>R - Toggle AutoRotate</p>
+			<p>M - Toggle Remap</p>
+		</div>
+		
+		<div id='socials' class='options'>
+			<a href="https://github.com/artautonomy/GIDI"><img src="img/socials/github.png" alt="github"></a>
+			<a href="https://www.instagram.com/artautonomy/"><img src="img/socials/instagram.png" alt="instagram"></a>
+			<a href="https://www.youtube.com/channel/UCiPYshK5e29AYbO1dFYWbGQ"><img src="img/socials/youtube.png" alt="youtube"></a>
+			<a href="https://www.reddit.com/user/will-kilroy"><img src="img/socials/reddit.png" alt="reddit"></a>
+		</div>
+	</div>
+
+	<script src="js/coloris.min.js"></script>
+	
+	<script src="js/render.js" type="module"></script>
+  
+  </body>
+</html>
