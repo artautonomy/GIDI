@@ -9,7 +9,7 @@
 
 1. Plug in a MIDI device
 2. Go to [gidi.uk](https://gidi.uk)
-3. Select your instrument from Pad or Synth
+3. Select your instrument from *Pad* or *Synth*
 4. Start playing
 
 ## Future Improvements
