@@ -234,7 +234,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 									
 										scene.remove(header)
 										
-										generateTitle('Now press the highest key')
+										generateTitle('Now press the highest key you will use')
 
 										lowNote = note
 											
@@ -919,7 +919,7 @@ document.getElementById('synth').addEventListener('click', function( event ) {
 	
 	scene.remove(header)
 	
-	generateTitle('To get started press the lowest key you would like to map')
+	generateTitle('Press the lowest key you will use')
 
 }, false)
 
