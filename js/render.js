@@ -727,7 +727,8 @@ function generateTitle(words) {
 	//1278
 	
 	//let fontSize = 3
-
+	
+	
 	let fontSize = window.innerWidth / (words.length * 100)
 	
 	loader.load('/js/fonts/Patua One_Regular.json', function ( font )
@@ -768,7 +769,7 @@ function generateTitle(words) {
 			
 		scene.add(header)
 		
-		const appear = new THREE.NumberKgeyframeTrack( '.material.opacity', [ 0, 0.1, 0.5], [ 0, 0, 1] )
+		const appear = new THREE.NumberKeyframeTrack( '.material.opacity', [ 0, 0.1, 0.5], [ 0, 0, 1] )
 			
 		const fontFade = new THREE.AnimationClip( 'fontAppear', -1, [ appear ] )
 		
