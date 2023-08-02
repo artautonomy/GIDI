@@ -1,0 +1,6 @@
+@media screen and (max-width: 900px) {
+  p {
+    font-size: 1em;
+	padding-bottom: 1vh;
+  }
+}

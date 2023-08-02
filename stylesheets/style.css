@@ -44,11 +44,24 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 #deviceType{position: absolute;
     display: block;
     text-align: center;
-    width: 100vw;margin-top: 50vh;}
+    width: 100vw;margin-top: 42.5vh;}
 
 
-#remap{display: block;margin: 1vh 0 1vh 0;width:100%}
-	
+#remap{margin: 1vh 0 1vh 0;width: 75%;}
+
+#infoBox{    display: block;
+    position: absolute;
+    top: 40vh;
+    width: 75vw;
+    margin: 0 7.5vw 0 7.5vw;
+    padding: 2vh 5vw;
+
+	background-image: linear-gradient(-45deg, #000000, #1b1a34, #ffb060, #5ab172,#ffffff);
+    background-size: 600% 600%;
+	animation: gradientAnimation 45s infinite; 
+	}
+
+
 #proceed{display:none}
 
 #settings{display:none;    
@@ -104,7 +117,7 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 	
 }
 
-.options{padding-bottom:3vh}
+.options{padding-bottom:3vh;text-align:center}
 
 
 

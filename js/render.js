@@ -66,7 +66,7 @@ const cubeY = -15
 // Set up scene
 const scene = new THREE.Scene()
 
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 500 )
+const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 )
 
 camera.position.x = 0
 camera.position.y = 0
@@ -116,17 +116,13 @@ lightFloor.position.set( 0, -15, 0)
 
 scene.add( lightFloor )
 
-generateTitle('What device are you using?')
-
-generateMappingDialog('range mapping')
-
 //renderer
 
 const renderer = new THREE.WebGLRenderer({antialias:true})
 
 renderer.setSize(window.innerWidth, window.innerHeight)
 
-document.body.appendChild(renderer.domElement)
+document.body.append(renderer.domElement)
 
 clock = new THREE.Clock()
 
@@ -144,12 +140,53 @@ controls.rotateSpeed = 0.333
 
 document.addEventListener("DOMContentLoaded", function () {
 	
-  	Coloris({
-		theme:'polaroid',
-		themeMode: 'dark',
-		alpha:false,
-		format:'rgb',
-	})
+	if(window.innerWidth <= window.innerHeight) {
+		
+		document.getElementById('deviceType').style.display = 'none'
+		
+		generateMappingDialog('GIDI')
+		
+		const infoBox = document.getElementById('socials')
+		
+		document.body.append(infoBox)
+		
+		infoBox.id = 'infoBox'
+				
+		let p = document.createElement('p')
+		
+		p.style.color = 'white'
+		
+		let pText = document.createTextNode('Plug in a MIDI device to a computer to get started.') 
+		
+		p.append(pText)
+		
+		infoBox.prepend(p)
+		
+		p = document.createElement('p')
+		
+		p.style.color = 'white'
+		
+		pText = document.createTextNode('GIDI is a free, open source web application which incorporates MIDI messages and ThreeJS to display visual feedback in relation to what a musician is playing.')
+		
+		p.append(pText)
+		
+		infoBox.prepend(p)
+
+		
+	} else {
+		
+		Coloris({
+			theme:'polaroid',
+			themeMode: 'dark',
+			alpha:false,
+			format:'rgb',
+		})
+		
+		generateTitle('What device are you using?')
+
+		generateMappingDialog('range mapping')
+	
+	}
 	
 	animate()
 })
@@ -527,7 +564,7 @@ function createKnob(status) {
 
 	const labelContent = document.createTextNode("Knob (" + status + ')')
 		
-	knobLabel.appendChild(labelContent)
+	knobLabel.append(labelContent)
 
 	const knobSpan = document.createElement("label")
 	
@@ -537,19 +574,19 @@ function createKnob(status) {
 
 	const spanContent = document.createTextNode("0")
 		
-	knobSpan.appendChild(spanContent)
+	knobSpan.append(spanContent)
 	
-	knobs.appendChild(optionDiv)
+	knobs.append(optionDiv)
 	
-	optionDiv.appendChild(knobLabel)
+	optionDiv.append(knobLabel)
 	
-	optionDiv.appendChild(knobSpan)
+	optionDiv.append(knobSpan)
 	
 	document.getElementById('mapToOption').style.display = 'block'
 	
 	document.getElementById('mapToOption').value = ' - Select - '
 	
-	optionDiv.appendChild(document.getElementById('mapToOption'))
+	optionDiv.append(document.getElementById('mapToOption'))
 
 }
 
@@ -561,7 +598,7 @@ function removeKnob(selectedKnob) {
 
 	document.getElementById('mapToOption').value = ''
 		
-	document.body.appendChild(document.getElementById('mapToOption'))
+	document.body.append(document.getElementById('mapToOption'))
 	
 	document.getElementById(selectedKnob).remove()
 	
@@ -691,7 +728,7 @@ function generateTitle(words) {
 	
 	//let fontSize = 3
 
-	let fontSize = window.innerWidth / 666
+	let fontSize = window.innerWidth / (words.length * 100)
 	
 	loader.load('/js/fonts/Patua One_Regular.json', function ( font )
 	{
@@ -731,7 +768,7 @@ function generateTitle(words) {
 			
 		scene.add(header)
 		
-		const appear = new THREE.NumberKeyframeTrack( '.material.opacity', [ 0, 0.1, 0.5], [ 0, 0, 1] )
+		const appear = new THREE.NumberKgeyframeTrack( '.material.opacity', [ 0, 0.1, 0.5], [ 0, 0, 1] )
 			
 		const fontFade = new THREE.AnimationClip( 'fontAppear', -1, [ appear ] )
 		
@@ -755,7 +792,7 @@ function generateMappingDialog(words) {
 	
 	//1278
 	
-	let fontSize = window.innerWidth / 100
+	let fontSize = window.innerWidth / (words.length * 5)
 	
 	loader.load('/js/fonts/Libre39Text_Regular.json', function ( font )
 	{
@@ -787,9 +824,9 @@ function generateMappingDialog(words) {
 			
 		mappingHeader = new THREE.Mesh( fontGeometry, matLite )
 		
-		mappingHeader.position.z = -100
+		mappingHeader.position.z = -350
 		
-		mappingHeader.position.y = 40
+		mappingHeader.position.y = 90
 		
 		mappingHeader.rotation.y = 0.2
 		
@@ -909,7 +946,7 @@ document.querySelector('#knobs').addEventListener('click',function ( event ) {
 		
         document.getElementById('mapToOption').value = searchKnob.setting
 
-		document.getElementById(knobID).appendChild(document.getElementById('mapToOption'))
+		document.getElementById(knobID).append(document.getElementById('mapToOption'))
 		
 	}
 
