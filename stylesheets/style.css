@@ -1,21 +1,26 @@
 body{margin:0;    overflow: hidden;}
 
-h1,h2,h3,p,label,button,span,select,input{font-family: 'Oxanium', cursive;font-weight:bold;text-shadow: 1px 1px 6px BLACK;text-align:center;}
+h1,h2,h3,p,label,button,span,select,input,option{font-family: 'Oxanium', cursive;font-weight:bold;text-shadow: 1px 1px 6px BLACK;text-align:center;}
+
+h1{    padding-bottom: 3vh;
+    font-size: 1.5vw;color:#8bcb6c}
 
 h2{margin:0.25vh 0 1vh 0}
 
 h3{font-size:1.1em;padding-top: 1vh;text-decoration:underline}
 
-p{font-size: 0.833em;}
+p{font-size: 0.85em;}
 
 label{display:block;position:relative;z-index:-1;font-size: 0.85em;margin: 0.5vh 0 0.5vh 0}
+
+select{color:white}
 
 .knobOption label{   display:inline-block;position: relative;
     z-index: -1;
     font-size: 0.8em;
     margin: 0.5vh 0 0.5vh 0;}
 	
-button{cursor: pointer;opacity: 0;font-size: 0.8vw;border-style: none;background-color: darkseagreen;width: 10vw;height: 5vh;animation: fadeIn 1s ease-in-out forwards;}
+button{cursor: pointer;opacity: 0;font-size: 0.8vw;border-style: none;background-color: darkseagreen;width: 10vw;height: 7vh;animation: fadeIn 1s ease-in-out forwards;}
 
 img{        width: 5%;
     height: auto;
@@ -26,32 +31,33 @@ img{        width: 5%;
 
 input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 
-#knob{float: right;}
+#knob{float: right;width:20px}
 
 #socials{text-align:center;    padding: 0;}
 
 #hide{
 	font-family: 'Handjet', cursive;
 	display:none;position: absolute;
-	width: 2vw;
+	width: 5vw;
 	height: 2.5vh;
 	background-color:rgb(0, 0, 61);
 	font-size: 1.3em;
 
 }
 
+#removeOption{font-weight:bold;color:#ff6060}
 
 #deviceType{position: absolute;
     display: block;
     text-align: center;
-    width: 100vw;margin-top: 42.5vh;}
+    width: 100vw;top: 37.5vh;}
 
 
-#remap{margin: 1vh 0 1vh 0;width: 75%;}
+#remap{margin: 1vh 0 1vh 0;width: 75%;height:3.33vh}
 
 #infoBox{    display: block;
     position: absolute;
-    top: 40vh;
+    top: 25vh;
     width: 75vw;
     margin: 0 7.5vw 0 7.5vw;
     padding: 2vh 5vw;
@@ -117,7 +123,7 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 	
 }
 
-.options{padding-bottom:3vh;text-align:center}
+.options{padding-bottom:1.25vh;text-align:center}
 
 
 

@@ -25,7 +25,7 @@
   <body>
 	
 	<div id='deviceType'>
-	
+		
 		<button id='synth' class='buttons'>Synth</button>
 		<button id='pad' class='buttons'>Pad</button>
 		
@@ -43,10 +43,12 @@
 			<select name="" id='mapToOption'>
 				<option disabled selected value=' - Select - '> - Select - </option>
 				<option value="Attack">Attack</option>
+				<option value="Decay">Decay</option>
+				<option value="Sustain">Sustain</option>
 				<option value="Release">Release</option>
 				<option value="Autorotate">AutoRotate</option>
 				<option value="Remap">Remap</option>
-				<option value='Remove'>Remove</option>
+				<option id='removeOption' value='Remove'>Remove</option>
 			</select>
 			
 		</div>
@@ -57,6 +59,16 @@
 			<div class='option'>
 				<label>Attack</label>
 				<input type="range" min="0" max="10" value="1" id="attack">
+			</div>
+			
+			<div class='option'>
+				<label>Decay</label>
+				<input type="range" min="0" max="10" value="5" id="decay">
+			</div>
+			
+			<div class='option'>
+				<label>Sustain</label>
+				<input type="range" min="0" max="10" value="10" id="sustain">
 			</div>
 			
 			<div class='option'>

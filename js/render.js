@@ -6,7 +6,7 @@ import { OrbitControls } from '/js/threejs/OrbitControls.js'
 
 import { TextGeometry } from '/js/threejs/TextGeometry.js'
 
-let clock,header,mappingHeader,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice
+let clock,header,mappingHeader,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount
 
 function knob(id,setting) {
 	
@@ -18,8 +18,8 @@ function knob(id,setting) {
 const keys = {
 	
 	attack: 0.05,
-	decay: 0,
-	sustain: 0,
+	decay: 0.3,
+	sustain: 0.5,
 	release: 0.35,
 	
 	colours: {
@@ -66,7 +66,7 @@ const cubeY = -15
 // Set up scene
 const scene = new THREE.Scene()
 
-const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 )
+const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 300 )
 
 camera.position.x = 0
 camera.position.y = 0
@@ -110,17 +110,13 @@ lightR.position.set( 30,5, 0 )
 
 scene.add( lightR )
 
-const lightFloor = new THREE.PointLight( 0xffffff, lightIntensity, 0, 2)
-
-lightFloor.position.set( 0, -15, 0)
-
-scene.add( lightFloor )
-
 //renderer
 
 const renderer = new THREE.WebGLRenderer({antialias:true})
 
 renderer.setSize(window.innerWidth, window.innerHeight)
+
+renderer.setPixelRatio(window.devicePixelRatio)
 
 document.body.append(renderer.domElement)
 
@@ -129,6 +125,8 @@ clock = new THREE.Clock()
 //controls default
 
 const controls = new OrbitControls( camera, renderer.domElement )
+
+controls.enablePan = false
 
 controls.autoRotateSpeed *= -0.666
 
@@ -143,8 +141,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	if(window.innerWidth <= window.innerHeight) {
 		
 		document.getElementById('deviceType').style.display = 'none'
-		
-		generateMappingDialog('GIDI')
 		
 		const infoBox = document.getElementById('socials')
 		
@@ -171,7 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		p.append(pText)
 		
 		infoBox.prepend(p)
-
+		
+		generateSplash()
 		
 	} else {
 		
@@ -182,9 +179,17 @@ document.addEventListener("DOMContentLoaded", function () {
 			format:'rgb',
 		})
 		
-		generateTitle('What device are you using?')
-
 		generateMappingDialog('range mapping')
+				
+		header = document.createElement('h1')
+		
+		header.style.color = foregroundColour
+		
+		let headerText = document.createTextNode('What device are you using?') 
+		
+		header.append(headerText)
+		
+		document.getElementById('deviceType').prepend(header)
 	
 	}
 	
@@ -231,18 +236,16 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 								switch(notesPlayed) {
 									
 									case 0:
-									
-										scene.remove(header)
+																													
+										header.innerHTML = 'Now press the highest key you will use'
 										
-										generateTitle('Now press the highest key you will use')
-
 										lowNote = note
 											
 										break
 									
 									case 1:
-									
-										scene.remove(header)
+										
+										header.style.display = 'none'
 										
 										scene.remove(mappingHeader)
 										
@@ -283,7 +286,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 								document.getElementById('hide').style.display = 'block'
 							}
 							
-							scene.remove(header)
+							header.style.display = 'none'
 							
 							scene.remove(mappingHeader)
 							
@@ -376,7 +379,23 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 										keys.attack = value / 20
 						
 										break
+									
+									case 'Decay':
 															
+										document.getElementById('decay').value = value
+																															
+										keys.decay = (parseInt(value) + 1) / 20
+						
+										break
+
+									case 'Sustain':
+															
+										document.getElementById('sustain').value = value
+																															
+										keys.sustain = value / 20
+						
+										break
+										
 									case 'Release':
 														
 										document.getElementById('release').value = value
@@ -442,15 +461,46 @@ function noteOn(mesh,key,velocity){
 		
 	}
 	
-	let amplify = Math.floor((velocity / 127) * velocityRange) + 0.75
+	let amplify = Math.floor((velocity / 127) * velocityRange) + keys.sustain
 	
 	amplify *= 3
+	
+	const times = [
+	
+		0, 
+		keys.attack, 
+		keys.attack + keys.decay
+	
+	]
+	
+	const meshPosition = [
+	
+		mesh.position.x, cubeY, mesh.position.z, 
+		mesh.position.x, cubeY + (amplify / 2), mesh.position.z,
+		mesh.position.x, cubeY + (amplify / 2) - 0.75, mesh.position.z
+	
+	]
+	
+	const meshScale = [
+	
+		mesh.scale.x, 1, mesh.scale.z,
+		mesh.scale.x, 1 + amplify, mesh.scale.z,
+		mesh.scale.x, (1 + amplify) - 1.5, mesh.scale.z
+	
+	]
+	
+	const meshColours = [
+	
+		keys.colours.red, keys.colours.green, keys.colours.blue, 
+		keys.colours.red + keys.colours.expression.red, keys.colours.green + keys.colours.expression.green, keys.colours.blue + keys.colours.expression.blue,
+		keys.colours.red + (keys.colours.expression.red / 2), keys.colours.green + (keys.colours.expression.green / 2), keys.colours.blue + (keys.colours.expression.blue / 2)
+	]
 
-	const cubePosition = new THREE.VectorKeyframeTrack( '.position', [ 0, keys.attack ], [ mesh.position.x, cubeY, mesh.position.z, mesh.position.x, cubeY + (amplify / 2), mesh.position.z] )
+	const cubePosition = new THREE.VectorKeyframeTrack( '.position', times, meshPosition )
 	
-	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', [ 0, keys.attack ], [ mesh.scale.x, 1, mesh.scale.z,mesh.scale.x, 1 + amplify, mesh.scale.z] )
+	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', times, meshScale )
 	
-	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.attack ], [keys.colours.red, keys.colours.green, keys.colours.blue, keys.colours.red + keys.colours.expression.red, keys.colours.green + keys.colours.expression.green, keys.colours.blue + keys.colours.expression.blue])
+	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', times, meshColours)
 	
 	const cubeClip = new THREE.AnimationClip( 'rise', -1, [ cubePosition, cubeScale, colorSweep] )
 	
@@ -487,7 +537,7 @@ function noteOff(mesh,key,velocity){
 	
 	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', [ 0, keys.release ], [ mesh.scale.x, mesh.scale.y, mesh.scale.z, mesh.scale.x, 1, mesh.scale.z] )
 	
-	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.red + keys.colours.expression.red,keys.colours.green + keys.colours.expression.green,keys.colours.blue + keys.colours.expression.blue, keys.colours.red,keys.colours.green,keys.colours.blue])
+	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.red + (keys.colours.expression.red / 2), keys.colours.green + (keys.colours.expression.green / 2), keys.colours.blue + (keys.colours.expression.blue / 2), keys.colours.red,keys.colours.green,keys.colours.blue])
 	
 	const cubeClip = new THREE.AnimationClip( 'fall', -1, [ cubePosition, cubeScale, colorSweep] )
 	
@@ -541,11 +591,11 @@ function mapInputs(midiInputs) {
 	
 	controls.target.set( centre.position.x,centre.position.y,centre.position.z )
 	
-	if(notesPlayed < 1)
-	{
-		camera.position.x = -25
-	}
-	
+	//pan camera out depending number of notes
+	camera.position.x = -midiInputs.length * 4
+	camera.position.y = midiInputs.length * 4
+	camera.position.z = midiInputs.length * 4
+
 	controls.update()
 
 }
@@ -616,8 +666,8 @@ function remap() {
 	midiInputs = []
 	
 	keysMapped = false
-			
-	scene.remove(header)
+	
+	header.style.display = 'block'
 	
 	scene.remove(mappingHeader)
 	
@@ -636,12 +686,12 @@ function remap() {
 	cubeCollectionGroup = new THREE.Object3D()
 	
 	if(synthDevice) {
-		
-		generateTitle('Press the lowest key you would like to map')
+				
+		header.innerHTML = 'Press the lowest key you would like to map'
 		
 	} else {
 		
-		generateTitle('Play any pad')
+		header.innerHTML = 'Play any pad'
 
 	}
 	
@@ -720,73 +770,6 @@ function setKeyExpressionColour(rgb) {
 			
 }
 
-function generateTitle(words) {
-	
-	const loader = new FontLoader()
-	
-	//1278
-	
-	//let fontSize = 3
-	
-	
-	let fontSize = window.innerWidth / (words.length * 100)
-	
-	loader.load('/js/fonts/Patua One_Regular.json', function ( font )
-	{
-		
-		const matLite = new THREE.MeshBasicMaterial(
-		{
-			color: foregroundColour,
-			transparent: true,
-			opacity: 0,
-			side: THREE.FrontSide,
-			
-			
-		  
-		} );
-		
-		const fontGeometry = new TextGeometry(words, {
-			font: font,
-			size: fontSize,
-			height: 0.3,
-			curveSegments: 50,
-				
-		} );
-		
-		fontGeometry.computeBoundingBox()
-
-		const xMid = - 0.5 * ( fontGeometry.boundingBox.max.x - fontGeometry.boundingBox.min.x )
-			
-		fontGeometry.translate( xMid, 8, 0 )
-			
-		header = new THREE.Mesh( fontGeometry, matLite )
-		
-		header.position.z = -60
-		
-		controls.target.set( header.position.x,header.position.y,header.position.z )
-		
-		controls.update()
-			
-		scene.add(header)
-		
-		const appear = new THREE.NumberKeyframeTrack( '.material.opacity', [ 0, 0.1, 0.5], [ 0, 0, 1] )
-			
-		const fontFade = new THREE.AnimationClip( 'fontAppear', -1, [ appear ] )
-		
-		fontMixer = new THREE.AnimationMixer( header )
-		
-		const clipFont = fontMixer.clipAction( fontFade )
-		
-		clipFont.setLoop(THREE.LoopOnce)
-		
-		clipFont.clampWhenFinished = true
-		
-		clipFont.play()
-	
-	}); 
-		
-}
-
 function generateMappingDialog(words) {
 	
 	const loader = new FontLoader()
@@ -816,7 +799,7 @@ function generateMappingDialog(words) {
 			curveSegments: 50,
 				
 		} );
-		
+				
 		fontGeometry.computeBoundingBox()
 
 		const xMid = - 0.5 * ( fontGeometry.boundingBox.max.x - fontGeometry.boundingBox.min.x )
@@ -825,6 +808,8 @@ function generateMappingDialog(words) {
 			
 		mappingHeader = new THREE.Mesh( fontGeometry, matLite )
 		
+		mappingHeader.name = 'header'
+				
 		mappingHeader.position.z = -350
 		
 		mappingHeader.position.y = 90
@@ -832,7 +817,7 @@ function generateMappingDialog(words) {
 		mappingHeader.rotation.y = 0.2
 		
 		scene.add(mappingHeader)
-		
+	
 		const times = [0, 8, 10, 12]
 		
 		const xAxis = new THREE.Vector3(1, 0, 0);
@@ -869,6 +854,149 @@ function generateMappingDialog(words) {
 		
 }
 
+function generateSplash() {
+	
+	cubeCollectionGroup = new THREE.Object3D()
+
+	meshCount = 0
+
+	let width = 8
+
+	let height = 8
+	
+	let i = 0
+	
+	let x = -8
+	
+	let y = -15
+	
+	let z = -8
+	
+	let step = width
+	
+	let iteration = 0
+	
+	let limit = 6
+	
+	controls.enableZoom = false
+	
+	controls.autoRotate = true
+	
+	camera.position.x = 200
+	
+	camera.position.y += 50
+	
+	burrow(x,y,z,width,height,step,iteration,limit)
+
+	scene.add( cubeCollectionGroup )
+	
+}
+
+function burrow(x,y,z,width,height,step,iteration,limit){
+		
+	let geometry = new THREE.BoxGeometry(step,step,step)		
+	
+	let p = 0
+	
+	let pY = z
+	
+	let startPositions = new Array(4)
+	
+	for (let g = 0; g < startPositions.length; g++) {
+		
+		startPositions[g] = new Array(2)
+		
+	}
+	
+	while(x < width) {
+		
+		z = pY
+		
+		while(z < height) {
+			
+			startPositions[p][0] = x
+
+			startPositions[p][1] = z
+		
+			p++
+			
+			z += step
+			
+		}
+		
+		x += step
+		
+	}
+	
+	if(iteration < limit) {
+		
+		for(let d = 4; d > 1; d--) {
+			
+			let randomPosition = parseInt(Math.random() * d)
+			
+			let rgbSplit = foregroundColour.slice(4).replace(')','').split(',')
+			
+			let r = (rgbSplit[0] / 255) + (iteration / 10 + 1) / d
+			
+			let g = (rgbSplit[1] / 255) + (iteration / 10 + 1) / d
+			
+			let b = (rgbSplit[2] / 255) + (iteration / 10 + 1) / d
+			
+			const boxColour = new THREE.Color(r,g,b);
+		
+			const material = new THREE.MeshStandardMaterial( { color: boxColour, transparent: true, opacity: 1, metalness:0.1,roughness:0.1} )
+				
+			let mesh = new THREE.Mesh(geometry, material)
+			
+			mesh.name = meshCount
+			
+			mesh.position.x = startPositions[randomPosition][0] + (step / 2) 
+			
+			mesh.position.y = y + limit - (step * 1.5)
+			
+			mesh.position.z = startPositions[randomPosition][1] + (step / 2)
+			
+			cubeCollectionGroup.add(mesh)
+			
+			recursionKeyframe(mesh,startPositions[randomPosition][0],y,startPositions[randomPosition][1],meshCount,r,g,b,step,width,iteration,limit)
+			
+			meshCount++
+			
+			burrow(startPositions[randomPosition][0], y, startPositions[randomPosition][1], startPositions[randomPosition][0] + step, startPositions[randomPosition][1] + step, step / 2, iteration + 1, limit)
+			
+			startPositions.splice(randomPosition, 1)
+			
+		}
+		
+	} 	
+		
+}
+	
+
+function recursionKeyframe(mesh,x,y,z,i,r,g,b,step,width,iteration,limit){
+	
+	let currentTime = i / 100
+	
+	currentTime += 1
+
+	let rE = r + 0.3
+
+	let gE =  g + 0.1
+
+	let bE = b - 0.2
+	
+	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [  currentTime, currentTime  + 0.333, currentTime  + 10], [ r,g,b, rE, gE, bE, r, g, b])
+
+	const cubeScale = new THREE.AnimationClip( 'cubePS', -1, [ colorSweep] )
+
+	window['scaleMixer' + i] = new THREE.AnimationMixer( mesh )
+	
+	window['clipScale' + i] = window['scaleMixer' + i].clipAction( cubeScale )
+		
+	
+}
+
+
 function animate() {
 
 	const delta = clock.getDelta()
@@ -890,7 +1018,20 @@ function animate() {
 		}
 
 	}
+	
+	for(let x = 0; x < meshCount; x++){ 
+	
+		window['clipScale' + x].play()
+	
+	}
 
+	for(let x = 0; x < meshCount; x++){ 
+		
+		window['scaleMixer'+ x].update( delta )
+		
+	}
+		
+	
 	if(dialogMixer != undefined) {
 
 		dialogMixer.update( delta )
@@ -913,27 +1054,27 @@ function animate() {
 
 document.getElementById('synth').addEventListener('click', function( event ) {
 	
-	document.getElementById('deviceType').style.display = 'none'
+	document.getElementById('synth').style.display = 'none'
+	
+	document.getElementById('pad').style.display = 'none'
 	
 	synthDevice = true
-	
-	scene.remove(header)
-	
-	generateTitle('Press the lowest key you will use')
+		
+	header.innerHTML = 'Press the lowest key you will use'
 
 }, false)
 
 document.getElementById('pad').addEventListener('click', function( event ) {
 		
-	document.getElementById('deviceType').style.display = 'none'
+	document.getElementById('synth').style.display = 'none'
 	
+	document.getElementById('pad').style.display = 'none'
+
 	synthDevice = false
-	
-	scene.remove(header)
-	
+		
 	scene.remove(mappingHeader)
 	
-	generateTitle('To get started play any pad')
+	header.innerHTML = 'To get started play any pad'
 	
 }, false)
 
@@ -988,6 +1129,18 @@ document.getElementById('autoRotate').addEventListener('change', function( event
 document.getElementById('attack').addEventListener('input', function( event ) {
 	
 	keys.attack = event.target.value / 20
+	
+}, false)
+
+document.getElementById('decay').addEventListener('input', function( event ) {
+		
+	keys.decay = (parseInt(event.target.value) + 1) / 20
+	
+}, false)
+
+document.getElementById('sustain').addEventListener('input', function( event ) {
+	
+	keys.sustain = event.target.value / 20
 	
 }, false)
 
@@ -1067,4 +1220,16 @@ document.addEventListener('coloris:pick', event => {
 		
 	}
   
+})
+
+window.addEventListener('resize', function(){
+	
+	camera.aspect = window.innerWidth / window.innerHeight
+
+	camera.updateProjectionMatrix()
+
+	renderer.setSize(window.innerWidth, window.innerHeight)
+
+    renderer.setPixelRatio(window.devicePixelRatio)
+	
 })

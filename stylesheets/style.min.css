@@ -1,20 +1,23 @@
 body{margin:0;overflow:hidden}
-button,h1,h2,h3,input,label,p,select,span{font-family:Oxanium,cursive;font-weight:700;text-shadow:1px 1px 6px #000;text-align:center}
+button,h1,h2,h3,input,label,option,p,select,span{font-family:Oxanium,cursive;font-weight:700;text-shadow:1px 1px 6px #000;text-align:center}
+h1{padding-bottom:3vh;font-size:1.5vw;color:#8bcb6c}
 h2{margin:.25vh 0 1vh 0}
 h3{font-size:1.1em;padding-top:1vh;text-decoration:underline}
-p{font-size:.833em}
+p{font-size:.85em}
 label{display:block;position:relative;z-index:-1;font-size:.85em;margin:.5vh 0 .5vh 0}
+select{color:#fff}
 .knobOption label{display:inline-block;position:relative;z-index:-1;font-size:.8em;margin:.5vh 0 .5vh 0}
-button{cursor:pointer;opacity:0;font-size:.8vw;border-style:none;background-color:#8fbc8f;width:10vw;height:5vh;animation:fadeIn 1s ease-in-out forwards}
+button{cursor:pointer;opacity:0;font-size:.8vw;border-style:none;background-color:#8fbc8f;width:10vw;height:7vh;animation:fadeIn 1s ease-in-out forwards}
 img{width:5%;height:auto;padding:0 3% 1vh 3%;vertical-align:middle}
 .buttons:hover{background-color:grey;box-shadow:inset #0dff00 0 0 0 1px}
 input{cursor:pointer;box-shadow:rgb(203 203 203) 0 0 4px 0}
-#knob{float:right}
+#knob{float:right;width:20px}
 #socials{text-align:center;padding:0}
-#hide{font-family:Handjet,cursive;display:none;position:absolute;width:2vw;height:2.5vh;background-color:#00003d;font-size:1.3em}
-#deviceType{position:absolute;display:block;text-align:center;width:100vw;margin-top:42.5vh}
-#remap{margin:1vh 0 1vh 0;width:75%}
-#infoBox{display:block;position:absolute;top:40vh;width:75vw;margin:0 7.5vw 0 7.5vw;padding:2vh 5vw;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:gradientAnimation 45s infinite}
+#hide{font-family:Handjet,cursive;display:none;position:absolute;width:5vw;height:2.5vh;background-color:#00003d;font-size:1.3em}
+#removeOption{font-weight:700;color:#ff6060}
+#deviceType{position:absolute;display:block;text-align:center;width:100vw;top:37.5vh}
+#remap{margin:1vh 0 1vh 0;width:75%;height:3.33vh}
+#infoBox{display:block;position:absolute;top:25vh;width:75vw;margin:0 7.5vw 0 7.5vw;padding:2vh 5vw;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:gradientAnimation 45s infinite}
 #proceed{display:none}
 #settings{display:none;color:#fff;background-color:rgba(0,0,0,.5);position:absolute;width:20vw;margin:2.5vh 0 0 0;padding:0 15px 0 15px;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:moveLeftOffScreen .1s linear forwards,gradientAnimation 45s infinite}
 #settings.hide{animation:moveRightOnScreen .33s linear forwards,gradientAnimation 45s infinite}
@@ -22,7 +25,7 @@ input{cursor:pointer;box-shadow:rgb(203 203 203) 0 0 4px 0}
 .knobOption{display:block;position:relative;z-index:1;margin-bottom:1vh;width:50%;background-color:rgba(0,0,0,.2);cursor:pointer;margin-left:23%;padding:2%}
 .option{display:block;margin-bottom:1vh;text-align:center}
 .clr-field input{color:#fff;text-align:initial;border-style:solid;border-color:#fff;border-width:1px;background:rgba(0,0,0,0);box-shadow:0 0 5px rgba(0,0,0,.3)}
-.options{padding-bottom:3vh;text-align:center}
+.options{padding-bottom:1.25vh;text-align:center}
 input[type=checkbox]{-webkit-appearance:none!important;height:15px;width:15px;border-style:solid;border-width:1px;border-color:#fff;box-shadow:0 0 5px rgba(0,0,0,.3)}
 input[type=checkbox]:checked{background-color:#b6ff90}
 input[type=range]{-webkit-appearance:none!important;border-style:solid;color:#fff;border-width:1px;background:rgba(0,0,0,0);height:10px;width:75%;outline:0;box-shadow:0 0 5px rgba(0,0,0,.3)}
