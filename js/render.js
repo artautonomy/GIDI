@@ -246,9 +246,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 									case 1:
 										
 										header.style.display = 'none'
-										
-										scene.remove(mappingHeader)
-										
+																				
 										document.getElementById('hide').style.display = 'block'
 										
 										highNote = note
@@ -989,7 +987,7 @@ document.getElementById('pad').addEventListener('click', function( event ) {
 	document.getElementById('pad').style.display = 'none'
 
 	synthDevice = false
-			
+	
 	header.innerHTML = 'To get started play any pad'
 	
 }, false)
