@@ -19,5 +19,5 @@
 ## Future Improvements
 
 - [x] Mobile splash screen
-- [ ] Add 'Decay' and 'Sustain' inputs with the ability to map to sliders and knobs
+- [x] Add 'Decay' and 'Sustain' inputs with the ability to map to sliders and knobs
 - [ ] Create different scenes
