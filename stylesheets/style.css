@@ -1,9 +1,8 @@
-body{margin:0;    overflow: hidden;}
+body{margin:0;overflow: hidden;background-color:black}
 
 h1,h2,h3,p,label,button,span,select,input,option{font-family: 'Oxanium', cursive;font-weight:bold;text-shadow: 1px 1px 6px BLACK;text-align:center;}
 
-h1{    padding-bottom: 3vh;
-    font-size: 1.5vw;color:#8bcb6c}
+h1{    padding-bottom: 3vh;font-size: 1.5vw}
 
 h2{margin:0.25vh 0 1vh 0}
 

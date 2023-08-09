@@ -1,6 +1,6 @@
-body{margin:0;overflow:hidden}
+body{margin:0;overflow:hidden;background-color:#000}
 button,h1,h2,h3,input,label,option,p,select,span{font-family:Oxanium,cursive;font-weight:700;text-shadow:1px 1px 6px #000;text-align:center}
-h1{padding-bottom:3vh;font-size:1.5vw;color:#8bcb6c}
+h1{padding-bottom:3vh;font-size:1.5vw}
 h2{margin:.25vh 0 1vh 0}
 h3{font-size:1.1em;padding-top:1vh;text-decoration:underline}
 p{font-size:.85em}

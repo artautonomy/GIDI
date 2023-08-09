@@ -6,7 +6,7 @@ import { OrbitControls } from '/js/threejs/OrbitControls.js'
 
 import { TextGeometry } from '/js/threejs/TextGeometry.js'
 
-let clock,header,mappingHeader,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount
+let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount
 
 function knob(id,setting) {
 	
@@ -79,8 +79,6 @@ const colourFamily = colourSchemes[parseInt(Math.random() * colourSchemes.length
 let backgroundColour = colourFamily[0]
 
 let foregroundColour = colourFamily[1]
-
-setStyle(foregroundColour,backgroundColour)
 
 //lights
 
@@ -179,8 +177,6 @@ document.addEventListener("DOMContentLoaded", function () {
 			format:'rgb',
 		})
 		
-		generateMappingDialog('range mapping')
-				
 		header = document.createElement('h1')
 		
 		header.style.color = foregroundColour
@@ -190,8 +186,12 @@ document.addEventListener("DOMContentLoaded", function () {
 		header.append(headerText)
 		
 		document.getElementById('deviceType').prepend(header)
-	
+		
+		setStyle(foregroundColour,backgroundColour)
+					
 	}
+	
+	
 	
 	animate()
 })
@@ -287,9 +287,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 							}
 							
 							header.style.display = 'none'
-							
-							scene.remove(mappingHeader)
-							
+														
 							if(!midiInputs.includes(note)) {
 						
 								midiInputs.push(note)
@@ -668,11 +666,7 @@ function remap() {
 	keysMapped = false
 	
 	header.style.display = 'block'
-	
-	scene.remove(mappingHeader)
-	
-	generateMappingDialog('range mapping')
-	
+			
 	notesPlayed = 0
 	
 	document.getElementById('autoRotate').checked = false
@@ -740,6 +734,8 @@ function setStyle(foregroundColour,backgroundColour) {
 
 	document.getElementById('mapToOption').style.color = foregroundColour	
 	
+	header.style.color = foregroundColour
+	
 	scene.background = new THREE.Color(backgroundColour)
 
 	setKeyColour(foregroundColour)
@@ -768,90 +764,6 @@ function setKeyExpressionColour(rgb) {
 
 	keys.colours.expression.blue = rgbSplit[2] / 255
 			
-}
-
-function generateMappingDialog(words) {
-	
-	const loader = new FontLoader()
-	
-	//1278
-	
-	let fontSize = window.innerWidth / (words.length * 5)
-	
-	loader.load('/js/fonts/Libre39Text_Regular.json', function ( font )
-	{
-		
-		const matLite = new THREE.MeshNormalMaterial(
-		{
-
-			transparent: false,
-			opacity: 1,
-			side: THREE.FrontSide,
-			
-			
-		  
-		} );
-		
-		const fontGeometry = new TextGeometry(words, {
-			font: font,
-			size: fontSize,
-			height: 3.33,
-			curveSegments: 50,
-				
-		} );
-				
-		fontGeometry.computeBoundingBox()
-
-		const xMid = - 0.5 * ( fontGeometry.boundingBox.max.x - fontGeometry.boundingBox.min.x )
-			
-		fontGeometry.translate( xMid, 8, 0 )
-			
-		mappingHeader = new THREE.Mesh( fontGeometry, matLite )
-		
-		mappingHeader.name = 'header'
-				
-		mappingHeader.position.z = -350
-		
-		mappingHeader.position.y = 90
-		
-		mappingHeader.rotation.y = 0.2
-		
-		scene.add(mappingHeader)
-	
-		const times = [0, 8, 10, 12]
-		
-		const xAxis = new THREE.Vector3(1, 0, 0);
-		
-		const r1 = new THREE.Quaternion().setFromAxisAngle(xAxis, 0)
-		
-		const r2 = new THREE.Quaternion().setFromAxisAngle(xAxis, 0)
-		
-		const r3 = new THREE.Quaternion().setFromAxisAngle(xAxis, Math.PI - 0.2)
-		
-		const r4 = new THREE.Quaternion().setFromAxisAngle(xAxis, 0)
-		
-		const values = [
-		
-		  r1.x + 0.333, r1.y, r1.z, r1.w,
-		  r2.x - 0.1, r2.y, r2.z, r2.w,
-		  r3.x + 0.01, r3.y, r3.z, r3.w,
-		  r4.x + 0.333, r4.y, r4.z, r4.w
-
-		  
-		];
-
-		const dialogPosition = new THREE.QuaternionKeyframeTrack( '.quaternion', times, values )
-		
-		dialogMixer = new THREE.AnimationMixer( mappingHeader )
-		
-		const dialogClip = new THREE.AnimationClip( 'dialog', -1, [ dialogPosition ] )
-		
-		const clipDialog = dialogMixer.clipAction( dialogClip )
-		
-		clipDialog.play()
-		
-	}); 
-		
 }
 
 function generateSplash() {
