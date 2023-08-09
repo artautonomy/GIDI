@@ -989,9 +989,7 @@ document.getElementById('pad').addEventListener('click', function( event ) {
 	document.getElementById('pad').style.display = 'none'
 
 	synthDevice = false
-		
-	scene.remove(mappingHeader)
-	
+			
 	header.innerHTML = 'To get started play any pad'
 	
 }, false)
