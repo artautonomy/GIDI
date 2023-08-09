@@ -57,7 +57,7 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 
 #infoBox{    display: block;
     position: absolute;
-    top: 25vh;
+    top: 10vh;
     width: 75vw;
     margin: 0 7.5vw 0 7.5vw;
     padding: 2vh 5vw;

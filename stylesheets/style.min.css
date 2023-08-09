@@ -17,7 +17,7 @@ input{cursor:pointer;box-shadow:rgb(203 203 203) 0 0 4px 0}
 #removeOption{font-weight:700;color:#ff6060}
 #deviceType{position:absolute;display:block;text-align:center;width:100vw;top:37.5vh}
 #remap{margin:1vh 0 1vh 0;width:75%;height:3.33vh}
-#infoBox{display:block;position:absolute;top:25vh;width:75vw;margin:0 7.5vw 0 7.5vw;padding:2vh 5vw;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:gradientAnimation 45s infinite}
+#infoBox{display:block;position:absolute;top:10vh;width:75vw;margin:0 7.5vw 0 7.5vw;padding:2vh 5vw;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:gradientAnimation 45s infinite}
 #proceed{display:none}
 #settings{display:none;color:#fff;background-color:rgba(0,0,0,.5);position:absolute;width:20vw;margin:2.5vh 0 0 0;padding:0 15px 0 15px;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:moveLeftOffScreen .1s linear forwards,gradientAnimation 45s infinite}
 #settings.hide{animation:moveRightOnScreen .33s linear forwards,gradientAnimation 45s infinite}

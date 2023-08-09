@@ -977,25 +977,23 @@ function recursionKeyframe(mesh,x,y,z,i,r,g,b,step,width,iteration,limit){
 	
 	let currentTime = i / 100
 	
-	currentTime += 1
+	currentTime += 2
 
-	let rE = r + 0.3
+	let rE = r + 0.6
 
-	let gE =  g + 0.1
+	let gE =  g + 0.3
 
 	let bE = b - 0.2
 	
-	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [  currentTime, currentTime  + 0.333, currentTime  + 10], [ r,g,b, rE, gE, bE, r, g, b])
+	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [  currentTime, currentTime  + 0.165, currentTime  + 10], [ r,g,b, rE, gE, bE, r, g, b])
 
 	const cubeScale = new THREE.AnimationClip( 'cubePS', -1, [ colorSweep] )
 
 	window['scaleMixer' + i] = new THREE.AnimationMixer( mesh )
 	
 	window['clipScale' + i] = window['scaleMixer' + i].clipAction( cubeScale )
-		
-	
-}
 
+}
 
 function animate() {
 
@@ -1020,14 +1018,22 @@ function animate() {
 	}
 	
 	for(let x = 0; x < meshCount; x++){ 
-	
-		window['clipScale' + x].play()
+		
+		if(window['clipScale' + x] != undefined) {
+			
+			window['clipScale' + x].play()
+			
+		}
 	
 	}
 
 	for(let x = 0; x < meshCount; x++){ 
-		
-		window['scaleMixer'+ x].update( delta )
+	
+		if(window['scaleMixer' + x] != undefined) {
+			
+			window['scaleMixer'+ x].update( delta )
+			
+		}
 		
 	}
 		
