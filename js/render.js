@@ -1,10 +1,6 @@
 import * as THREE from '/js/threejs/three.module.js'
 
-import { FontLoader } from '/js/threejs/FontLoader.js'
-
 import { OrbitControls } from '/js/threejs/OrbitControls.js'
-
-import { TextGeometry } from '/js/threejs/TextGeometry.js'
 
 let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount
 
