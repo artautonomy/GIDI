@@ -1,6 +1,8 @@
 # GIDI
 [GIDI](https://gidi.uk) is a free, open source web application which incorporates MIDI messages and ThreeJS to display visual feedback in relation to what a musician is playing.
 
+[![Watch the video](https://gidi.uk/img/assets/0.png)](https://www.youtube.com/watch?v=WQpXuZBZHTc)
+
 <img src="https://gidi.uk/img/assets/0.png"/>
 <div style='display:inline-block'>
   <img src="https://gidi.uk/img/assets/1.png" width="49%"/>
