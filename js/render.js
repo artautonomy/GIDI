@@ -207,7 +207,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 			
 			const velocity = event.data[2]
 			
-			if(status != undefined && synthDevice != undefined) {
+			if(status != undefined && synthDevice != undefined) {	
 			
 				switch(status) {
 					
