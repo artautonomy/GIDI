@@ -1,17 +1,13 @@
 # GIDI
-[GIDI](https://gidi.uk) is a free, open source web application which incorporates MIDI messages and ThreeJS to display visual feedback in relation to what a musician is playing.
+[GIDI](https://gidi.uk) is a free, open source web application which uses MIDI and ThreeJS to display visual feedback in relation to what a musician is playing to augment a live performance.
+
+*Note: Please toggle sound on for videos - GitHub disables sound by default.*
 
 https://github.com/artautonomy/GIDI/assets/19935725/e11f21dd-5881-4c77-8c5b-36d0a6bfbfe3
 
-*Note: Toggle sound on for videos - GitHub disables sound by default.*
-
 https://github.com/artautonomy/GIDI/assets/19935725/84fe4174-b07a-404c-a98e-8e5918ec0c12
 
-
-
-*Note: Toggle sound on for videos - GitHub disables sound by default.*
-
-## How to use
+## How to use GIDI
 
 1. Plug in a MIDI device
 2. Go to [gidi.uk](https://gidi.uk)
