@@ -3,8 +3,8 @@
 
 <img src="https://gidi.uk/img/assets/0.png"/>
 <div style='display:inline-block'>
-  <img src="https://gidi.uk/img/assets/1.png" width="40%"/>
-  <img src="https://gidi.uk/img/assets/2.png" width="40%"/>
+  <img src="https://gidi.uk/img/assets/1.png" width="50%"/>
+  <img src="https://gidi.uk/img/assets/2.png" width="50%"/>
 </div>
 
 ## How to use
