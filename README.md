@@ -17,6 +17,7 @@ https://github.com/artautonomy/GIDI/assets/19935725/84fe4174-b07a-404c-a98e-8e59
 ## Future Improvements
 
 - [x] Mobile splash screen
-- [x] Add 'Decay' and 'Sustain' inputs with the ability to map to sliders and knobs
+- [x] Add ADSR capability
+- [x] Slider mapping to ADSR and Autorotate
 - [ ] Add MIDI CC functionality 
 - [ ] Create different scenes
