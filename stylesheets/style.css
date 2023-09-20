@@ -8,7 +8,7 @@ h2{margin:0.25vh 0 1vh 0}
 
 h3{font-size:1.1em;padding-top: 1vh;text-decoration:underline}
 
-p{font-size: 0.85em;}
+p{font-size: 0.9em;font-weight:100}
 
 label{display:block;position:relative;z-index:-1;font-size: 0.85em;margin: 0.5vh 0 0.5vh 0}
 
@@ -19,6 +19,7 @@ select{color:white}
     font-size: 0.8em;
     margin: 0.5vh 0 0.5vh 0;}
 	
+
 button{cursor: pointer;opacity: 0;font-size: 0.8vw;border-style: none;background-color: darkseagreen;width: 10vw;height: 7vh;animation: fadeIn 1s ease-in-out forwards;}
 
 img{        width: 5%;
@@ -40,7 +41,7 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 	width: 5vw;
 	height: 2.5vh;
 	background-color:rgb(0, 0, 61);
-	font-size: 1.3em;
+	font-size: 1.5vh;
 
 }
 
@@ -52,7 +53,7 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
     width: 100vw;top: 37.5vh;}
 
 
-#remap{margin: 1vh 0 1vh 0;width: 75%;height:3.33vh}
+#remap{margin: 1vh 0 1vh 0;width: 50%;height:3.33vh;font-size:0.85em}
 
 #infoBox{    display: block;
     position: absolute;
@@ -89,19 +90,45 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 
 #mapToOption{display: none;margin-top: 0.5vh;width: 100%;}
 
+#minimisedSliders{
+	
+	position: absolute;
+    right: 0;
+    top: 0;
+    height: 45px;
+    width: 50vw;
+	
+}
 
 .knobOption{
-	
+
     display: block;
     position: relative;
     z-index: 1;
     margin-bottom: 1vh;
     width: 50%;
-        background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0,0,0,0.2);
     cursor: pointer;
     margin-left: 23%;
     padding: 2%;
+	font-size:0.85em;
 }
+
+
+.knobOption.minimised {
+	
+	display: inline-block;
+    color: #fff;
+    font-size: .75em;
+    width: 75px;
+    padding: 0px;
+    padding-left: 5px;
+    margin: 0;
+    float: right;
+	cursor:default;
+	
+}
+
 
 .option{
 	

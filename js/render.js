@@ -184,12 +184,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		document.getElementById('deviceType').prepend(header)
 		
 		setStyle(foregroundColour,backgroundColour)
-					
+	
 	}
 	
-	
-	
 	animate()
+
 })
 
 // Listen to MIDI
@@ -201,11 +200,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 
 		input.value.onmidimessage = function(event) {
 		
-			const status = event.data[0]
-			
-			const note = event.data[1]
-			
-			const velocity = event.data[2]
+			const [status, note, velocity] = event.data
 			
 			if(status != undefined && synthDevice != undefined) {	
 			
@@ -339,25 +334,29 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 					
 					//knobs
 					default:
-				
+						
 						let activeKnob = knobs.find((element) => element.id == status)
 						
-						if(activeKnob == undefined && velocity != undefined) {
-												
-							document.getElementById('knobsHelp').style.display = 'none'
+						if(velocity != undefined) {
+							
+							if(activeKnob == undefined) {
+																
+								document.getElementById('knobsHelp').style.display = 'none'
+														
+								newKnob = new knob(status, ' - Select - ')
+								
+								searchKnob = newKnob
 													
-							newKnob = new knob(status, ' - Select - ')
-							
-							searchKnob = newKnob
-												
-							knobs.push(newKnob)
-							
-							knobID = newKnob.id
+								knobs.push(newKnob)
+								
+								knobID = newKnob.id
 
-							createKnob(knobID)
+								createKnob(knobID)
+								
+								break
 												
-						} else if(velocity != undefined) {
-																			
+							} 
+														
 							const value = Math.floor((velocity / 127) * 10)
 													
 							document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = value
@@ -426,7 +425,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 								}
 							
 						}
-
+						
 						break
 
 					
@@ -629,7 +628,13 @@ function createKnob(status) {
 	document.getElementById('mapToOption').value = ' - Select - '
 	
 	optionDiv.append(document.getElementById('mapToOption'))
-
+	
+	if(!hidden) {
+		
+		optionDiv.classList.toggle('minimised')
+		
+	}
+		
 }
 
 function removeKnob(selectedKnob) {
@@ -686,25 +691,56 @@ function remap() {
 }
 
 function animateSettings() {
+		
+	let knobOptions = Array.from(document.getElementsByClassName('knobOption'))
 	
 	if(hidden) {
 		
 		document.getElementById('hide').innerHTML = '>'
-				
-		document.getElementById('settings').classList.toggle('hide')
-
+		
+		for(var i = 0; i < knobOptions.length; i++) {
+			
+			const currentOption = knobOptions[i]
+			
+			if(currentOption.children.mapToOption != undefined) {
+			
+				currentOption.children.mapToOption.style.display = 'none'
+			
+			}
+			
+			document.getElementById('minimisedSliders').append(currentOption)
+			
+			currentOption.classList.toggle('minimised')
+			
+		}
+		
 
 	} else {
 		
 		document.getElementById('hide').innerHTML = '<'
-		
+
+		for (let i = 0; i < knobOptions.length; i++) {
+			
+		    const currentOption = knobOptions[i]		  
+			
+			if(currentOption.children.mapToOption != undefined) {
+			
+				currentOption.children.mapToOption.style.display = 'block'
+			
+			}
+
+			document.getElementById('knobs').append(currentOption)
+
+			currentOption.classList.toggle('minimised')
+		   
+		}
+				
 		document.getElementById('settings').style.display = 'block'
 
-		document.getElementById('settings').classList.toggle('hide')
-		
-
 	}
-
+	
+	document.getElementById('settings').classList.toggle('hide')
+	
 	hidden = !hidden
 	
 	setStyle(foregroundColour,backgroundColour)
@@ -715,9 +751,10 @@ function setStyle(foregroundColour,backgroundColour) {
 	
 	for(let x = 0; x < document.getElementsByClassName('buttons').length; x++) {
 
-		document.getElementsByTagName('button')[x].style.backgroundColor = foregroundColour
+		document.getElementsByClassName('buttons')[x].style.backgroundColor = foregroundColour
 		
-		document.getElementsByTagName('button')[x].style.color = backgroundColour
+		document.getElementsByClassName('buttons')[x].style.color = backgroundColour
+		
 	}
 	
 	document.getElementById('remap').style.backgroundColor = backgroundColour
@@ -1103,11 +1140,18 @@ document.addEventListener('coloris:pick', event => {
 		case 'keysColour':
 		
 			setKeyColour(rgb)
-						
-			mapInputs(midiInputs)
 			
 			foregroundColour = rgb
 			
+			for(let x = 0; x < midiInputs.length; x++){
+			
+				//find key
+				let ob = cubeCollectionGroup.getObjectByName(midiInputs[x])
+				
+				ob.material.color.setRGB(keys.colours.red, keys.colours.green, keys.colours.blue)				
+
+			}
+	
 			break
 		
 		case 'KeysExpressionColour':

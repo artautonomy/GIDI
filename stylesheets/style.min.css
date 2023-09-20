@@ -3,7 +3,7 @@ button,h1,h2,h3,input,label,option,p,select,span{font-family:Oxanium,cursive;fon
 h1{padding-bottom:3vh;font-size:1.5vw}
 h2{margin:.25vh 0 1vh 0}
 h3{font-size:1.1em;padding-top:1vh;text-decoration:underline}
-p{font-size:.85em}
+p{font-size:.9em;font-weight:100}
 label{display:block;position:relative;z-index:-1;font-size:.85em;margin:.5vh 0 .5vh 0}
 select{color:#fff}
 .knobOption label{display:inline-block;position:relative;z-index:-1;font-size:.8em;margin:.5vh 0 .5vh 0}
@@ -13,16 +13,18 @@ img{width:5%;height:auto;padding:0 3% 1vh 3%;vertical-align:middle}
 input{cursor:pointer;box-shadow:rgb(203 203 203) 0 0 4px 0}
 #knob{float:right;width:20px}
 #socials{text-align:center;padding:0}
-#hide{font-family:Handjet,cursive;display:none;position:absolute;width:5vw;height:2.5vh;background-color:#00003d;font-size:1.3em}
+#hide{font-family:Handjet,cursive;display:none;position:absolute;width:5vw;height:2.5vh;background-color:#00003d;font-size:1.5vh}
 #removeOption{font-weight:700;color:#ff6060}
 #deviceType{position:absolute;display:block;text-align:center;width:100vw;top:37.5vh}
-#remap{margin:1vh 0 1vh 0;width:75%;height:3.33vh}
+#remap{margin:1vh 0 1vh 0;width:50%;height:3.33vh;font-size:.85em}
 #infoBox{display:block;position:absolute;top:10vh;width:75vw;margin:0 7.5vw 0 7.5vw;padding:2vh 5vw;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:gradientAnimation 45s infinite}
 #proceed{display:none}
 #settings{display:none;color:#fff;background-color:rgba(0,0,0,.5);position:absolute;width:20vw;margin:2.5vh 0 0 0;padding:0 15px 0 15px;background-image:linear-gradient(-45deg,#000,#1b1a34,#ffb060,#5ab172,#fff);background-size:600% 600%;animation:moveLeftOffScreen .1s linear forwards,gradientAnimation 45s infinite}
 #settings.hide{animation:moveRightOnScreen .33s linear forwards,gradientAnimation 45s infinite}
 #mapToOption{display:none;margin-top:.5vh;width:100%}
-.knobOption{display:block;position:relative;z-index:1;margin-bottom:1vh;width:50%;background-color:rgba(0,0,0,.2);cursor:pointer;margin-left:23%;padding:2%}
+#minimisedSliders{position:absolute;right:0;top:0;height:45px;width:50vw}
+.knobOption{display:block;position:relative;z-index:1;margin-bottom:1vh;width:50%;background-color:rgba(0,0,0,.2);cursor:pointer;margin-left:23%;padding:2%;font-size:.85em}
+.knobOption.minimised{display:inline-block;color:#fff;font-size:.75em;width:75px;padding:0;padding-left:5px;margin:0;float:right;cursor:default}
 .option{display:block;margin-bottom:1vh;text-align:center}
 .clr-field input{color:#fff;text-align:initial;border-style:solid;border-color:#fff;border-width:1px;background:rgba(0,0,0,0);box-shadow:0 0 5px rgba(0,0,0,.3)}
 .options{padding-bottom:1.25vh;text-align:center}

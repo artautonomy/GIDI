@@ -25,20 +25,17 @@
   </head>
   <body>
 	
-	<div id='deviceType'>
-		
-		<button id='synth' class='buttons'>Synth</button>
-		<button id='pad' class='buttons'>Pad</button>
-		
-	</div>
+	<button id='hide' class='buttons'>></button>
 	
-	<button id='hide'>></button>
+	<div id='minimisedSliders'>
+	
+	</div>
 	
 	<div id='settings'>
 	
 		<div id='knobs' class='options'>
-			<h2>Knobs</h2>
-			<label id='knobsHelp'>No knobs configured, play any to connect and map</label>
+			<h2>Sliders & Knobs</h2>
+			<p id='knobsHelp'>No sliders or knobs configured, play any to connect and map</p>
 
 			<select name="" id='mapToOption'>
 				<option disabled selected value=' - Select - '> - Select - </option>
@@ -81,7 +78,7 @@
 			<h2>Scene</h2>
 			
 			<div class='option'>
-				<label>Autorotate</label>
+				<label>Auto Rotate</label>
 				<input id='autoRotate' type="checkbox">
 			</div>
 			
@@ -100,13 +97,11 @@
 				<input id='backgroundColour' type="text" data-coloris>
 			</div>
 			
-		</div>
-		
-		<div id='mapping' class='options'>
-			<h2>MIDI Mapping</h2>
+			<button id='remap' class='buttons'>Remap MIDI Device</button>
 			
-			<button id='remap' class='buttons'>Remap Device</button>
-		</div>	
+		</div>
+
+			
 		
 		<div id='help' class='options'>
 			<h2>Tips</h2>
@@ -114,9 +109,9 @@
 			<p>To zoom use the mousewheel</p>
 			
 			<h3>Keyboard Shortcuts</h3>
-			<p>H - Toggle Settings</p>
-			<p>R - Toggle AutoRotate</p>
-			<p>M - Toggle Remap</p>
+			<p>H - Toggle Settings view</p>
+			<p>R - Toggle <b>Auto Rotate</b></p>
+			<p>M - Toggle <b>Remap MIDI Device</b></p>
 		</div>
 		
 		<div id='socials' class='options'>
@@ -125,6 +120,13 @@
 			<a href="https://www.youtube.com/channel/UCiPYshK5e29AYbO1dFYWbGQ"><img src="img/socials/youtube.png" alt="youtube"/></a>
 			<a href="https://www.reddit.com/user/will-kilroy"><img src="img/socials/reddit.png" alt="reddit"/></a>
 		</div>
+	</div>
+	
+	<div id='deviceType'>
+		
+		<button id='synth' class='buttons'>Synth</button>
+		<button id='pad' class='buttons'>Pad</button>
+		
 	</div>
 
 	<script src="js/coloris.min.js"></script>
