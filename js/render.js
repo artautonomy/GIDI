@@ -2,7 +2,7 @@ import * as THREE from '/js/threejs/three.module.js'
 
 import { OrbitControls } from '/js/threejs/OrbitControls.js'
 
-let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount
+let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,p2,infoBox
 
 function knob(id,setting) {
 	
@@ -37,12 +37,39 @@ const keys = {
 }
 
 let colourSchemes = [
-	['rgb(0,0,0)','rgb(163,163,163)'],
-	['rgb(0, 0, 61)','rgb(134, 143, 186)'],
+	['rgb(22,22,59)','rgb(186,177,134)'],
 	['rgb(176,136,56)','rgb(0,0,61)'],
-	['rgb(255,227,201)','rgb(48,22,56)']
+	['rgb(164,204,175)','rgb(48,22,56)'],
+	['rgb(225,193,182)','rgb(22,32,24)']
 ]
+
+let tipsArray = [
+				 'You can control the camera position by clicking and dragging the mouse',
+				 'To zoom in and out of a scene use the mousewheel',
+				 'There are 3 colour pickers to allow full customisation of the keys and background',
+				 'Map sliders or knobs to ADSR (Attack, Decay, Sustain, Release), Auto Rotate or Remap',
+				 '<u>Keyboard Shortcuts</u><br><br>H - Toggle Settings view<br>R - Toggle <b>Auto Rotate</b><br>M - Toggle <b>Remap MIDI Device</b>',
+				 'For any feedback or bespoke projects message through the links below'
+				]
+
+let tipsI = 1
 	
+window.setInterval(function() { 
+
+	document.getElementById('tips').innerHTML = tipsArray[tipsI]
+	
+	if(tipsI < tipsArray.length - 1) {
+		
+		tipsI++
+		
+	} else {
+		
+		tipsI = 0
+		
+	}
+
+}, 10000)
+
 //defaults
 
 let midiInputs = []
@@ -132,63 +159,71 @@ controls.rotateSpeed = 0.333
 
 document.addEventListener("DOMContentLoaded", function () {
 	
-	if(window.innerWidth <= window.innerHeight) {
-		
-		document.getElementById('deviceType').style.display = 'none'
-		
-		const infoBox = document.getElementById('socials')
-		
-		document.body.append(infoBox)
-		
-		infoBox.id = 'infoBox'
-				
-		let p = document.createElement('p')
-		
-		p.style.color = 'white'
-		
-		let pText = document.createTextNode('Plug in a MIDI device to a computer to get started.') 
-		
-		p.append(pText)
-		
-		infoBox.prepend(p)
+	animate()
+	
+	header = document.createElement('h1')
+			
+	header.style.color = foregroundColour
+	
+	let headerText = document.createTextNode('What device are you using?') 
+	
+	header.append(headerText)
+	
+	document.getElementById('deviceType').prepend(header)
+	
+	setStyle(foregroundColour,backgroundColour)
+			
+	document.getElementById('deviceType').style.display = 'none'
+	
+	infoBox = document.getElementById('socials')
+	
+	document.body.append(infoBox)
+	
+	infoBox.id = 'infoBox'
+	
+	if(window.innerWidth > window.innerHeight) {
 		
 		p = document.createElement('p')
+
+		p.id = 'infoText'
 		
-		p.style.color = 'white'
+		p.style.color = '#ffcd08'
 		
-		pText = document.createTextNode('GIDI is a free, open source web application which incorporates MIDI messages and ThreeJS to display visual feedback in relation to what a musician is playing.')
-		
+		const pText = document.createTextNode('Connect a MIDI device to your computer and play to get started.') 
+
 		p.append(pText)
-		
+
 		infoBox.prepend(p)
 		
-		generateSplash()
+		generateSplash(7)
+		
 		
 	} else {
 		
-		Coloris({
-			theme:'polaroid',
-			themeMode: 'dark',
-			alpha:false,
-			format:'rgb',
-		})
+		generateSplash(6)
 		
-		header = document.createElement('h1')
+		let p = document.createElement('p')
+
+		p.id = 'infoText'
 		
-		header.style.color = foregroundColour
-		
-		let headerText = document.createTextNode('What device are you using?') 
-		
-		header.append(headerText)
-		
-		document.getElementById('deviceType').prepend(header)
-		
-		setStyle(foregroundColour,backgroundColour)
-	
+		let pText = document.createTextNode('It is not currently supported on mobile, however demos can be found in the links below.') 
+
+		p.append(pText)
+
+		infoBox.prepend(p)
+
 	}
 	
-	animate()
+	p2 = document.createElement('p')
 
+	p2.id = 'infoText'
+
+	let p2Text = document.createTextNode('GIDI is a free, open source web application for musicians which combines MIDI and ThreeJS to provide augmentation of a live performance.')
+
+	p2.append(p2Text)
+
+	infoBox.prepend(p2)
+	
 })
 
 // Listen to MIDI
@@ -199,7 +234,68 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 	for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
 
 		input.value.onmidimessage = function(event) {
-		
+			
+			if(notesPlayed == 0) {
+								
+				p.innerHTML = 'MIDI device connected'
+				
+				p.style.color = '#6fff6f'
+				
+				const startButton = document.createElement('button')
+				
+				startButton.id = 'start'
+				
+				const buttonText = document.createTextNode('Start')
+				
+				startButton.append(buttonText)
+				
+				infoBox.append(startButton)
+				
+				startButton.onclick = function() {
+					
+					p.remove()
+					
+					p2.remove()
+					
+					for(let i = 0; i < document.getElementsByTagName('img').length;i++) {
+						
+						document.getElementsByTagName('img')[i].style.display = 'inline-block'
+						
+					}
+					
+					startButton.remove()
+					
+					removeSplash(cubeCollectionGroup)  
+						
+					scene.remove(cubeCollectionGroup)	
+						
+					infoBox.id = 'socials'
+					
+					document.getElementById('deviceType').style.display = 'block'
+				
+					Coloris({
+						theme:'polaroid',
+						themeMode: 'dark',
+						alpha:false,
+						format:'rgb',
+					})
+					
+					controls.autoRotate = false
+					
+					controls.enableZoom = true
+					
+					document.getElementById('settings').append(infoBox)
+					
+					infoBox.style.display = 'inline-block'
+					
+					
+					
+				}
+				
+				notesPlayed++
+				
+			}
+			
 			const [status, note, velocity] = event.data
 			
 			if(status != undefined && synthDevice != undefined) {	
@@ -226,7 +322,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 								
 								switch(notesPlayed) {
 									
-									case 0:
+									case 1:
 																													
 										header.innerHTML = 'Now press the highest key you will use'
 										
@@ -234,7 +330,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 											
 										break
 									
-									case 1:
+									case 2:
 										
 										header.style.display = 'none'
 																				
@@ -270,7 +366,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 						//pad
 						else {
 							
-							if(notesPlayed == 0) {
+							if(notesPlayed == 1) {
 								
 								document.getElementById('hide').style.display = 'block'
 							}
@@ -797,7 +893,7 @@ function setKeyExpressionColour(rgb) {
 			
 }
 
-function generateSplash() {
+function generateSplash(iterations) {
 	
 	cubeCollectionGroup = new THREE.Object3D()
 
@@ -819,7 +915,7 @@ function generateSplash() {
 	
 	let iteration = 0
 	
-	let limit = 6
+	let limit = iterations
 	
 	controls.enableZoom = false
 	
@@ -914,7 +1010,22 @@ function burrow(x,y,z,width,height,step,iteration,limit){
 	} 	
 		
 }
+
+function removeSplash(cubeCollectionGroup) {
 	
+	for(let i = cubeCollectionGroup.children.length - 1; i >= 0; i--) {
+		
+		var selectedCube = cubeCollectionGroup.children[i]
+			
+		cubeCollectionGroup.remove( selectedCube )
+		
+		selectedCube.geometry.dispose()
+		
+		selectedCube.material.dispose()
+	
+	}
+	
+}
 
 function recursionKeyframe(mesh,x,y,z,i,r,g,b,step,width,iteration,limit){
 	
