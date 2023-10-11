@@ -4,10 +4,29 @@ import { OrbitControls } from '/js/threejs/OrbitControls.js'
 
 let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,p2,infoBox
 
-function knob(id,setting) {
+class splashMesh {
 	
-    this.id = id;
-    this.setting = setting;
+	constructor(mesh,mixer,clip) {
+		
+		this.mesh = mesh
+		
+		this.mixer = mixer
+		
+		this.clip = clip
+	
+	}
+	
+}
+
+class knob {
+	
+	constructor(id,setting,value) {
+		
+		this.id = id
+		
+		this.setting = setting
+	
+	}
 	
 }
 
@@ -36,39 +55,152 @@ const keys = {
 
 }
 
-let colourSchemes = [
+class keyAnimation {
+	
+	constructor(key, riseMixer,riseClip) {
+		
+		this.key = key
+		
+		this.riseMixer = riseMixer
+		
+		this.riseClip = riseClip
+		
+		this.deallocate = function(mixer,clip) {
+			
+			mixer.uncacheClip(clip)
+			
+			mixer.uncacheAction(clip)
+		
+		}
+
+	}
+	
+	assignRiseMixer(mixer,clip) {
+	
+		this.riseMixer = mixer
+		
+		this.riseClip = clip
+		
+	}
+	
+	assignFallMixer(mixer,clip) {
+	
+		this.fallMixer = mixer
+		
+		this.fallClip = clip
+		
+	}
+	
+	assignSparkMixer(mixer,clip) {
+		
+		if(this.sparkClip != undefined && this.sparkClip.isRunning()) {
+			
+			if(this.sparkClip2 != undefined && this.sparkClip2.isRunning()) {
+				
+				if(this.sparkClip3 != undefined && this.sparkClip3.isRunning()) {
+					
+					if(this.sparkClip4 != undefined && this.sparkClip4.isRunning()) {
+						
+						if(this.sparkClip5 != undefined && this.sparkClip5.isRunning()) {
+							
+							if(this.sparkClip6 != undefined && this.sparkClip6.isRunning()) {
+								
+								if(this.sparkClip7 != undefined && this.sparkClip7.isRunning()) {
+									
+									this.deallocate(this.sparkMixer7,this.sparkClip7)
+							
+									this.sparkClip8 = clip
+									
+									this.sparkMixer8 = mixer
+									
+								} else {
+									
+									this.deallocate(this.sparkMixer6,this.sparkClip6)
+							
+									this.sparkClip7 = clip
+									
+									this.sparkMixer7 = mixer
+									
+								}
+								
+							}
+							
+							else {
+								
+								this.deallocate(this.sparkMixer5,this.sparkClip5)
+							
+								this.sparkClip6 = clip
+								
+								this.sparkMixer6 = mixer
+								
+							}
+						
+						} else {
+							
+							this.deallocate(this.sparkMixer4,this.sparkClip4)
+							
+							this.sparkClip5 = clip
+							
+							this.sparkMixer5 = mixer
+							
+						}
+					
+					} else {
+						
+						this.deallocate(this.sparkMixer3,this.sparkClip3)
+						
+						this.sparkClip4 = clip
+						
+						this.sparkMixer4 = mixer
+						
+					}
+				
+				} else {
+					
+					this.deallocate(this.sparkMixer2,this.sparkClip2)
+					
+					this.sparkClip3 = clip
+				
+					this.sparkMixer3 = mixer
+					
+				}
+			
+			} else {
+				
+				this.deallocate(this.sparkMixer,this.sparkClip)
+			
+				this.sparkClip2 = clip
+			
+				this.sparkMixer2 = mixer
+				
+			}
+			
+		} else {
+			
+			this.sparkClip = clip
+			
+			this.sparkMixer = mixer
+			
+		}
+	}
+	
+}
+
+const colourSchemes = [
 	['rgb(22,22,59)','rgb(186,177,134)'],
 	['rgb(176,136,56)','rgb(0,0,61)'],
 	['rgb(164,204,175)','rgb(48,22,56)'],
 	['rgb(225,193,182)','rgb(22,32,24)']
 ]
 
-let tipsArray = [
-				 'You can control the camera position by clicking and dragging the mouse',
-				 'To zoom in and out of a scene use the mousewheel',
-				 'There are 3 colour pickers to allow full customisation of the keys and background',
-				 'Map sliders or knobs to ADSR (Attack, Decay, Sustain, Release), Auto Rotate or Remap',
-				 '<u>Keyboard Shortcuts</u><br><br>H - Toggle Settings view<br>R - Toggle <b>Auto Rotate</b><br>M - Toggle <b>Remap MIDI Device</b>',
-				 'For any feedback or bespoke projects message through the links below'
-				]
-
-let tipsI = 1
-	
-window.setInterval(function() { 
-
-	document.getElementById('tips').innerHTML = tipsArray[tipsI]
-	
-	if(tipsI < tipsArray.length - 1) {
-		
-		tipsI++
-		
-	} else {
-		
-		tipsI = 0
-		
-	}
-
-}, 10000)
+const tipsArray = [
+	'You can control the camera position by clicking and dragging the mouse',
+	'To zoom in and out of a scene use the mousewheel',
+	'There are 3 colour pickers to allow full customisation of the keys and background',
+	'You can map sliders or knobs to ADSR (Attack, Decay, Sustain, Release), Auto Rotate, Key Smoke or Remap',
+	'<u>Keyboard Shortcuts</u><br><br>H - Toggle Settings view<br>R - Toggle <b>Auto Rotate</b><br>M - Toggle <b>Remap MIDI Device</b>',
+	'For feedback or bespoke projects enquiries message through the links below'
+]
 
 //defaults
 
@@ -76,15 +208,23 @@ let midiInputs = []
 
 let knobs = []
 
+let splashMeshs = []
+
+let keyAnimations = []
+
 let hidden = false
 
 let keysMapped = false
 
 let rotating = true
 
+let keySmoke = true
+
 let notesPlayed = 0
 
 const cubeY = -15
+
+let tipsI = 1
 
 // Set up scene
 const scene = new THREE.Scene()
@@ -160,6 +300,8 @@ controls.rotateSpeed = 0.333
 document.addEventListener("DOMContentLoaded", function () {
 	
 	animate()
+	
+	createTips(tipsI)
 	
 	header = document.createElement('h1')
 			
@@ -287,8 +429,6 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 					document.getElementById('settings').append(infoBox)
 					
 					infoBox.style.display = 'inline-block'
-					
-					
 					
 				}
 				
@@ -439,9 +579,11 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 																
 								document.getElementById('knobsHelp').style.display = 'none'
 														
-								newKnob = new knob(status, ' - Select - ')
+								newKnob = new knob(status, ' - Select - ','0')
 								
 								searchKnob = newKnob
+								
+								activeKnob = newKnob
 													
 								knobs.push(newKnob)
 								
@@ -450,19 +592,56 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 								createKnob(knobID)
 								
 								break
-												
+							
 							} 
-														
+							
 							const value = Math.floor((velocity / 127) * 10)
-													
-							document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = value
-												
+							
+							if(activeKnob.setting == 'Autorotate') {
+								
+								let autoRotateText
+								
+								if(!rotating == true) {
+									
+									autoRotateText = 'On'
+									
+								} else {
+									
+									autoRotateText = 'Off'
+									
+								}
+								
+								document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = autoRotateText
+								
+								
+							} else if(activeKnob.setting == 'Keysmoke'){
+								
+								let smokeText
+								
+								if(keySmoke == true) {
+									
+									smokeText = 'On'
+									
+								} else {
+									
+									smokeText = 'Off'
+									
+								}
+								
+								document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = smokeText
+								
+							}	else {
+								
+								document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = value
+								
+							}	
+							
 							switch(activeKnob.setting) {
 										
 									case 'Attack':
-															
+									
 										document.getElementById('attack').value = value
-																															
+										
 										keys.attack = value / 20
 						
 										break
@@ -470,15 +649,15 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 									case 'Decay':
 															
 										document.getElementById('decay').value = value
-																															
+										
 										keys.decay = (parseInt(value) + 1) / 20
 						
 										break
 
 									case 'Sustain':
-															
+										
 										document.getElementById('sustain').value = value
-																															
+										
 										keys.sustain = value / 20
 						
 										break
@@ -486,23 +665,35 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 									case 'Release':
 														
 										document.getElementById('release').value = value
-																									
+										
 										keys.release = value / 20
 										
 										break
 														
 									case 'Autorotate':
-															
+									
 										if(value == 10) {
-																
+										
 											controls.autoRotate = rotating
 							
 											document.getElementById('autoRotate').checked = rotating
-																
+										
 											rotating = !rotating
 										
 										}
 										
+										break
+									
+									case 'Keysmoke':
+									
+										if(value == 10) {
+										
+											document.getElementById('keySmoke').checked = !keySmoke
+										
+											keySmoke = !keySmoke
+										
+										}
+									
 										break
 										
 									case 'Remap':
@@ -537,20 +728,119 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 
 function noteOn(mesh,key,velocity){
 	
-	const velocityRange = 3
-	
-	const releaseKey =  window['clipFall' + key]
+	const currentKey = keyAnimations.find(element => element.key == key)
 	
 	//if note falling and note needs to rose halt/end key rise
-	if(releaseKey != undefined && releaseKey.isRunning()) {
+	if(currentKey != undefined && currentKey.fallClip.isRunning()) {
+				
+		currentKey.fallClip.stop()
+	
+	}
+		
+	const amplify = (Math.floor((velocity / 127) * 3) + keys.sustain) * 3
+		
+	const [keyMixer, keyClip] = animateNoteOn(mesh,amplify,cubeY)
+		
+	if(currentKey == undefined) {
+		
+		let animation = new keyAnimation(key,keyMixer,keyClip)
+		
+		animation.assignRiseMixer(keyMixer,keyClip)
+		
+		keyAnimations.push( animation )
+		
+	} else {
+		
+		let index = keyAnimations.findIndex(element => element.key == key)
 
-		window['clipFall' + key].halt(0)
+		keyAnimations[index].assignRiseMixer(keyMixer,keyClip)
 		
 	}
 	
-	let amplify = Math.floor((velocity / 127) * velocityRange) + keys.sustain
+}
+
+function noteOff(mesh,key,velocity){
 	
-	amplify *= 3
+	const currentKey = keyAnimations.find(element => element.key == key)
+	
+	const index = keyAnimations.findIndex(element => element.key == key)
+	
+	const amplify = (Math.floor((velocity / 127) * 3) + 0.75) * 3
+		
+	//if note rising and note needs to fall halt/end key rise
+	if(currentKey != undefined && currentKey.riseClip.isRunning()) {
+	
+		currentKey.riseClip.halt(0.025)
+		
+		const [sparkMixer, sparkClip] = animateSparks(mesh,velocity,cubeY,amplify)
+		
+		if(keySmoke && index > -1) {
+			
+			keyAnimations[index].assignSparkMixer(sparkMixer,sparkClip)
+			
+		}
+		
+	}
+	
+	const [keyMixer, keyClip] = animateNoteOff(mesh,velocity,amplify)
+		
+	if(index > -1) {
+		
+		keyAnimations[index].assignFallMixer(keyMixer,keyClip)
+	
+	}
+	
+}
+
+function mapInputs(midiInputs) {
+
+	scene.add( cubeCollectionGroup )
+	
+	let keyGeometry = new THREE.BoxGeometry(0.5,1,5)		
+		
+	for(let x = 0; x < midiInputs.length; x++){
+		
+		//find old ob
+		let ob = cubeCollectionGroup.getObjectByName(midiInputs[x])
+		
+		//delete old ob
+		if(ob) {
+		
+			cubeCollectionGroup.remove(ob)
+		
+		}
+		
+		const boxColour = new THREE.Color(keys.colours.red, keys.colours.green, keys.colours.blue)
+
+		const material = new THREE.MeshStandardMaterial( { color: boxColour} )
+			
+		let mesh = new THREE.Mesh(keyGeometry, material)
+				
+		mesh.name = midiInputs[x]
+		
+		mesh.position.x = x
+		
+		mesh.position.y = cubeY
+		
+		cubeCollectionGroup.add(mesh)
+
+	}
+		
+	//lock view to centre of keyboard	
+	const centre = cubeCollectionGroup.getObjectByName(midiInputs[parseInt(midiInputs.length / 2)])
+	
+	controls.target.set( centre.position.x,centre.position.y,centre.position.z )
+	
+	//pan camera out depending number of notes
+	camera.position.x = -midiInputs.length * 22.5
+	camera.position.y = midiInputs.length * 22.5 
+	camera.position.z = midiInputs.length * 22.5
+
+	controls.update()
+
+}
+
+function animateNoteOn(mesh,amplify,cubeY) {
 	
 	const times = [
 	
@@ -582,44 +872,31 @@ function noteOn(mesh,key,velocity){
 		keys.colours.red + keys.colours.expression.red, keys.colours.green + keys.colours.expression.green, keys.colours.blue + keys.colours.expression.blue,
 		keys.colours.red + (keys.colours.expression.red / 2), keys.colours.green + (keys.colours.expression.green / 2), keys.colours.blue + (keys.colours.expression.blue / 2)
 	]
-
-	const cubePosition = new THREE.VectorKeyframeTrack( '.position', times, meshPosition )
+	
+	const cubeIncrease = new THREE.VectorKeyframeTrack( '.position', times, meshPosition )
 	
 	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', times, meshScale )
 	
 	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', times, meshColours)
 	
-	const cubeClip = new THREE.AnimationClip( 'rise', -1, [ cubePosition, cubeScale, colorSweep] )
+	const cubeClip = new THREE.AnimationClip( 'rise', -1, [ cubeIncrease, cubeScale, colorSweep] )
 	
-	window['riseMixer' + key] = new THREE.AnimationMixer( mesh )
+	let keyMixer = new THREE.AnimationMixer( mesh )
 	
-	window['clipRise' + key] = window['riseMixer' + key].clipAction( cubeClip )
-
-	window['clipRise' + key].clampWhenFinished = true
+	let keyClip = keyMixer.clipAction( cubeClip )
+		
+	keyClip.clampWhenFinished = true
 	
-	window['clipRise' + key].setLoop(THREE.LoopOnce)
+	keyClip.setLoop(THREE.LoopOnce)
 	
-	window['clipRise' + key].play()
+	keyClip.play()
+	
+	return [keyMixer, keyClip]
 	
 }
 
-function noteOff(mesh,key,velocity){
-	
-	const attackKey =  window['clipRise' + key]
-	
-	//if note rising and note needs to fall halt/end key rise
-	if(attackKey != undefined && attackKey.isRunning()) {
-
-		window['clipRise' + key].halt(0.025)
+function animateNoteOff(mesh,velocity,amplify) {
 		
-	}
-	
-	const velocityRange = 3
-	
-	let amplify = Math.floor((velocity / 127) * velocityRange) + 0.75
-	
-	amplify *= 3
-
 	const cubePosition = new THREE.VectorKeyframeTrack( '.position', [ 0, keys.release ], [ mesh.position.x, mesh.position.y, mesh.position.z, mesh.position.x, cubeY, mesh.position.z] )
 	
 	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', [ 0, keys.release ], [ mesh.scale.x, mesh.scale.y, mesh.scale.z, mesh.scale.x, 1, mesh.scale.z] )
@@ -628,63 +905,114 @@ function noteOff(mesh,key,velocity){
 	
 	const cubeClip = new THREE.AnimationClip( 'fall', -1, [ cubePosition, cubeScale, colorSweep] )
 	
-	window['fallMixer' + key] = new THREE.AnimationMixer( mesh )
+	let keyMixer = new THREE.AnimationMixer( mesh )
+				
+	let keyClip = keyMixer.clipAction( cubeClip )
+		
+	keyClip.clampWhenFinished = true
 	
-	window['clipFall' + key] = window['fallMixer' + key].clipAction( cubeClip )
-
-	window['clipFall' + key].clampWhenFinished = true
+	keyClip.setLoop(THREE.LoopOnce)
 	
-	window['clipFall' + key].setLoop(THREE.LoopOnce)
+	keyClip.play()
 	
-	window['clipFall' + key].play()
+	return [keyMixer, keyClip]
+	
 }
 
-function mapInputs(midiInputs) {
-
-	scene.add( cubeCollectionGroup )
+function animateSparks(mesh,velocity,cubeY,amplify){
 	
-	let keyGeometry = new THREE.BoxGeometry(0.5,1,5)		
-		
-	for(let x = 0; x < midiInputs.length; x++){
-		
-		//find old ob
-		let ob = cubeCollectionGroup.getObjectByName(midiInputs[x])
-		
-		//delete old ob
-		if(ob) {
-		
-			cubeCollectionGroup.remove(ob)
-		
-		}
-		
-		const boxColour = new THREE.Color(keys.colours.red, keys.colours.green, keys.colours.blue)
+	let spark = createSpark(mesh,cubeY,amplify)
 	
-		const material = new THREE.MeshStandardMaterial( { color: boxColour} )
-			
-		let mesh = new THREE.Mesh(keyGeometry, material)
-				
-		mesh.name = midiInputs[x]
+	const sparkTimes = [
+	
+		0, 
+		keys.attack * 2, 
+		keys.attack + keys.decay * 2
+	
+	]
+	
+	const sparkPosition = [
+	
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 5, spark.position.z, 
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 10, spark.position.z,
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 17, spark.position.z
+	
+	]
+	
+	const sparkScaleDecrease = [
+	
+		spark.scale.x, spark.scale.y, spark.scale.z,
+		spark.scale.x, spark.scale.y, spark.scale.z,
+		spark.scale.x, 0, 0
+	
+	]
+	
+	const opacityKeyframes = [
 		
-		mesh.position.x = x
-		
-		mesh.position.y = cubeY
-		
-		cubeCollectionGroup.add(mesh)
+		(127 / velocity) / 2,
+		(127 / (velocity / 1.5) / 2),
+		0
+	
+	]
+	
+	const meshColours = [
+	
+		keys.colours.red, keys.colours.green, keys.colours.blue, 
+		keys.colours.red + keys.colours.expression.red, keys.colours.green + keys.colours.expression.green, keys.colours.blue + keys.colours.expression.blue,
+		keys.colours.red + (keys.colours.expression.red / 2), keys.colours.green + (keys.colours.expression.green / 2), keys.colours.blue + (keys.colours.expression.blue / 2)
+	]
+	
+	const sparkIncrease = new THREE.VectorKeyframeTrack( '.position', sparkTimes, sparkPosition )
+	
+	const disappear = new THREE.KeyframeTrack('.material.opacity', sparkTimes, opacityKeyframes )
+	
+	const sparkScale = new THREE.VectorKeyframeTrack( '.scale', sparkTimes, sparkScaleDecrease )
+	
+	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', sparkTimes, meshColours)
+	
+	const sparksClip = new THREE.AnimationClip( 'spark', -1, [ sparkIncrease, colorSweep, disappear, sparkScale ] )
+	
+	let sparkMixer = new THREE.AnimationMixer( spark )
+	
+	let sparkClip = sparkMixer.clipAction( sparksClip )
+	
+	if(keySmoke) {
 
+		sparkClip.clampWhenFinished = true
+		
+		sparkClip.setLoop(THREE.LoopOnce)
+		
+		sparkClip.play()
+	
 	}
-		
-	//lock view to centre of keyboard	
-	const centre = cubeCollectionGroup.getObjectByName(midiInputs[parseInt(midiInputs.length / 2)])
 	
-	controls.target.set( centre.position.x,centre.position.y,centre.position.z )
+	return [sparkMixer,sparkClip]
 	
-	//pan camera out depending number of notes
-	camera.position.x = -midiInputs.length * 4
-	camera.position.y = midiInputs.length * 4
-	camera.position.z = midiInputs.length * 4
+}
 
-	controls.update()
 
+function createSpark(mesh) {
+	
+	let keyGeometry = new THREE.BoxGeometry(0.5,1,5)
+	
+	const boxColour = new THREE.Color(keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue)
+
+	const material = new THREE.MeshStandardMaterial( { color: boxColour} )
+
+	let spark = new THREE.Mesh(keyGeometry, material)
+	
+	spark.material.transparent = true
+					
+	spark.position.x = mesh.position.x
+	
+	spark.position.y = 1000
+	
+	spark.position.z = 0
+	
+	cubeCollectionGroup.add(spark)
+	
+	return spark
+	
 }
 
 function createKnob(status) {
@@ -753,7 +1081,6 @@ function removeKnob(selectedKnob) {
 
 }
 
-
 function remap() {
 	
 	midiInputs = []
@@ -762,7 +1089,7 @@ function remap() {
 	
 	header.style.display = 'block'
 			
-	notesPlayed = 0
+	notesPlayed = 1
 	
 	document.getElementById('autoRotate').checked = false
 	
@@ -986,9 +1313,7 @@ function burrow(x,y,z,width,height,step,iteration,limit){
 			const material = new THREE.MeshStandardMaterial( { color: boxColour, transparent: true, opacity: 1, metalness:0.1,roughness:0.1} )
 				
 			let mesh = new THREE.Mesh(geometry, material)
-			
-			mesh.name = meshCount
-			
+						
 			mesh.position.x = startPositions[randomPosition][0] + (step / 2) 
 			
 			mesh.position.y = y + limit - (step * 1.5)
@@ -1013,17 +1338,28 @@ function burrow(x,y,z,width,height,step,iteration,limit){
 
 function removeSplash(cubeCollectionGroup) {
 	
-	for(let i = cubeCollectionGroup.children.length - 1; i >= 0; i--) {
+	//remove cubes from scene, deallocate all
+	for(let i = 0; i < splashMeshs.length; i++) {
 		
-		var selectedCube = cubeCollectionGroup.children[i]
+		var selectedCube = splashMeshs[i]
 			
-		cubeCollectionGroup.remove( selectedCube )
+		cubeCollectionGroup.remove( selectedCube.mesh )
 		
-		selectedCube.geometry.dispose()
+		selectedCube.mesh.geometry.dispose()
 		
-		selectedCube.material.dispose()
-	
+		selectedCube.mesh.material.dispose()
+		
+		selectedCube.clip.stop()
+		
+		selectedCube.mixer.stopAllAction()
+		
+		selectedCube.mixer.uncacheClip(selectedCube.clip)
+		
+		selectedCube.mixer.uncacheAction(selectedCube.clip)
+		
 	}
+		
+	splashMeshs = []
 	
 }
 
@@ -1042,68 +1378,125 @@ function recursionKeyframe(mesh,x,y,z,i,r,g,b,step,width,iteration,limit){
 	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [  currentTime, currentTime  + 0.165, currentTime  + 10], [ r,g,b, rE, gE, bE, r, g, b])
 
 	const cubeScale = new THREE.AnimationClip( 'cubePS', -1, [ colorSweep] )
-
-	window['scaleMixer' + i] = new THREE.AnimationMixer( mesh )
 	
-	window['clipScale' + i] = window['scaleMixer' + i].clipAction( cubeScale )
+	let mixer = new THREE.AnimationMixer( mesh )
+	
+	let clip = mixer.clipAction( cubeScale )
+	
+	clip.play()
+	
+	splashMeshs.push( new splashMesh(mesh,mixer,clip) )
+	
+}
 
+function createTips(tipsI) {
+	
+	const tips = document.getElementById('tips')
+		
+	window.setInterval(function() { 
+	
+		tips.classList.toggle('disappear')
+		
+		window.setTimeout(function() { 
+		
+			tips.classList.toggle('disappear')
+			
+			tips.innerHTML = tipsArray[tipsI]
+			
+		}, 500)
+		
+		if(tipsI < tipsArray.length - 1) {
+			
+			tipsI++
+			
+		} else {
+			
+			tipsI = 0
+			
+		}
+
+	}, 10000)
+	
 }
 
 function animate() {
 
 	const delta = clock.getDelta()
 	
-	for(let x = 0; x < midiInputs.length; x++){ 
+	for(let x = 0; x < keyAnimations.length; x++){ 
 		
-		const midiInputName = midiInputs[x]
+		if(keyAnimations[x].riseClip != undefined){
+			
+			keyAnimations[x].riseMixer.update( delta )
 		
-		if(window['riseMixer' + midiInputName] != undefined) {
-						
-			window['riseMixer' + midiInputName].update( delta )
-	
 		}
 		
-		if(window['fallMixer' + midiInputName] != undefined) {
+		if(keyAnimations[x].fallClip != undefined){
 			
-			window['fallMixer' + midiInputName].update( delta )
-		
-		}
-
-	}
-	
-	for(let x = 0; x < meshCount; x++){ 
-		
-		if(window['clipScale' + x] != undefined) {
-			
-			window['clipScale' + x].play()
-			
-		}
-	
-	}
-
-	for(let x = 0; x < meshCount; x++){ 
-	
-		if(window['scaleMixer' + x] != undefined) {
-			
-			window['scaleMixer'+ x].update( delta )
+			keyAnimations[x].fallMixer.update( delta )
 			
 		}
 		
-	}
+		if(keyAnimations[x].sparkClip != undefined){
+
+			keyAnimations[x].sparkMixer.update( delta )
 		
-	
-	if(dialogMixer != undefined) {
+		}
+		
+		if(keyAnimations[x].sparkClip2 != undefined){
 
-		dialogMixer.update( delta )
+			keyAnimations[x].sparkMixer2.update( delta )
+		
+		}
+		
+		if(keyAnimations[x].sparkClip3 != undefined){
 
+			keyAnimations[x].sparkMixer3.update( delta )
+		
+		}
+		
+		if(keyAnimations[x].sparkClip4 != undefined){
+
+			keyAnimations[x].sparkMixer4.update( delta )
+		
+		}
+		
+		if(keyAnimations[x].sparkClip5 != undefined){
+
+			keyAnimations[x].sparkMixer5.update( delta )
+		
+		}
+		
+		if(keyAnimations[x].sparkClip6 != undefined){
+
+			keyAnimations[x].sparkMixer6.update( delta )
+		
+		}
+		
+		if(keyAnimations[x].sparkClip7 != undefined){
+
+			keyAnimations[x].sparkMixer7.update( delta )
+		
+		}
+		
+		if(keyAnimations[x].sparkClip8 != undefined){
+
+			keyAnimations[x].sparkMixer8.update( delta )
+		
+		}
+		
 	}
 	
-	if (fontMixer != undefined) {
-			
-		fontMixer.update( delta )
-			
-	}
+	for(let x = 0; x < splashMeshs.length; x++){ 
+		
+		if(splashMeshs[x].clip != undefined){
+
+			splashMeshs[x].mixer.update( delta )
+		
+		}
 	
+	}
+
 	requestAnimationFrame(animate)
 		
 	controls.update()
@@ -1147,13 +1540,13 @@ document.querySelector('#knobs').addEventListener('click',function ( event ) {
         document.getElementById('mapToOption').value = searchKnob.setting
 
 		document.getElementById(knobID).append(document.getElementById('mapToOption'))
-		
+	
 	}
 
 })
 
 document.getElementById('mapToOption').addEventListener('change', function() {
-	
+		
 	if(this.value == 'Remove') {
 		
 		removeKnob(knobID)
@@ -1163,6 +1556,45 @@ document.getElementById('mapToOption').addEventListener('change', function() {
 		document.getElementById(knobID).children[0].innerHTML = this.value
 
         searchKnob.setting = this.value
+		
+		if(searchKnob.setting == 'Autorotate') {
+								
+			let autoRotateText
+			
+			if(!rotating == true) {
+				
+				autoRotateText = 'On'
+				
+			} else {
+				
+				autoRotateText = 'Off'
+				
+			}
+			
+			document.getElementsByName('knob' + searchKnob.id)[0].innerHTML = autoRotateText
+			
+			
+		} else if(searchKnob.setting == 'Keysmoke'){
+			
+			let smokeText
+			
+			if(keySmoke == true) {
+				
+				smokeText = 'On'
+				
+			} else {
+				
+				smokeText = 'Off'
+				
+			}
+			
+			document.getElementsByName('knob' + searchKnob.id)[0].innerHTML = smokeText
+			
+		}	else {
+			
+			document.getElementsByName('knob' + searchKnob.id)[0].innerHTML = document.getElementById(this.value.toLowerCase()).value
+			
+		}	
 	
 	}
 	
@@ -1182,11 +1614,65 @@ document.getElementById('autoRotate').addEventListener('change', function( event
 	
 	rotating = !rotating
 	
+	let activeKnob = knobs.find((element) => element.setting == 'Autorotate')
+	
+	if(activeKnob != undefined) {
+		
+		let autoRotateText
+		
+		if(!rotating == true) {
+			
+			autoRotateText = 'On'
+			
+		} else {
+			
+			autoRotateText = 'Off'
+			
+		}
+		
+		document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = autoRotateText
+		
+	}
+	
+}, false)
+
+document.getElementById('keySmoke').addEventListener('change', function( event ) {
+	
+	keySmoke = event.target.checked
+	
+	let activeKnob = knobs.find((element) => element.setting == 'Keysmoke')
+	
+	if(activeKnob != undefined) {
+		
+		let smokeText
+	
+		if(keySmoke == true) {
+			
+			smokeText = 'On'
+			
+		} else {
+			
+			smokeText = 'Off'
+			
+		}
+		
+		document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = smokeText
+	
+	}
+		
 }, false)
 
 document.getElementById('attack').addEventListener('input', function( event ) {
 	
 	keys.attack = event.target.value / 20
+	
+	const activeKnob = knobs.find((element) => element.setting == 'Attack')
+	
+	if(activeKnob != undefined) {
+		
+		document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = event.target.value
+		
+	}
 	
 }, false)
 
@@ -1194,17 +1680,41 @@ document.getElementById('decay').addEventListener('input', function( event ) {
 		
 	keys.decay = (parseInt(event.target.value) + 1) / 20
 	
+	const activeKnob = knobs.find((element) => element.setting == 'Decay')
+	
+	if(activeKnob != undefined) {
+		
+		document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = event.target.value 
+		
+	}
+	
 }, false)
 
 document.getElementById('sustain').addEventListener('input', function( event ) {
 	
 	keys.sustain = event.target.value / 20
 	
+	const activeKnob = knobs.find((element) => element.setting == 'Sustain')
+	
+	if(activeKnob != undefined) {
+		
+		document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = event.target.value 
+	
+	}
+	
 }, false)
 
 document.getElementById('release').addEventListener('input', function( event ) {
 	
 	keys.release = event.target.value / 20
+	
+	const activeKnob = knobs.find((element) => element.setting == 'Release')
+	
+	if(activeKnob != undefined) {
+		
+		document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = event.target.value 
+	
+	}
 	
 }, false)
 
@@ -1245,7 +1755,7 @@ document.addEventListener('coloris:pick', event => {
 	const pickerID = event.detail.currentEl.id
 	
 	let rgb = event.detail.color
-	
+		
 	switch(pickerID) {
 		
 		case 'keysColour':
