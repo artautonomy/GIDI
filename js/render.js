@@ -368,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	p2.id = 'infoText'
 
-	let p2Text = document.createTextNode('GIDI is a free, open source web application for musicians (combining MIDI and ThreeJS) to provide augmentation of a live performance.')
+	let p2Text = document.createTextNode('GIDI is a free, open source web application for musicians (combining MIDI and ThreeJS) to augmentate a live performance.')
 
 	p2.append(p2Text)
 
