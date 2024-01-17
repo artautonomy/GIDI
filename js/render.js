@@ -188,7 +188,7 @@ class keyAnimation {
 
 const colourSchemes = [
 	['rgb(189, 157, 86)','rgb(38, 0, 255)','rgb(134, 45, 45)'],
-	['rgb(0,0,39)','rgb(255,255,255)','rgb(255, 202, 96)'],
+	['rgb(0,0,39)','rgb(210, 110, 96)','rgb(255, 202, 96)'],
 
 ]
 
@@ -1262,7 +1262,7 @@ function generateSplash(iterations) {
 	
 	camera.position.x = 200
 	
-	camera.position.y += 50
+	camera.position.y += 135
 	
 	burrow(x,y,z,width,height,step,iteration,limit)
 
@@ -1312,7 +1312,7 @@ function burrow(x,y,z,width,height,step,iteration,limit){
 			
 			let randomPosition = parseInt(Math.random() * d)
 			
-			let rgbSplit = foregroundColour.slice(4).replace(')','').split(',')
+			let rgbSplit = expressionColour.slice(4).replace(')','').split(',')
 			
 			let r = (rgbSplit[0] / 255) + (iteration / 10 + 1) / d
 			
@@ -1322,8 +1322,8 @@ function burrow(x,y,z,width,height,step,iteration,limit){
 			
 			const boxColour = new THREE.Color(r,g,b);
 		
-			const material = new THREE.MeshStandardMaterial( { color: boxColour, transparent: true, opacity: 1, metalness:0.1,roughness:0.1} )
-				
+			const material = new THREE.MeshStandardMaterial( { emissive:boxColour, emissiveIntensity:0.5,transparent: true, opacity: 1, metalness:1,roughness:0.88} )
+
 			let mesh = new THREE.Mesh(geometry, material)
 						
 			mesh.position.x = startPositions[randomPosition][0] + (step / 2) 
@@ -1381,11 +1381,11 @@ function recursionKeyframe(mesh,x,y,z,i,r,g,b,step,width,iteration,limit){
 	
 	currentTime += 2
 
-	let rE = r + 0.6
+	let rE = r - 0.2
 
-	let gE =  g + 0.3
+	let gE =  g - 0.9
 
-	let bE = b - 0.2
+	let bE = b - 0.5
 	
 	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [  currentTime, currentTime  + 0.165, currentTime  + 10], [ r,g,b, rE, gE, bE, r, g, b])
 
