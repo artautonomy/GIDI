@@ -1220,8 +1220,6 @@ function setKeyColour(rgb) {
 
 function setKeyExpressionColour(rgb) {
 	
-	console.log(rgb)
-	
 	let rgbSplit = rgb.slice(4).replace(')','').split(',')
 			
 	keys.colours.expression.red = rgbSplit[0] / 255
