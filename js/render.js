@@ -35,7 +35,7 @@ const keys = {
 	attack: 0.05,
 	decay: 0.3,
 	sustain: 0.5,
-	release: 0.35,
+	release: 0.18,
 	
 	colours: {
 		
@@ -45,9 +45,9 @@ const keys = {
 		
 		expression: {
 			
-			red:0.6,
-			green:0.6,
-			blue:0.6
+			red:1,
+			green:1,
+			blue:1
 			
 		}
 		
@@ -187,10 +187,9 @@ class keyAnimation {
 }
 
 const colourSchemes = [
-	['rgb(22,22,59)','rgb(186,177,134)'],
-	['rgb(176,136,56)','rgb(0,0,61)'],
-	['rgb(164,204,175)','rgb(48,22,56)'],
-	['rgb(225,193,182)','rgb(22,32,24)']
+	['rgb(189, 157, 86)','rgb(38, 0, 255)','rgb(134, 45, 45)'],
+	['rgb(0,0,39)','rgb(255,255,255)','rgb(255, 202, 96)'],
+
 ]
 
 const tipsArray = [
@@ -241,7 +240,16 @@ const colourFamily = colourSchemes[parseInt(Math.random() * colourSchemes.length
 
 let backgroundColour = colourFamily[0]
 
-let foregroundColour = colourFamily[1]
+let expressionColour = colourFamily[1]
+
+let foregroundColour = colourFamily[2]
+
+//set Coloris pickers to random colours
+document.getElementById('keysColour').value = foregroundColour
+
+document.getElementById('KeysExpressionColour').value = expressionColour
+
+document.getElementById('backgroundColour').value = backgroundColour
 
 //lights
 
@@ -313,7 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 	document.getElementById('deviceType').prepend(header)
 	
-	setStyle(foregroundColour,backgroundColour)
+	setStyle(foregroundColour,expressionColour,backgroundColour)
 			
 	document.getElementById('deviceType').style.display = 'none'
 	
@@ -360,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	p2.id = 'infoText'
 
-	let p2Text = document.createTextNode('GIDI is a free, open source web application for musicians which combines MIDI and ThreeJS to provide augmentation of a live performance.')
+	let p2Text = document.createTextNode('GIDI is a free, open source web application for musicians (combining MIDI and ThreeJS) to provide augmentation of a live performance.')
 
 	p2.append(p2Text)
 
@@ -420,6 +428,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 						themeMode: 'dark',
 						alpha:false,
 						format:'rgb',
+						
 					})
 					
 					controls.autoRotate = false
@@ -812,7 +821,7 @@ function mapInputs(midiInputs) {
 		
 		const boxColour = new THREE.Color(keys.colours.red, keys.colours.green, keys.colours.blue)
 
-		const material = new THREE.MeshStandardMaterial( { color: boxColour} )
+		const material = new THREE.MeshStandardMaterial( {color:boxColour,emissive: boxColour,emissiveIntensity:0.1} )
 			
 		let mesh = new THREE.Mesh(keyGeometry, material)
 				
@@ -832,9 +841,9 @@ function mapInputs(midiInputs) {
 	controls.target.set( centre.position.x,centre.position.y,centre.position.z )
 	
 	//pan camera out depending number of notes
-	camera.position.x = -midiInputs.length * 22.5
-	camera.position.y = midiInputs.length * 22.5 
-	camera.position.z = midiInputs.length * 22.5
+	camera.position.x = -midiInputs.length * 15
+	camera.position.y = midiInputs.length * 15
+	camera.position.z = midiInputs.length * 15
 
 	controls.update()
 
@@ -869,8 +878,8 @@ function animateNoteOn(mesh,amplify,cubeY) {
 	const meshColours = [
 	
 		keys.colours.red, keys.colours.green, keys.colours.blue, 
-		keys.colours.red + keys.colours.expression.red, keys.colours.green + keys.colours.expression.green, keys.colours.blue + keys.colours.expression.blue,
-		keys.colours.red + (keys.colours.expression.red / 2), keys.colours.green + (keys.colours.expression.green / 2), keys.colours.blue + (keys.colours.expression.blue / 2)
+		keys.colours.red + keys.colours.expression.red / 2, keys.colours.green + keys.colours.expression.green / 2, keys.colours.blue + keys.colours.expression.blue / 2,
+		keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue
 	]
 	
 	const cubeIncrease = new THREE.VectorKeyframeTrack( '.position', times, meshPosition )
@@ -901,7 +910,7 @@ function animateNoteOff(mesh,velocity,amplify) {
 	
 	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', [ 0, keys.release ], [ mesh.scale.x, mesh.scale.y, mesh.scale.z, mesh.scale.x, 1, mesh.scale.z] )
 	
-	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.red + (keys.colours.expression.red / 2), keys.colours.green + (keys.colours.expression.green / 2), keys.colours.blue + (keys.colours.expression.blue / 2), keys.colours.red,keys.colours.green,keys.colours.blue])
+	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue, keys.colours.red,keys.colours.green,keys.colours.blue])
 	
 	const cubeClip = new THREE.AnimationClip( 'fall', -1, [ cubePosition, cubeScale, colorSweep] )
 	
@@ -933,8 +942,8 @@ function animateSparks(mesh,velocity,cubeY,amplify){
 	
 	const sparkPosition = [
 	
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 5, spark.position.z, 
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 10, spark.position.z,
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 10, spark.position.z, 
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 13, spark.position.z,
 		spark.position.x, cubeY + (amplify / 2) - 0.75 + 17, spark.position.z
 	
 	]
@@ -958,8 +967,8 @@ function animateSparks(mesh,velocity,cubeY,amplify){
 	const meshColours = [
 	
 		keys.colours.red, keys.colours.green, keys.colours.blue, 
-		keys.colours.red + keys.colours.expression.red, keys.colours.green + keys.colours.expression.green, keys.colours.blue + keys.colours.expression.blue,
-		keys.colours.red + (keys.colours.expression.red / 2), keys.colours.green + (keys.colours.expression.green / 2), keys.colours.blue + (keys.colours.expression.blue / 2)
+		keys.colours.red + keys.colours.expression.red / 2, keys.colours.green + keys.colours.expression.green / 2, keys.colours.green + keys.colours.expression.blue / 1.5,
+		keys.colours.expression.red, keys.colours.expression.green , keys.colours.expression.blue
 	]
 	
 	const sparkIncrease = new THREE.VectorKeyframeTrack( '.position', sparkTimes, sparkPosition )
@@ -997,7 +1006,7 @@ function createSpark(mesh) {
 	
 	const boxColour = new THREE.Color(keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue)
 
-	const material = new THREE.MeshStandardMaterial( { color: boxColour} )
+	const material = new THREE.MeshStandardMaterial( { color: boxColour, emissive: boxColour,emissiveIntensity:0.3} )
 
 	let spark = new THREE.Mesh(keyGeometry, material)
 	
@@ -1166,11 +1175,11 @@ function animateSettings() {
 	
 	hidden = !hidden
 	
-	setStyle(foregroundColour,backgroundColour)
+	setStyle(foregroundColour,expressionColour,backgroundColour)
 	
 }
 
-function setStyle(foregroundColour,backgroundColour) {
+function setStyle(foregroundColour,expressionColour,backgroundColour) {
 	
 	for(let x = 0; x < document.getElementsByClassName('buttons').length; x++) {
 
@@ -1191,9 +1200,10 @@ function setStyle(foregroundColour,backgroundColour) {
 	header.style.color = foregroundColour
 	
 	scene.background = new THREE.Color(backgroundColour)
-
+		
 	setKeyColour(foregroundColour)
 	
+	setKeyExpressionColour(expressionColour)
 }
 
 function setKeyColour(rgb) {
@@ -1209,6 +1219,8 @@ function setKeyColour(rgb) {
 }
 
 function setKeyExpressionColour(rgb) {
+	
+	console.log(rgb)
 	
 	let rgbSplit = rgb.slice(4).replace(')','').split(',')
 			
@@ -1777,7 +1789,9 @@ document.addEventListener('coloris:pick', event => {
 		
 		case 'KeysExpressionColour':
 			
-			setKeyExpressionColour(rgb)
+			expressionColour = rgb
+			
+			setKeyExpressionColour(expressionColour)
 			
 			break
 		
