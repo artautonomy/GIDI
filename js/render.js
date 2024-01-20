@@ -1244,7 +1244,7 @@ function generateSplash(iterations) {
 	
 	let x = -8
 	
-	let y = -15
+	let y = -13.5
 	
 	let z = -8
 	
@@ -1258,9 +1258,9 @@ function generateSplash(iterations) {
 	
 	controls.autoRotate = true
 	
-	camera.position.x = 200
+	camera.position.x = 150
 	
-	camera.position.y += 135
+	camera.position.y += 66
 	
 	burrow(x,y,z,width,height,step,iteration,limit)
 
@@ -1377,15 +1377,15 @@ function recursionKeyframe(mesh,x,y,z,i,r,g,b,step,width,iteration,limit){
 	
 	let currentTime = i / 100
 	
-	currentTime += 2
+	currentTime += 1.5
 
-	let rE = r - 0.2
+	let rE = r  - 1.1
 
-	let gE =  g - 0.9
+	let gE =  g - 0.7
 
-	let bE = b - 0.5
+	let bE = b - 2
 	
-	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [  currentTime, currentTime  + 0.165, currentTime  + 10], [ r,g,b, rE, gE, bE, r, g, b])
+	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [  currentTime, currentTime  + 0.177, currentTime  + 5, currentTime + 15], [ r,g,b, rE, gE, bE, rE, gE, bE, r, g, b])
 
 	const cubeScale = new THREE.AnimationClip( 'cubePS', -1, [ colorSweep] )
 	
