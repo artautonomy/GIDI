@@ -2,7 +2,7 @@ import * as THREE from '/js/threejs/three.module.js'
 
 import { OrbitControls } from '/js/threejs/OrbitControls.js'
 
-let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,p2,infoBox
+let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,p2,infoBox,keyboardNotes
 
 class splashMesh {
 	
@@ -42,6 +42,14 @@ const keys = {
 		red: 1,
 		green: 1,
 		blue: 1,
+		
+		blackKeys: {
+			
+			red:0,
+			green:0,
+			blue:0
+		
+		},
 		
 		expression: {
 			
@@ -187,7 +195,7 @@ class keyAnimation {
 }
 
 const colourSchemes = [
-	['rgb(189, 157, 86)','rgb(38, 0, 255)','rgb(134, 45, 45)'],
+	['rgb(189, 157, 86)','rgb(156, 140, 255)','rgb(134, 45, 45)'],
 	['rgb(0,0,39)','rgb(210, 110, 96)','rgb(255, 202, 96)'],
 
 ]
@@ -202,6 +210,8 @@ const tipsArray = [
 ]
 
 //defaults
+
+keyboardNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
 let midiInputs = []
 
@@ -297,7 +307,7 @@ const controls = new OrbitControls( camera, renderer.domElement )
 
 controls.enablePan = false
 
-controls.autoRotateSpeed *= -0.666
+controls.autoRotateSpeed *= -0.175
 
 controls.maxDistance = 75
 
@@ -309,6 +319,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 	animate()
 	
+	scene.background = new THREE.Color('rgb(0,0,0)')
+	
 	createTips(tipsI)
 	
 	header = document.createElement('h1')
@@ -319,10 +331,18 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 	header.append(headerText)
 	
-	document.getElementById('deviceType').prepend(header)
-	
 	setStyle(foregroundColour,expressionColour,backgroundColour)
-			
+	
+	Coloris({
+				theme:'polaroid',
+				themeMode: 'dark',
+				alpha:false,
+				format:'rgb',
+				
+			})
+	
+	document.getElementById('deviceType').prepend(header)
+		
 	document.getElementById('deviceType').style.display = 'none'
 	
 	infoBox = document.getElementById('socials')
@@ -331,6 +351,12 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 	infoBox.id = 'infoBox'
 	
+	
+					
+	/* testing ignore  */
+	
+
+	//if PC
 	if(window.innerWidth > window.innerHeight) {
 		
 		p = document.createElement('p')
@@ -350,8 +376,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		
 	} else {
 		
-		generateSplash(6)
-		
 		let p = document.createElement('p')
 
 		p.id = 'infoText'
@@ -361,8 +385,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		p.append(pText)
 
 		infoBox.prepend(p)
+		
+		generateSplash(6)
 
 	}
+	
 	
 	p2 = document.createElement('p')
 
@@ -373,6 +400,110 @@ document.addEventListener("DOMContentLoaded", function () {
 	p2.append(p2Text)
 
 	infoBox.prepend(p2)
+	
+	
+	/* testing 
+ 	
+	midiInputs = [
+
+		60,
+		61,
+		62,
+		63,
+		64,65,66,67,68,69,70,71,72
+		
+
+	]
+
+	synthDevice = true
+
+	mapSynthInputs(midiInputs)
+
+	let swi = true
+
+	let i = 0
+	
+	
+	
+	let rVelocity = Math.random() * 127
+	
+	let white = midiInputs[0]
+		
+	let black = midiInputs[1]
+	
+	let ob = scene.getObjectByName(white)
+		
+	let bob = scene.getObjectByName(black)
+		
+	//noteOn(ob,ob.name,rVelocity)
+	
+	//noteOn(bob,bob.name,rVelocity)
+	
+	
+
+	window.setInterval(function() { 
+		
+		let white = midiInputs[parseInt(i)]
+		
+		let black = midiInputs[parseInt(i + 1)]
+		
+		let ob = scene.getObjectByName(white)
+			
+		let bob = scene.getObjectByName(black)
+		
+		let rVelocity = Math.random() * 127
+		
+		if(swi) {
+
+			if (ob) {
+
+				noteOn(ob,ob.name,rVelocity)
+
+			}
+			
+			if (bob) {
+				
+				noteOn(bob,bob.name,rVelocity)
+			
+			}
+			
+		} else {
+			
+			if (ob) {
+
+				noteOff(ob,ob.name,10)
+				
+			}
+			
+			if (bob) {
+				
+				noteOff(bob,bob.name,10)
+				
+			}
+		
+		}
+		
+		swi = !swi
+		
+		if(parseInt(i) < midiInputs.length) {
+			
+			i += 0.5
+			
+		} else {
+			
+			i = -0.5
+			
+		}
+		
+	}, 250)
+	
+	
+	
+	document.getElementById('settings').style.display = 'block'
+
+	document.getElementById('settings').style.right = '-246.2px'
+	
+	*/
 	
 })
 
@@ -422,14 +553,6 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 					infoBox.id = 'socials'
 					
 					document.getElementById('deviceType').style.display = 'block'
-				
-					Coloris({
-						theme:'polaroid',
-						themeMode: 'dark',
-						alpha:false,
-						format:'rgb',
-						
-					})
 					
 					controls.autoRotate = false
 					
@@ -473,7 +596,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 									
 									case 1:
 																													
-										header.innerHTML = 'Now press the highest key you will use'
+										header.innerHTML = 'Now play the highest note'
 										
 										lowNote = note
 											
@@ -487,19 +610,26 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 										
 										highNote = note
 										
+										if(lowNote > highNote) {
+											
+											highNote = lowNote
+											
+											lowNote = note
+											
+										}
+										
 										for(let x = lowNote; x <= highNote; x++) {
 											
 											midiInputs.push(x)
 											
 										}
 										
-										mapInputs(midiInputs)
+										mapSynthInputs(midiInputs)
 										
 										keysMapped = true
 									
 										break
 										
-									
 									default:
 									
 										break
@@ -532,7 +662,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 								  
 								})
 							
-								mapInputs(midiInputs)
+								mapPadInputs(midiInputs)
 								
 								notesPlayed++
 								
@@ -737,7 +867,21 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 
 function noteOn(mesh,key,velocity){
 	
+	let whiteKey = true
+	
 	const currentKey = keyAnimations.find(element => element.key == key)
+	
+	const noteName = keyboardNotes[key % 12]
+	
+	const amplify = (Math.floor((velocity / 127) * 3) + keys.sustain) + 1.5 * 3
+	
+	if (noteName.includes('#')) {
+		
+		whiteKey = false
+		
+	} 
+	
+	const [keyMixer, keyClip] = animateNoteOn(mesh,amplify,cubeY,whiteKey)
 	
 	//if note falling and note needs to rose halt/end key rise
 	if(currentKey != undefined && currentKey.fallClip.isRunning()) {
@@ -745,10 +889,6 @@ function noteOn(mesh,key,velocity){
 		currentKey.fallClip.stop()
 	
 	}
-		
-	const amplify = (Math.floor((velocity / 127) * 3) + keys.sustain) * 3
-		
-	const [keyMixer, keyClip] = animateNoteOn(mesh,amplify,cubeY)
 		
 	if(currentKey == undefined) {
 		
@@ -770,18 +910,28 @@ function noteOn(mesh,key,velocity){
 
 function noteOff(mesh,key,velocity){
 	
+	let whiteKey = true
+	
+	const noteName = keyboardNotes[key % 12]
+	
 	const currentKey = keyAnimations.find(element => element.key == key)
 	
 	const index = keyAnimations.findIndex(element => element.key == key)
 	
-	const amplify = (Math.floor((velocity / 127) * 3) + 0.75) * 3
+	const amplify = (Math.floor((velocity / 127) * 3) + 1) * 3
+	
+	if (noteName.includes('#')) {
 		
+		whiteKey = false
+		
+	} 
+	
 	//if note rising and note needs to fall halt/end key rise
 	if(currentKey != undefined && currentKey.riseClip.isRunning()) {
 	
 		currentKey.riseClip.halt(0.025)
 		
-		const [sparkMixer, sparkClip] = animateSparks(mesh,velocity,cubeY,amplify)
+		const [sparkMixer, sparkClip] = animateSparks(mesh,velocity,cubeY,amplify,whiteKey)
 		
 		if(keySmoke && index > -1) {
 			
@@ -791,8 +941,8 @@ function noteOff(mesh,key,velocity){
 		
 	}
 	
-	const [keyMixer, keyClip] = animateNoteOff(mesh,velocity,amplify)
-		
+	const [keyMixer, keyClip] = animateNoteOff(mesh, whiteKey)
+	
 	if(index > -1) {
 		
 		keyAnimations[index].assignFallMixer(keyMixer,keyClip)
@@ -801,7 +951,131 @@ function noteOff(mesh,key,velocity){
 	
 }
 
-function mapInputs(midiInputs) {
+function mapSynthInputs(midiInputs) {
+	
+	let boxColour
+	
+	let keyGeometry
+	
+	let x = 0
+	
+	let y = 0
+	
+	let z = 0
+	
+	let whiteIndex = 0
+	
+	scene.add( cubeCollectionGroup )
+	
+	for(let i = 0; i < midiInputs.length; i++){
+		
+		//find old ob
+		let ob = cubeCollectionGroup.getObjectByName(midiInputs[i])
+		
+		//delete old ob
+		if(ob) {
+		
+			cubeCollectionGroup.remove(ob)
+		
+		}
+		
+		ob = cubeCollectionGroup.getObjectByName(midiInputs[i] + ' back_board')
+	
+		//delete old ob
+		if(ob) {
+		
+			cubeCollectionGroup.remove(ob)
+		
+		}
+		
+		const boardGeometry = new THREE.BoxGeometry(1,1.5,1)	
+			
+		//const boardColour = new THREE.Color('rgb(116,39,0)')
+		
+		const boardColour = new THREE.Color(keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue)
+		
+		const boardMaterial = new THREE.MeshStandardMaterial( {color:boardColour,emissive: boardColour,emissiveIntensity:0.1,roughness:1} )
+		
+		const boardMesh = new THREE.Mesh(boardGeometry, boardMaterial)
+		
+		const noteName = keyboardNotes[midiInputs[i] % 12]
+		
+		boardMesh.name = midiInputs[i] + ' back_board'
+		
+		if (noteName.includes('#')) {
+			
+			keyGeometry = new THREE.BoxGeometry(0.6,0.5,3.5)	
+			
+			boxColour = new THREE.Color(keys.colours.blackKeys.red, keys.colours.blackKeys.green, keys.colours.blackKeys.blue)
+			
+			x = whiteIndex - 0.475
+			
+			y = cubeY + 0.75
+			
+			z = -0.75
+			
+			boardMesh.position.x = x
+		
+			boardMesh.position.y = y - 0.5
+			
+			boardMesh.position.z = z - 2.25
+			
+		} else {
+			
+			keyGeometry = new THREE.BoxGeometry(0.95,1,5)	
+			
+			boxColour = new THREE.Color(keys.colours.red, keys.colours.green, keys.colours.blue)
+			
+			x = whiteIndex
+			
+			y = cubeY
+			
+			z = 0
+			
+			boardMesh.position.x = x
+		
+			boardMesh.position.y = y + 0.25
+			
+			boardMesh.position.z = z - 3
+		
+			whiteIndex++
+			
+		}
+		
+		const material = new THREE.MeshStandardMaterial( {color:boxColour,emissive: boxColour,emissiveIntensity:0.1} )
+		
+		let mesh = new THREE.Mesh(keyGeometry, material)
+		
+		mesh.name = midiInputs[i]
+		
+		mesh.position.x = x
+		
+		mesh.position.y = y
+		
+		mesh.position.z = z
+		
+		cubeCollectionGroup.add(mesh)
+		
+		cubeCollectionGroup.add(boardMesh)
+		
+	}
+		
+			
+	//lock view to centre of keyboard	
+	const centre = cubeCollectionGroup.getObjectByName(midiInputs[parseInt(midiInputs.length / 2)])
+		
+	controls.target.set( centre.position.x,centre.position.y,centre.position.z )
+		
+	//pan camera out depending number of notes
+	camera.position.x = -midiInputs.length * 15
+	camera.position.y = midiInputs.length * 15
+	camera.position.z = midiInputs.length * 15
+	
+	controls.update()
+
+}
+
+function mapPadInputs(midiInputs) {
 
 	scene.add( cubeCollectionGroup )
 	
@@ -849,8 +1123,8 @@ function mapInputs(midiInputs) {
 
 }
 
-function animateNoteOn(mesh,amplify,cubeY) {
-	
+function animateNoteOn(mesh,amplify,cubeY,whiteKey) {
+		
 	const times = [
 	
 		0, 
@@ -858,29 +1132,94 @@ function animateNoteOn(mesh,amplify,cubeY) {
 		keys.attack + keys.decay
 	
 	]
+
+	let meshColours, meshScale, meshPosition
 	
-	const meshPosition = [
+	if(synthDevice) {
+				
+		if(!whiteKey) {
+			
+			amplify -= 0.875
+			
+			meshColours = [
+		
+				keys.colours.blackKeys.blue, keys.colours.blackKeys.green, keys.colours.blackKeys.blue, 
+				keys.colours.blackKeys.red + keys.colours.expression.red / 2, keys.colours.blackKeys.green + keys.colours.expression.green / 2, keys.colours.blackKeys.blue + keys.colours.expression.blue / 2,
+				keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue
+			
+			]
+			
+			meshPosition = [
 	
-		mesh.position.x, cubeY, mesh.position.z, 
-		mesh.position.x, cubeY + (amplify / 2), mesh.position.z,
-		mesh.position.x, cubeY + (amplify / 2) - 0.75, mesh.position.z
+				mesh.position.x, (cubeY + 0.75), mesh.position.z, 
+				mesh.position.x, (cubeY + 0.75) + (amplify / 2), mesh.position.z,
+				mesh.position.x, (cubeY + 0.75) + (amplify / 2) - 0.75, mesh.position.z
+			
+			]
+		
+			meshScale = [
+			
+				mesh.scale.x, 1, mesh.scale.z,
+				mesh.scale.x, 1 + amplify * 2, mesh.scale.z,
+				mesh.scale.x, 1 + (amplify * 2) - 1.5, mesh.scale.z
+			
+			]
+			
+			
+		} else {
+
+			meshColours = [
+		
+				keys.colours.red, keys.colours.green, keys.colours.blue, 
+				keys.colours.red + keys.colours.expression.red / 2, keys.colours.green + keys.colours.expression.green / 2, keys.colours.blue + keys.colours.expression.blue / 2,
+				keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue
+				
+			]
+			
+			meshPosition = [
 	
-	]
+				mesh.position.x, cubeY, mesh.position.z, 
+				mesh.position.x, cubeY + (amplify / 2), mesh.position.z,
+				mesh.position.x, cubeY + (amplify / 2) - 0.75, mesh.position.z
+			
+			]
+		
+			meshScale = [
+			
+				mesh.scale.x, 1, mesh.scale.z,
+				mesh.scale.x, 1 + amplify, mesh.scale.z,
+				mesh.scale.x, (1 + amplify) - 1.5, mesh.scale.z
+			
+			]
+			
+		}
+		
+	} else {
+		
+		meshColours = [
+		
+			keys.colours.red, keys.colours.green, keys.colours.blue, 
+			keys.colours.red + keys.colours.expression.red / 2, keys.colours.green + keys.colours.expression.green / 2, keys.colours.blue + keys.colours.expression.blue / 2,
+			keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue
+		]
+		
+		meshPosition = [
 	
-	const meshScale = [
+			mesh.position.x, cubeY, mesh.position.z, 
+			mesh.position.x, cubeY + (amplify / 2), mesh.position.z,
+			mesh.position.x, cubeY + (amplify / 2) - 0.75, mesh.position.z
+		
+		]
+		
+		meshScale = [
+		
+			mesh.scale.x, 1, mesh.scale.z,
+			mesh.scale.x, 1 + amplify, mesh.scale.z,
+			mesh.scale.x, (1 + amplify) - 1.5, mesh.scale.z
+		
+		]
 	
-		mesh.scale.x, 1, mesh.scale.z,
-		mesh.scale.x, 1 + amplify, mesh.scale.z,
-		mesh.scale.x, (1 + amplify) - 1.5, mesh.scale.z
-	
-	]
-	
-	const meshColours = [
-	
-		keys.colours.red, keys.colours.green, keys.colours.blue, 
-		keys.colours.red + keys.colours.expression.red / 2, keys.colours.green + keys.colours.expression.green / 2, keys.colours.blue + keys.colours.expression.blue / 2,
-		keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue
-	]
+	}
 	
 	const cubeIncrease = new THREE.VectorKeyframeTrack( '.position', times, meshPosition )
 	
@@ -904,13 +1243,37 @@ function animateNoteOn(mesh,amplify,cubeY) {
 	
 }
 
-function animateNoteOff(mesh,velocity,amplify) {
+function animateNoteOff(mesh, whiteKey) {
 		
-	const cubePosition = new THREE.VectorKeyframeTrack( '.position', [ 0, keys.release ], [ mesh.position.x, mesh.position.y, mesh.position.z, mesh.position.x, cubeY, mesh.position.z] )
+	let cubePosition, colorSweep
+	
+	if(synthDevice) {
+	
+		if(!whiteKey) {
+			
+			cubePosition = new THREE.VectorKeyframeTrack( '.position', [ 0, keys.release ], [ mesh.position.x, mesh.position.y, mesh.position.z, mesh.position.x, cubeY + 0.75, mesh.position.z] )
+		
+			colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue, keys.colours.blackKeys.red,keys.colours.blackKeys.green,keys.colours.blackKeys.blue])
+		
+	
+		} else {
+			
+			cubePosition = new THREE.VectorKeyframeTrack( '.position', [ 0, keys.release ], [ mesh.position.x, mesh.position.y, mesh.position.z, mesh.position.x, cubeY, mesh.position.z] )
+	
+			colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue, keys.colours.red,keys.colours.green,keys.colours.blue])
+			
+		}
+		
+	} else {
+	
+		cubePosition = new THREE.VectorKeyframeTrack( '.position', [ 0, keys.release ], [ mesh.position.x, mesh.position.y, mesh.position.z, mesh.position.x, cubeY, mesh.position.z] )
+		
+		colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue, keys.colours.red,keys.colours.green,keys.colours.blue])
+		
+
+	}
 	
 	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', [ 0, keys.release ], [ mesh.scale.x, mesh.scale.y, mesh.scale.z, mesh.scale.x, 1, mesh.scale.z] )
-	
-	const colorSweep = new THREE.ColorKeyframeTrack( '.material.color', [ 0, keys.release ], [ keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue, keys.colours.red,keys.colours.green,keys.colours.blue])
 	
 	const cubeClip = new THREE.AnimationClip( 'fall', -1, [ cubePosition, cubeScale, colorSweep] )
 	
@@ -928,9 +1291,9 @@ function animateNoteOff(mesh,velocity,amplify) {
 	
 }
 
-function animateSparks(mesh,velocity,cubeY,amplify){
+function animateSparks(mesh,velocity,cubeY,amplify,whiteKey){
 	
-	let spark = createSpark(mesh,cubeY,amplify)
+	let spark = createSpark(mesh, whiteKey)
 	
 	const sparkTimes = [
 	
@@ -942,9 +1305,9 @@ function animateSparks(mesh,velocity,cubeY,amplify){
 	
 	const sparkPosition = [
 	
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 10, spark.position.z, 
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 13, spark.position.z,
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 17, spark.position.z
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 1, spark.position.z, 
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 5, spark.position.z,
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 10, spark.position.z
 	
 	]
 	
@@ -999,10 +1362,19 @@ function animateSparks(mesh,velocity,cubeY,amplify){
 	
 }
 
-
-function createSpark(mesh) {
-	
+function createSpark(mesh, whiteKey) {
+		
 	let keyGeometry = new THREE.BoxGeometry(0.5,1,5)
+		
+	if(synthDevice) {
+		
+		if(!whiteKey) {
+			
+			keyGeometry = new THREE.BoxGeometry(0.6,0.5,3.5)
+		
+		} 
+	
+	}
 	
 	const boxColour = new THREE.Color(keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue)
 
@@ -1016,7 +1388,7 @@ function createSpark(mesh) {
 	
 	spark.position.y = 1000
 	
-	spark.position.z = 0
+	spark.position.z = mesh.position.z
 	
 	cubeCollectionGroup.add(spark)
 	
@@ -1215,6 +1587,37 @@ function setKeyColour(rgb) {
 	keys.colours.green = rgb[1] / 255
 	
 	keys.colours.blue = rgb[2] / 255
+	
+}
+
+function setBlackKeyColour(rgb) {
+	
+	rgb = rgb.slice(4).replace(')','').split(',')
+							
+	const r = rgb[0]
+	
+	const g = rgb[1]
+	
+	const b = rgb[2]
+	
+	if(r < 70 && g < 70 && b < 70) {
+		
+		keys.colours.blackKeys.red = 1
+	
+		keys.colours.blackKeys.green = 1
+		
+		keys.colours.blackKeys.blue = 1
+		
+	} else {
+		
+		keys.colours.blackKeys.red = 0
+	
+		keys.colours.blackKeys.green = 0
+		
+		keys.colours.blackKeys.blue = 0
+		
+		
+	}
 	
 }
 
@@ -1769,8 +2172,6 @@ document.addEventListener('coloris:pick', event => {
 	switch(pickerID) {
 		
 		case 'keysColour':
-		
-			setKeyColour(rgb)
 			
 			foregroundColour = rgb
 			
@@ -1779,8 +2180,32 @@ document.addEventListener('coloris:pick', event => {
 				//find key
 				let ob = cubeCollectionGroup.getObjectByName(midiInputs[x])
 				
-				ob.material.color.setRGB(keys.colours.red, keys.colours.green, keys.colours.blue)				
-
+				const noteName = keyboardNotes[midiInputs[x] % 12]
+		
+				if(synthDevice) {
+					
+					if (!noteName.includes('#')) {
+						
+						setKeyColour(rgb)
+						
+						ob.material.color.setRGB(keys.colours.red, keys.colours.green, keys.colours.blue)
+						
+					} else {
+						
+						setBlackKeyColour(rgb)
+						
+						ob.material.color.setRGB(keys.colours.blackKeys.red, keys.colours.blackKeys.green, keys.colours.blackKeys.blue)
+						
+					}
+					
+				} else {
+					
+					setKeyColour(rgb)
+					
+					ob.material.color.setRGB(keys.colours.red, keys.colours.green, keys.colours.blue)				
+					
+				}
+				
 			}
 	
 			break
@@ -1790,6 +2215,21 @@ document.addEventListener('coloris:pick', event => {
 			expressionColour = rgb
 			
 			setKeyExpressionColour(expressionColour)
+			
+			if(synthDevice) {
+				
+				for(let x = 0; x < midiInputs.length; x++){
+				
+					let ob = cubeCollectionGroup.getObjectByName(midiInputs[x] + ' back_board')
+					
+					ob.material.color.setRGB(keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue)
+					
+				}
+			
+			}
+			
+			
+			
 			
 			break
 		
