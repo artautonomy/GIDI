@@ -3,7 +3,8 @@
 
 *Note: Please toggle sound on for videos - GitHub disables sound by default.*
 
-https://github.com/artautonomy/GIDI/assets/19935725/c0d1941b-3c7e-440a-ae41-4a6031a95375
+https://github.com/artautonomy/GIDI/assets/19935725/8cd677d0-e58d-412a-9022-c0df4d146616
+
 
 https://github.com/artautonomy/GIDI/assets/19935725/84fe4174-b07a-404c-a98e-8e5918ec0c12
 
