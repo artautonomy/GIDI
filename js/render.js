@@ -342,8 +342,6 @@ document.addEventListener("DOMContentLoaded", function () {
 			})
 	
 	document.getElementById('deviceType').prepend(header)
-		
-	document.getElementById('deviceType').style.display = 'none'
 	
 	infoBox = document.getElementById('socials')
 	
@@ -351,11 +349,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 	infoBox.id = 'infoBox'
 	
-	
-					
-	/* testing ignore  */
-	
-
 	//if PC
 	if(window.innerWidth > window.innerHeight) {
 		
@@ -400,111 +393,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	p2.append(p2Text)
 
 	infoBox.prepend(p2)
-	
-	
-	/* testing 
- 	
-	midiInputs = [
 
-		60,
-		61,
-		62,
-		63,
-		64,65,66,67,68,69,70,71,72
-		
-
-	]
-
-	synthDevice = true
-
-	mapSynthInputs(midiInputs)
-
-	let swi = true
-
-	let i = 0
-	
-	
-	
-	let rVelocity = Math.random() * 127
-	
-	let white = midiInputs[0]
-		
-	let black = midiInputs[1]
-	
-	let ob = scene.getObjectByName(white)
-		
-	let bob = scene.getObjectByName(black)
-		
-	//noteOn(ob,ob.name,rVelocity)
-	
-	//noteOn(bob,bob.name,rVelocity)
-	
-	
-
-	window.setInterval(function() { 
-		
-		let white = midiInputs[parseInt(i)]
-		
-		let black = midiInputs[parseInt(i + 1)]
-		
-		let ob = scene.getObjectByName(white)
-			
-		let bob = scene.getObjectByName(black)
-		
-		let rVelocity = Math.random() * 127
-		
-		if(swi) {
-
-			if (ob) {
-
-				noteOn(ob,ob.name,rVelocity)
-
-			}
-			
-			if (bob) {
-				
-				noteOn(bob,bob.name,rVelocity)
-			
-			}
-			
-		} else {
-			
-			if (ob) {
-
-				noteOff(ob,ob.name,10)
-				
-			}
-			
-			if (bob) {
-				
-				noteOff(bob,bob.name,10)
-				
-			}
-		
-		}
-		
-		swi = !swi
-		
-		if(parseInt(i) < midiInputs.length) {
-			
-			i += 0.5
-			
-		} else {
-			
-			i = -0.5
-			
-		}
-		
-	}, 250)
-	
-	
-	
-	document.getElementById('settings').style.display = 'block'
-
-	document.getElementById('settings').style.right = '-246.2px'
-	
-	*/
-	
 })
 
 // Listen to MIDI
