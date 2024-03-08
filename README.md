@@ -12,7 +12,7 @@ https://github.com/artautonomy/GIDI/assets/19935725/84fe4174-b07a-404c-a98e-8e59
 
 1. Plug in a MIDI instrument to your PC using a MIDI to USB cable (or for newer MIDI instruments simply a USB-C)
 2. Go to [gidi.uk](https://gidi.uk)
-3. Select your instrument from **Pad** or **Synth**a
+3. Select your instrument from **Pad** or **Synth**
 4. Start playing
 
 ## Future Improvements
