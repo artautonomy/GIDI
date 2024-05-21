@@ -2,7 +2,7 @@ import * as THREE from '/js/threejs/three.module.js'
 
 import { OrbitControls } from '/js/threejs/OrbitControls.js'
 
-let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,p2,infoBox,keyboardNotes
+let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,video,infoBox,keyboardNotes
 
 class splashMesh {
 	
@@ -240,10 +240,6 @@ const scene = new THREE.Scene()
 
 const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 300 )
 
-camera.position.x = 0
-camera.position.y = 0
-camera.position.z = 30
-
 let cubeCollectionGroup = new THREE.Object3D()
 
 const colourFamily = colourSchemes[parseInt(Math.random() * colourSchemes.length)]
@@ -358,14 +354,12 @@ document.addEventListener("DOMContentLoaded", function () {
 		
 		p.style.color = '#ffcd08'
 		
-		const pText = document.createTextNode('Connect a MIDI device to your computer and play to get started.') 
+		const pText = document.createTextNode('Connect a MIDI device to your computer and play it to get started') 
 
 		p.append(pText)
 
 		infoBox.prepend(p)
-		
-		generateSplash(7)
-		
+	
 		
 	} else {
 		
@@ -373,26 +367,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		p.id = 'infoText'
 		
-		let pText = document.createTextNode('It is not currently supported on mobile, however demos can be found in the links below.') 
+		let pText = document.createTextNode('GIDI is not currently supported on mobile') 
 
 		p.append(pText)
 
 		infoBox.prepend(p)
 		
-		generateSplash(6)
-
 	}
 	
+	video = document.createElement('video')
 	
-	p2 = document.createElement('p')
-
-	p2.id = 'infoText'
-
-	let p2Text = document.createTextNode('GIDI is a free, open source web application for musicians (combining MIDI and ThreeJS) to augment a live performance.')
-
-	p2.append(p2Text)
-
-	infoBox.prepend(p2)
+	video.src = "img/assets/How to use GIDI.mp4"
+	
+	video.controls = true
+	
+	video.autoplay = true
+	
+	video.muted = true
+	
+	infoBox.prepend(video)
+	
+	generateSplash()
 
 })
 
@@ -425,7 +420,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 					
 					p.remove()
 					
-					p2.remove()
+					video.remove()
 					
 					for(let i = 0; i < document.getElementsByTagName('img').length;i++) {
 						
@@ -1522,120 +1517,49 @@ function setKeyExpressionColour(rgb) {
 			
 }
 
-function generateSplash(iterations) {
+function generateSplash() {
 	
-	cubeCollectionGroup = new THREE.Object3D()
+	let keyGeometry = new THREE.BoxGeometry(0.95,5,12)	
+	
+	const cubeAmount = 20
+	
+	for(let x = 0; x < cubeAmount; x++){
+	
+		const boxColour = new THREE.Color(keys.colours.red, keys.colours.green, keys.colours.blue)
 
-	meshCount = 0
+		const material = new THREE.MeshStandardMaterial( {color:boxColour,emissive: boxColour,emissiveIntensity:0.1} )
+			
+		let mesh = new THREE.Mesh(keyGeometry, material)
+				
+		mesh.name = midiInputs[x]
+		
+		mesh.position.x = x
+		
+		mesh.position.y = cubeY
+		
+		cubeCollectionGroup.add(mesh)
+		
+		splashKeyframe(mesh,x)
+		
+		if(x == cubeAmount / 2) {
+			
+			controls.target.set( mesh.position.x,mesh.position.y + 22,mesh.position.z )
+			
+		}
 
-	let width = 8
-
-	let height = 8
+	}
 	
-	let i = 0
-	
-	let x = -8
-	
-	let y = -13.5
-	
-	let z = -8
-	
-	let step = width
-	
-	let iteration = 0
-	
-	let limit = iterations
+	scene.add( cubeCollectionGroup )
 	
 	controls.enableZoom = false
 	
 	controls.autoRotate = true
 	
-	camera.position.x = 150
+	//pan camera out depending number of notes
+	camera.position.x = -splashMeshs.length * 2
+	camera.position.y = splashMeshs.length * 2
+	camera.position.z = splashMeshs.length * 2
 	
-	camera.position.y += 66
-	
-	burrow(x,y,z,width,height,step,iteration,limit)
-
-	scene.add( cubeCollectionGroup )
-	
-}
-
-function burrow(x,y,z,width,height,step,iteration,limit){
-		
-	let geometry = new THREE.BoxGeometry(step,step,step)		
-	
-	let p = 0
-	
-	let pY = z
-	
-	let startPositions = new Array(4)
-	
-	for (let g = 0; g < startPositions.length; g++) {
-		
-		startPositions[g] = new Array(2)
-		
-	}
-	
-	while(x < width) {
-		
-		z = pY
-		
-		while(z < height) {
-			
-			startPositions[p][0] = x
-
-			startPositions[p][1] = z
-		
-			p++
-			
-			z += step
-			
-		}
-		
-		x += step
-		
-	}
-	
-	if(iteration < limit) {
-		
-		for(let d = 4; d > 1; d--) {
-			
-			let randomPosition = parseInt(Math.random() * d)
-			
-			let rgbSplit = expressionColour.slice(4).replace(')','').split(',')
-			
-			let r = (rgbSplit[0] / 255) + (iteration / 10 + 1) / d
-			
-			let g = (rgbSplit[1] / 255) + (iteration / 10 + 1) / d
-			
-			let b = (rgbSplit[2] / 255) + (iteration / 10 + 1) / d
-			
-			const boxColour = new THREE.Color(r,g,b);
-		
-			const material = new THREE.MeshStandardMaterial( { emissive:boxColour, emissiveIntensity:0.5,transparent: true, opacity: 1, metalness:1,roughness:0.88} )
-
-			let mesh = new THREE.Mesh(geometry, material)
-						
-			mesh.position.x = startPositions[randomPosition][0] + (step / 2) 
-			
-			mesh.position.y = y + limit - (step * 1.5)
-			
-			mesh.position.z = startPositions[randomPosition][1] + (step / 2)
-			
-			cubeCollectionGroup.add(mesh)
-			
-			recursionKeyframe(mesh,startPositions[randomPosition][0],y,startPositions[randomPosition][1],meshCount,r,g,b,step,width,iteration,limit)
-			
-			meshCount++
-			
-			burrow(startPositions[randomPosition][0], y, startPositions[randomPosition][1], startPositions[randomPosition][0] + step, startPositions[randomPosition][1] + step, step / 2, iteration + 1, limit)
-			
-			startPositions.splice(randomPosition, 1)
-			
-		}
-		
-	} 	
-		
 }
 
 function removeSplash(cubeCollectionGroup) {
@@ -1684,6 +1608,47 @@ function recursionKeyframe(mesh,x,y,z,i,r,g,b,step,width,iteration,limit){
 	let mixer = new THREE.AnimationMixer( mesh )
 	
 	let clip = mixer.clipAction( cubeScale )
+	
+	clip.play()
+	
+	splashMeshs.push( new splashMesh(mesh,mixer,clip) )
+	
+}
+
+function splashKeyframe(mesh,x){
+	
+	x += 4
+	
+	const times = [ x /4, x /2 , x]
+	
+	const amplify = 2
+	
+	const meshPosition = [
+
+		mesh.position.x, mesh.position.y, mesh.position.z, 
+		mesh.position.x, (mesh.position.y + amplify) + amplify / 4, mesh.position.z,
+		mesh.position.x, mesh.position.y, mesh.position.z
+
+	]
+
+	const meshScale = [
+
+		mesh.scale.x, 1, mesh.scale.z,
+		mesh.scale.x, amplify, mesh.scale.z,
+		mesh.scale.x, 1, mesh.scale.z
+
+	]
+
+		
+	const cubeIncrease = new THREE.VectorKeyframeTrack( '.position', times, meshPosition )
+	
+	const cubeScale = new THREE.VectorKeyframeTrack( '.scale', times, meshScale )
+	
+	const cubeClip = new THREE.AnimationClip( 'cubePR', -1, [ cubeIncrease, cubeScale ] )
+	
+	let mixer = new THREE.AnimationMixer( mesh )
+	
+	let clip = mixer.clipAction( cubeClip )
 	
 	clip.play()
 	
@@ -1798,7 +1763,7 @@ function animate() {
 		}
 	
 	}
-
+	
 	requestAnimationFrame(animate)
 		
 	controls.update()

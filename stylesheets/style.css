@@ -16,6 +16,12 @@ label{display:block;position:relative;z-index:-1;font-size: 0.85em;margin: 0.5vh
 
 select{color:white}
 
+video {
+	height: auto;
+        width: 100%;
+
+}
+
 .knobOption label{   display:inline-block;position: relative;
     z-index: -1;
     font-size: 0.8em;
