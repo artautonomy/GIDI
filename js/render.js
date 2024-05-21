@@ -2,7 +2,7 @@ import * as THREE from '/js/threejs/three.module.js'
 
 import { OrbitControls } from '/js/threejs/OrbitControls.js'
 
-let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,video,infoBox,keyboardNotes
+let clock,header,highNote,lowNote,dialogMixer,fontMixer,newKnob,searchKnob,knobID,synthDevice,meshCount,p,video,startBox,infoBox,keyboardNotes
 
 class splashMesh {
 	
@@ -341,39 +341,27 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 	infoBox = document.getElementById('socials')
 	
-	document.body.append(infoBox)
-	
 	infoBox.id = 'infoBox'
 	
-	//if PC
-	if(window.innerWidth > window.innerHeight) {
-		
-		p = document.createElement('p')
-
-		p.id = 'infoText'
-		
-		p.style.color = '#ffcd08'
-		
-		const pText = document.createTextNode('Connect a MIDI device to your computer and play it to get started') 
-
-		p.append(pText)
-
-		infoBox.prepend(p)
+	document.body.append(infoBox)
 	
-		
-	} else {
-		
-		let p = document.createElement('p')
+	startBox = document.createElement('div')
+	
+	infoBox.prepend(startBox)
+	
+	p = document.createElement('p')
 
-		p.id = 'infoText'
-		
-		let pText = document.createTextNode('GIDI is not currently supported on mobile') 
+	p.id = 'infoText'
+	
+	p.style.color = '#ffcd08'
+	
+	const pText = document.createTextNode('Connect a MIDI instrument to your device, then play a note to get started') 
 
-		p.append(pText)
+	p.append(pText)
 
-		infoBox.prepend(p)
-		
-	}
+	infoBox.prepend(p)
+	
+	
 	
 	video = document.createElement('video')
 	
@@ -414,11 +402,13 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 				
 				startButton.append(buttonText)
 				
-				infoBox.append(startButton)
+				startBox.append(startButton)
 				
 				startButton.onclick = function() {
 					
 					p.remove()
+					
+					startBox.remove()
 					
 					video.remove()
 					
@@ -999,9 +989,9 @@ function mapPadInputs(midiInputs) {
 	controls.target.set( centre.position.x,centre.position.y,centre.position.z )
 	
 	//pan camera out depending number of notes
-	camera.position.x = -midiInputs.length * 15
-	camera.position.y = midiInputs.length * 15
-	camera.position.z = midiInputs.length * 15
+	camera.position.x = -midiInputs.length * 5
+	camera.position.y = midiInputs.length * 5
+	camera.position.z = midiInputs.length * 5
 
 	controls.update()
 
@@ -2104,11 +2094,11 @@ document.addEventListener('coloris:pick', event => {
 })
 
 window.addEventListener('resize', function(){
-	
+
 	camera.aspect = window.innerWidth / window.innerHeight
-
+	
 	camera.updateProjectionMatrix()
-
+	
 	renderer.setSize(window.innerWidth, window.innerHeight)
 
     renderer.setPixelRatio(window.devicePixelRatio)

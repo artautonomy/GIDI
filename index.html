@@ -7,7 +7,7 @@
 	<!-- Metadata -->
 	<meta charset='utf-8'>
 	<meta name='description' content='GIDI is a free, open source web application for musicians which combines MIDI and ThreeJS to provide augmentation of a live performance.'>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	
 	<!-- Fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,24 +37,6 @@
 	</div>
 	
 	<div id='settings'>
-	
-		<div id='knobs' class='options'>
-			<h2>Sliders & Knobs</h2>
-			<p id='knobsHelp'>No sliders or knobs configured, play any to connect and map</p>
-
-			<select name="" id='mapToOption'>
-				<option disabled selected value=' - Select - '> - Select - </option>
-				<option value="Attack">Attack</option>
-				<option value="Decay">Decay</option>
-				<option value="Sustain">Sustain</option>
-				<option value="Release">Release</option>
-				<option value="Autorotate">AutoRotate</option>
-				<option value="Keysmoke">Key Smoke</option>
-				<option value="Remap">Remap</option>
-				<option id='removeOption' value='Remove'>Remove</option>
-			</select>
-			
-		</div>
 		
 		<div id='keys' class='options'>
 			<h2>Keys</h2>
@@ -108,11 +90,27 @@
 				<input id='keySmoke' type="checkbox" checked>
 			</div>
 			
+		</div>
+		
+		<div id='knobs' class='options'>
+			<h2>MIDI Mapping</h2>
+			<p id='knobsHelp'>No sliders or knobs configured, play any to connect and map</p>
+
+			<select name="" id='mapToOption'>
+				<option disabled selected value=' - Select - '> - Select - </option>
+				<option value="Attack">Attack</option>
+				<option value="Decay">Decay</option>
+				<option value="Sustain">Sustain</option>
+				<option value="Release">Release</option>
+				<option value="Autorotate">AutoRotate</option>
+				<option value="Keysmoke">Key Smoke</option>
+				<option value="Remap">Remap</option>
+				<option id='removeOption' value='Remove'>Remove</option>
+			</select>
+			
 			<button id='remap' class='buttons'>Remap MIDI Device</button>
 			
 		</div>
-
-			
 		
 		<div id='help' class='options'>
 			<h2>Tips</h2>

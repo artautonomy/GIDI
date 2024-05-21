@@ -1,5 +1,19 @@
-@media (orientation:portrait) and (max-width:900px){
-p{font-size:1em;padding-bottom:1vh}
+@media (max-width:900px){
+button{width:25vw}
+h1{font-size:1.25em}
+h2{font-size:1.2em}
+label{font-size:.6em}
+p{font-size:.8em;padding-bottom:1vh}
+#hide{width:20vw;height:17vw;font-size:3.5vh}
 #infoBox{top:10vh;width:75vw;margin:0 7.5vw 0 7.5vw}
-img{display:inline-block}
+#settings{width:98vw;height:43vh;overflow:scroll;margin:57vh 0 0 0;padding:0 1vw 0 1vw}
+.option{margin:0}
+}
+@media (orientation:portrait) and (max-width:900px){
+#infoBox{top:10vh;width:75vw;margin:0 7.5vw 0 7.5vw}
+}
+@media (orientation:landscape) and (max-width:900px){
+#infoBox{top:2vh;width:33vw;margin:0 29vw 0 29vw}
+#remap{height:7vh}
+#hide{width:16vw;height:7vw}
 }
