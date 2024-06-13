@@ -37,10 +37,19 @@
 	</div>
 	
 	<div id='settings'>
-		
+			
 		<div id='keys' class='options'>
 			<h2>Keys</h2>
 			
+			<label>Select a preset to change key expression</label>
+
+			<select name="adsrPreset" id="adsrPreset">
+			  <option selected value="piano">Piano</option>
+			  <option value="strings">Strings</option>
+			  <option value="pad">Pad</option>
+			  <option value="guitar">Guitar</option>
+			</select>
+
 			<div class='option'>
 				<label>Attack</label>
 				<input type="range" min="0" max="10" value="1" id="attack">
@@ -76,12 +85,12 @@
 			</div>
 			
 			<div class='option'>
-				<label>Key Expression and Backboard Blend Colour</label>
+				<label>Key Pressed Colour</label>
 				<input id='KeysExpressionColour' type="text" data-coloris>
 			</div>
 			
 			<div class='option'>
-				<label>Scene Background Colour</label>
+				<label>Scene Background</label>
 				<input id='backgroundColour' type="text" data-coloris>
 			</div>
 			
@@ -94,6 +103,7 @@
 		
 		<div id='knobs' class='options'>
 			<h2>MIDI Mapping</h2>
+			
 			<p id='knobsHelp'>No sliders or knobs configured, play any to connect and map</p>
 
 			<select name="" id='mapToOption'>
@@ -108,10 +118,10 @@
 				<option id='removeOption' value='Remove'>Remove</option>
 			</select>
 			
-			<button id='remap' class='buttons'>Remap MIDI Device</button>
 			
+			<button id='remap' class='buttons'>Remap MIDI Device</button>
+
 		</div>
-		
 		<div id='help' class='options'>
 			<h2>Tips</h2>
 			<p id='tips'>You can control the camera position by clicking and dragging the mouse</p>
@@ -119,9 +129,8 @@
 		
 		<div id='socials' class='options'>
 			<a href="https://github.com/artautonomy/GIDI"><img src="img/socials/github.png" class='icons' alt="github"/></a>
-			<a href="https://www.instagram.com/artautonomy/"><img src="img/socials/instagram.png" class='icons' alt="instagram"/></a>
 			<a href="https://www.youtube.com/channel/UCiPYshK5e29AYbO1dFYWbGQ"><img src="img/socials/youtube.png" class='icons' alt="youtube"/></a>
-			<a href="https://www.reddit.com/user/will-kilroy"><img src="img/socials/reddit.png" class='icons' alt="reddit"/></a>
+			<a href="https://www.instagram.com/artautonomy/"><img src="img/socials/instagram.png" class='icons' alt="instagram"/></a>
 		</div>
 	</div>
 	

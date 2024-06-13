@@ -2,11 +2,11 @@ body{margin:0;overflow: hidden;background-color:black}
 
 canvas{cursor:pointer}
 
-h1,h2,h3,p,label,button,span,select,input,option{font-family: 'Oxanium', cursive;font-weight:bold;text-shadow: 1px 1px 6px BLACK;text-align:center;}
+h1,h2,h3,p,label,button,span,select,input,option{font-family: 'Oxanium', cursive;text-shadow: 1px 1px 6px BLACK;text-align:center;}
 
 h1{padding-bottom: 2vh;font-size: 1.75em;text-shadow: 1px 1px 1px BLACK;}
 
-h2{margin:0.25vh 0 1vh 0}
+h2{margin:0.25vh 0 1vh 0;font-weight:bold;text-decoration: underline;}
 
 h3{font-size:1.1em;padding-top: 1vh;text-decoration:underline}
 
@@ -14,13 +14,41 @@ p{font-size: 0.9em;font-weight:100}
 
 label{display:block;position:relative;z-index:-1;font-size: 0.85em;margin: 0.5vh 0 0.5vh 0}
 
-select{color:white}
+select {
+	border-style: solid;
+    color: white;
+    border-width: 1px;
+    background: rgba(0,0,0,0);
+	width: 75%;
+	outline: none;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+	border-color: white;
+	height: 20px;
+	margin-bottom: 1vh;
+}
+
+select * {
+  color:black;
+}
+
 
 video {
 	height: auto;
-        width: 100%;
+        width: 75%;
 
 }
+
+
+button{cursor: pointer;opacity: 0;font-size: 1em;font-weight:bold;border-style: none;background-color: darkseagreen;width: 10vw;height: 7vh;animation: fadeIn 1s ease-in-out forwards;}
+
+input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
+
+img{display:inline-block;width: 5%;
+    height: auto;
+    padding: 0 2.5% 1vh 2.5%;
+    vertical-align: middle;}
+
+.buttons:hover{background-color:grey;box-shadow:inset #0dff00 0px 0px 0px 1px}
 
 .knobOption label{   display:inline-block;position: relative;
     z-index: -1;
@@ -28,16 +56,6 @@ video {
     margin: 0.5vh 0 0.5vh 0;}
 	
 
-button{cursor: pointer;opacity: 0;font-size: 1em;border-style: none;background-color: darkseagreen;width: 10vw;height: 7vh;animation: fadeIn 1s ease-in-out forwards;}
-
-img{display:inline-block;width: 5%;
-    height: auto;
-    padding: 0 3% 1vh 3%;
-    vertical-align: middle;}
-
-.buttons:hover{background-color:grey;box-shadow:inset #0dff00 0px 0px 0px 1px}
-
-input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 
 #knob{float: right;width:20px}
 
@@ -66,7 +84,14 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
     width: 100vw;top: 25vh;}
 
 
-#remap{margin: 1vh 0 1vh 0;width: 50%;height:3.33vh;font-size:0.85em;text-shadow: 1px 1px 1px BLACK;}
+#remap{    display: block;
+    margin-bottom: 1vh;
+    width: 75%;
+    height: 3.33vh;
+    font-size: .85em;
+    text-shadow: 1px 1px 1px #000;
+    margin-left: 12.5%;
+}
 
 #infoBox{    
 
@@ -166,7 +191,6 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
     padding: 0px;
     padding-left: 5px;
     margin: 0;
-    float: right;
 	cursor:default;
 	
 }
@@ -175,7 +199,7 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
 .option{
 	
 	display: block;
-	margin-bottom:1vh;
+	margin-bottom:0.2vh;
 	text-align:center;
 	
 }
@@ -188,6 +212,16 @@ input{cursor: pointer;box-shadow:rgb(203 203 203) 0px 0px 4px 0px}
     border-width: 1px;
     background: rgba(0,0,0,0);
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+	height: 20px;
+	
+}
+
+.clr-field button {
+	text-align:initial;
+	border-style: solid;
+    border-color: white;
+    border-width: 1px;
+	z-index:-1
 	
 }
 
@@ -212,6 +246,8 @@ input[type="checkbox"]:checked {
     background-color: #b6ff90;
 	
 }
+
+
 
 input[type="range"] {
 	-webkit-appearance: none !important;

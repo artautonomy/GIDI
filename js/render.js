@@ -30,6 +30,7 @@ class knob {
 	
 }
 
+
 const keys = {
 	
 	attack: 0.05,
@@ -209,6 +210,15 @@ const tipsArray = [
 	'For feedback or bespoke projects enquiries message through the links below'
 ]
 
+const adsrPresets = [ 
+
+	{name:'piano',attack: 0.05,decay: 0.3,sustain: 0.5,	release: 0.18},
+	{name:'strings',attack: 0.35,decay: 0.5,sustain: 0.3, release: 0.35},
+	{name:'pad',attack: 0.45,decay: 0.5,sustain: 0.5, release: 0.45},
+	{name:'guitar',attack: 0.01,decay: 0.4,sustain: 0.4, release: 0.3}
+
+]
+
 //defaults
 
 keyboardNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
@@ -234,6 +244,8 @@ let notesPlayed = 0
 const cubeY = -15
 
 let tipsI = 1
+
+let settingCounter = 1
 
 // Set up scene
 const scene = new THREE.Scene()
@@ -361,8 +373,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	infoBox.prepend(p)
 	
-	
-	
 	video = document.createElement('video')
 	
 	video.src = "img/assets/How to use GIDI.mp4"
@@ -376,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	infoBox.prepend(video)
 	
 	generateSplash()
-
+	
 })
 
 // Listen to MIDI
@@ -389,7 +399,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 		input.value.onmidimessage = function(event) {
 			
 			if(notesPlayed == 0) {
-								
+
 				p.innerHTML = 'MIDI device connected'
 				
 				p.style.color = '#6fff6f'
@@ -398,7 +408,7 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 				
 				startButton.id = 'start'
 				
-				const buttonText = document.createTextNode('Start')
+				const buttonText = document.createTextNode('Launch')
 				
 				startButton.append(buttonText)
 				
@@ -435,6 +445,26 @@ navigator.requestMIDIAccess().then(function(midiAccess) {
 					document.getElementById('settings').append(infoBox)
 					
 					infoBox.style.display = 'inline-block'
+					
+					if(window.innerHeight > window.innerWidth || window.innerWidth < 900) {
+						
+						for(let i = 1; i < document.getElementsByClassName('options').length - 1;i++) {
+							
+							document.getElementsByClassName('options')[i].style.display = 'none'
+							
+						}
+						
+						const nextSetting = document.createElement('button')
+								
+						nextSetting.className = 'nextSetting'
+						
+						const nextSettingText = document.createTextNode('>') 
+
+						nextSetting.append(nextSettingText)
+						
+						infoBox.prepend(nextSetting)
+						
+					}
 					
 				}
 				
@@ -863,9 +893,7 @@ function mapSynthInputs(midiInputs) {
 		}
 		
 		const boardGeometry = new THREE.BoxGeometry(1,1.5,1)	
-			
-		//const boardColour = new THREE.Color('rgb(116,39,0)')
-		
+					
 		const boardColour = new THREE.Color(keys.colours.expression.red, keys.colours.expression.green, keys.colours.expression.blue)
 		
 		const boardMaterial = new THREE.MeshStandardMaterial( {color:boardColour,emissive: boardColour,emissiveIntensity:0.1,roughness:1} )
@@ -1179,9 +1207,9 @@ function animateSparks(mesh,velocity,cubeY,amplify,whiteKey){
 	
 	const sparkPosition = [
 	
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 1, spark.position.z, 
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 5, spark.position.z,
-		spark.position.x, cubeY + (amplify / 2) - 0.75 + 10, spark.position.z
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 7, spark.position.z, 
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 9, spark.position.z,
+		spark.position.x, cubeY + (amplify / 2) - 0.75 + 15, spark.position.z
 	
 	]
 	
@@ -1195,8 +1223,8 @@ function animateSparks(mesh,velocity,cubeY,amplify,whiteKey){
 	
 	const opacityKeyframes = [
 		
-		(127 / velocity) / 2,
-		(127 / (velocity / 1.5) / 2),
+		velocity / 127,
+		1,
 		0
 	
 	]
@@ -1280,6 +1308,8 @@ function createKnob(status) {
 	
 	const knobs = document.getElementById("knobs")
 	
+	const remap = document.getElementById("remap")
+	
 	const knobLabel = document.createElement("label")
 
 	const labelContent = document.createTextNode("Knob (" + status + ')')
@@ -1297,6 +1327,8 @@ function createKnob(status) {
 	knobSpan.append(spanContent)
 	
 	knobs.append(optionDiv)
+	
+	knobs.append(remap)
 	
 	optionDiv.append(knobLabel)
 	
@@ -1439,9 +1471,7 @@ function setStyle(foregroundColour,expressionColour,backgroundColour) {
 
 	document.getElementById('remap').style.color = foregroundColour	
 	
-	document.getElementById('mapToOption').style.backgroundColor = backgroundColour
 
-	document.getElementById('mapToOption').style.color = foregroundColour	
 	
 	header.style.color = foregroundColour
 	
@@ -1786,6 +1816,31 @@ document.getElementById('pad').addEventListener('click', function( event ) {
 	
 }, false)
 
+document.querySelector('#settings').addEventListener('click',function ( event ) {
+			
+	if (event.target.classList.contains('nextSetting')) {
+						
+		for(let i = 0; i < document.getElementsByClassName('options').length - 1;i++) {
+			
+			document.getElementsByClassName('options')[i].style.display = 'none'
+			
+		}
+		
+		document.getElementsByClassName('options')[settingCounter].style.display = 'block'
+		
+		if(settingCounter < 2) {
+			
+			settingCounter++
+		
+		} else {
+			
+			settingCounter = 0
+			
+		}
+	}
+
+})
+
 document.querySelector('#knobs').addEventListener('click',function ( event ) {
 			
 	if (event.target.classList.contains('knobOption')) {
@@ -1916,6 +1971,28 @@ document.getElementById('keySmoke').addEventListener('change', function( event )
 		document.getElementsByName('knob' + activeKnob.id)[0].innerHTML = smokeText
 	
 	}
+		
+}, false)
+
+document.getElementById('adsrPreset').addEventListener('input', function( event ) {
+		
+	const selectedPreset = adsrPresets.find((element) => element.name == event.target.value)
+	
+	keys.attack = selectedPreset.attack
+	
+	document.getElementById('attack').value = selectedPreset.attack * 20
+	
+	keys.decay = selectedPreset.decay
+	
+	document.getElementById('decay').value = selectedPreset.decay * 20
+	
+	keys.sustain = selectedPreset.sustain
+	
+	document.getElementById('sustain').value = selectedPreset.sustain * 20
+	
+	keys.release = selectedPreset.release
+	
+	document.getElementById('release').value = selectedPreset.release * 20
 		
 }, false)
 
