@@ -1,2 +1,4 @@
-
 ableton setup guide.png
+node_modules/
+build/
+*.env

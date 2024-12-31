@@ -11,7 +11,6 @@
     Text3DGeometry,
     useCursor,
   } from "@threlte/extras";
-  import { spring } from "svelte/motion";
   import { tweened } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
