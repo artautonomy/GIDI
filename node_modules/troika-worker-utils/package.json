@@ -1,0 +1,17 @@
+{
+  "name": "troika-worker-utils",
+  "version": "0.50.0",
+  "description": "Utilities for executing code in Web Workers",
+  "author": "Jason Johnston <jason.johnston@protectwise.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/protectwise/troika.git",
+    "directory": "packages/troika-worker-utils"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "dist/troika-worker-utils.umd.js",
+  "module": "dist/troika-worker-utils.esm.js",
+  "module:src": "src/index.js",
+  "gitHead": "57f2e7882ba85389f376bd62d7202355f7fe5d9e"
+}

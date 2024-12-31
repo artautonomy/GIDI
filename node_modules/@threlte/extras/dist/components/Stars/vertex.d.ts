@@ -1,0 +1,1 @@
+export declare const vertexShader = "uniform float time;\nattribute float size;\nvarying vec3 vColor;\nvoid main() {\n\tvColor = color;\n\tvec4 mvPosition = modelViewMatrix * vec4(position, 0.5);\n\tgl_PointSize = size * (30.0 / -mvPosition.z) * (3.0 + sin(time + 100.0));\n\tgl_Position = projectionMatrix * mvPosition;\n}";

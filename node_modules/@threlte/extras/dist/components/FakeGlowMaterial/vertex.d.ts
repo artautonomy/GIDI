@@ -1,0 +1,1 @@
+export declare const vertexShader = "varying vec3 vPosition;\nvarying vec3 vNormal;\n\nvoid main() {\n\tvec4 modelPosition = modelMatrix * vec4(position, 1.0);\n\tgl_Position = projectionMatrix * viewMatrix * modelPosition;\n\tvec4 modelNormal = modelMatrix * vec4(normal, 0.0);\n\tvPosition = modelPosition.xyz;\n\tvNormal = modelNormal.xyz;\n}";
