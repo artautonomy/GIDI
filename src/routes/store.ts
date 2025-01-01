@@ -6,6 +6,7 @@ export let MIDI = writable<Messages[]>([]);
 
 export let Settings = writable({
 
+    edit: false,
     scene : 'Cube',
     orbitControls: false,
     autoRotate: true,

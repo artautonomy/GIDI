@@ -27,8 +27,15 @@
   let cameraPosition = $state([5, 3, 4]);
   let mobileNotes: { note: number; velocity: number }[] = $state([]);
 
+  let mobile = $state(false);
+
   const introZoom = tweened(0);
   const buttonScale = spring(6);
+
+  const title = "Welcome to GIDI";
+
+  const summary =
+    "GIDI is a free, open source web application for musicians using MIDI devices\n\nBy reading MIDI messages it can visualise a performance on a web browser";
 
   introZoom.set(50, {
     delay: 200,
@@ -48,6 +55,7 @@
   }
   //if Mobile
   else {
+    mobile = true;
     let oldIndex: number;
 
     $Settings.attack = 2000;
@@ -93,10 +101,12 @@
   zoom={$introZoom}
 >
   <OrbitControls
-    enableDamping
     autoRotateSpeed={2}
     autoRotate={true}
-    enabled={false}
+    enabled={mobile}
+    enableDamping
+    enablePan={false}
+    enableZoom={false}
     on:start={(camera) => {
       cameraPosition = camera.target.object.position;
       introZoom.set(camera.target.object.zoom, { duration: 0 });
@@ -111,7 +121,7 @@
   <Billboard position.y={7}>
     <T.Mesh>
       <Text
-        text={"Welcome to GIDI"}
+        text={title}
         color={"orange"}
         fontSize={window.innerWidth / 3000}
         textAlign={"center"}
@@ -119,7 +129,7 @@
         position.y={window.innerWidth / 1250}
       />
       <Text
-        text={"GIDI is a free, open source web application for musicians using MIDI\n\nBy interpreting MIDI messages it can visualise performances on a web browser\n\n\n\nTo start using GIDI follow the steps below:"}
+        text={summary + "\n\n\n\nTo start using GIDI follow the steps below:"}
         fontSize={window.innerWidth / 6000}
         textAlign={"center"}
         smooth={1}
@@ -140,7 +150,7 @@
   <T.Mesh
     position={[0, -window.innerHeight / 250, 0]}
     interactive
-    onpointerenter={() => buttonScale.set(12)}
+    onpointerenter={() => buttonScale.set(8)}
     onpointerleave={() => buttonScale.set(6)}
   >
     <Text
@@ -192,10 +202,10 @@
   <!-- if Mobile -->
 {:else}
   <!-- Splash Screen-->
-  <Billboard follow={true}>
+  <Billboard>
     <T.Mesh position={[0, 5.5, 0]}>
       <Text
-        text={"Welcome to GIDI"}
+        text={title}
         color={"orange"}
         fontSize={window.innerWidth / 1000}
         textAlign={"center"}
@@ -203,7 +213,7 @@
         position.y={window.innerHeight / 250}
       />
       <Text
-        text={"GIDI is a free, open source web application for musicians using MIDI\n\nBy interpreting MIDI messages it can visualise performances on a web browser"}
+        text={summary}
         fontSize={window.innerWidth / 2000}
         textAlign={"center"}
         smooth={1}
@@ -212,13 +222,13 @@
       />
 
       <Text
-        text={"To start using GIDI revisit this website on a computer"}
+        text={"Revisit this site on a computer to begin"}
         fontSize={window.innerWidth / 1750}
         textAlign={"center"}
         color={"orange"}
         smooth={1}
         anchorX={"center"}
-        position.y={-window.innerHeight / 5000}
+        position.y={window.innerHeight / 1800}
       />
     </T.Mesh>
   </Billboard>

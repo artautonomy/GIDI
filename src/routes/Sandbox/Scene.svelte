@@ -8,11 +8,10 @@
     interactivity,
     OrbitControls,
     Text,
-    Text3DGeometry,
     useCursor,
   } from "@threlte/extras";
   import { tweened } from "svelte/motion";
-  import { cubicInOut } from "svelte/easing";
+  import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Cube from "./Instance/Cube.svelte";
@@ -31,41 +30,47 @@
   });
   onDestroy(unsubscribe);
 
-  function setupScene(choice: string) {
-    $Settings.orbitControls = false;
+  const { hovering, onPointerEnter, onPointerLeave } = useCursor();
 
-    introZoom.set(0, {
-      delay: 250,
-      duration: 750,
-      easing: cubicInOut,
-    });
-
-    setTimeout(() => {
-      $Settings.attack = 50;
-
-      cameraPosition = [5, 1, 3];
-
-      introZoom.set(50, {
-        duration: 750,
-        easing: cubicInOut,
-      });
-      setTimeout(() => {
-        $Settings.orbitControls = true;
-      }, 750);
-    }, 1050);
-  }
-
-  const { onPointerEnter, onPointerLeave } = useCursor();
   interactivity();
 
   let cameraPosition = $state([10, 10, 20]);
+
   const introZoom = tweened(0);
 
-  introZoom.set(50, {
-    duration: 1000,
+  const hintText = tweened(1);
+
+  let selected = $state($Settings.colours.key);
+
+  hintText.set(0, {
+    delay: 5000,
+    duration: 2500,
     easing: cubicInOut,
   });
 
+  $effect(() => {
+    if ($Settings.edit) {
+      selected = $Settings.colours.key;
+
+      introZoom.set(25, {
+        duration: 1000,
+        easing: cubicOut,
+      });
+    } else {
+      if ($hovering) {
+        selected = { r: 77, g: 144, b: 57 };
+      } else {
+        selected = $Settings.colours.key;
+      }
+      introZoom.set(50, {
+        delay: 250,
+        duration: 1000,
+        easing: cubicIn,
+      });
+    }
+  });
+
+  $Settings.orbitControls = true;
   $Settings.autoRotate = false;
 </script>
 
@@ -87,14 +92,32 @@
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
-
+<Billboard position.y={-window.innerHeight / 175}>
+  <T.Mesh scale={0.75} position.y={window.innerHeight / 750}>
+    <T.ConeGeometry />
+    <T.MeshBasicMaterial
+      color={"orange"}
+      transparent={true}
+      opacity={$hintText}
+    />
+  </T.Mesh>
+  <Text
+    fillOpacity={$hintText}
+    text={"Select to edit"}
+    color={"orange"}
+    fontSize={window.innerWidth / 3000}
+    textAlign={"center"}
+    anchorX={"center"}
+    position.y={window.innerWidth / 1250}
+  />
+</Billboard>
 <Align auto precise>
   <!-- Show sample of styles -->
   {#each midiMessages as note, index}
     <T.Group
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
-      onclick={() => setupScene("Cube")}
+      onclick={() => ($Settings.edit = true)}
     >
       <InstancedMesh>
         <T.BoxGeometry />
@@ -105,7 +128,7 @@
             velocity={note.velocity}
             attack={$Settings.attack}
             release={$Settings.release}
-            keyColour={$Settings.colours.key}
+            keyColour={selected}
             expressionColour={$Settings.colours.expression}
           />
         {:else}
@@ -114,7 +137,7 @@
             velocity={note.velocity}
             attack={$Settings.attack}
             release={$Settings.release}
-            keyColour={$Settings.colours.key}
+            keyColour={selected}
             expressionColour={$Settings.colours.expression}
           />
         {/if}
