@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/Sandbox/+page.svelte";
+export { default as component } from "../../../../src/routes/play/+page.svelte";

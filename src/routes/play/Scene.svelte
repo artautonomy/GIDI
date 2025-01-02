@@ -10,7 +10,7 @@
     Text,
     useCursor,
   } from "@threlte/extras";
-  import { tweened } from "svelte/motion";
+  import { Tween } from "svelte/motion";
   import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
@@ -36,20 +36,32 @@
 
   let cameraPosition = $state([10, 10, 20]);
 
-  const introZoom = tweened(0);
+  let tips = $state("Press and hold the mouse to rotate the scene");
 
-  const hintText = tweened(1);
+  const introZoom = new Tween(0, {
+    delay: 250,
+    duration: 1000,
+    easing: cubicIn,
+  });
 
-  let selected = $state($Settings.colours.key);
-
-  hintText.set(0, {
-    delay: 5000,
-    duration: 2500,
+  const hintText = new Tween(1, {
+    duration: 1000,
     easing: cubicInOut,
   });
 
+  const hintArrow = new Tween(0, {
+    duration: 1000,
+    easing: cubicInOut,
+  });
+
+  introZoom.target = 50;
+
+  let selected = $state($Settings.colours.key);
+
   $effect(() => {
     if ($Settings.edit) {
+      hintText.target = 0;
+
       selected = $Settings.colours.key;
 
       introZoom.set(25, {
@@ -58,12 +70,15 @@
       });
     } else {
       if ($hovering) {
-        selected = { r: 77, g: 144, b: 57 };
+        selected = {
+          r: 255 - $Settings.colours.key.r,
+          g: 255 - $Settings.colours.key.g,
+          b: 255 - $Settings.colours.key.b,
+        };
       } else {
         selected = $Settings.colours.key;
       }
       introZoom.set(50, {
-        delay: 250,
         duration: 1000,
         easing: cubicIn,
       });
@@ -79,7 +94,7 @@
   position={cameraPosition}
   near={0.001}
   far={5000}
-  zoom={$introZoom}
+  zoom={introZoom.current}
 >
   <OrbitControls
     enableDamping
@@ -88,27 +103,30 @@
     enabled={$Settings.orbitControls}
     on:start={(camera) => {
       cameraPosition = camera.target.object.position;
-      introZoom.set(camera.target.object.zoom, { duration: 0 });
+    }}
+    onend={() => {
+      hintArrow.target = 0.75;
+      tips = "To open the menu click here";
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
 <Billboard position.y={-window.innerHeight / 175}>
-  <T.Mesh scale={0.75} position.y={window.innerHeight / 750}>
+  <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
     <T.ConeGeometry />
     <T.MeshBasicMaterial
       color={"orange"}
       transparent={true}
-      opacity={$hintText}
+      opacity={hintText.current}
     />
   </T.Mesh>
   <Text
-    fillOpacity={$hintText}
-    text={"Select to edit"}
+    fillOpacity={hintText.current}
+    text={tips}
     color={"orange"}
-    fontSize={window.innerWidth / 3000}
+    fontSize={window.innerWidth / 5000}
     textAlign={"center"}
     anchorX={"center"}
-    position.y={window.innerWidth / 1250}
+    position.y={window.innerHeight / 1250}
   />
 </Billboard>
 <Align auto precise>

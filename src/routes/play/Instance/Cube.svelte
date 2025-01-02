@@ -3,7 +3,7 @@
 
   import { Instance } from "@threlte/extras";
   import { cubicOut } from "svelte/easing";
-  import { tweened } from "svelte/motion";
+  import { Tween } from "svelte/motion";
   import { derived } from "svelte/store";
 
   interface Props {
@@ -27,21 +27,15 @@
   let { x, velocity, attack, release, keyColour, expressionColour }: Props =
     $props();
 
-  const bottomY = tweened(1);
-  const topY = tweened(6);
-  const scale = tweened(1);
-  const r = tweened(keyColour.r);
-  const g = tweened(keyColour.g);
-  const b = tweened(keyColour.b);
+  const y = new Tween(1);
+  const scale = new Tween(1);
+  const r = new Tween(keyColour.r);
+  const g = new Tween(keyColour.g);
+  const b = new Tween(keyColour.b);
 
-  run(() => {
+  $effect(() => {
     if (velocity > 0) {
-      bottomY.set(3, {
-        duration: attack,
-        easing: cubicOut,
-      });
-
-      topY.set(8, {
+      y.set(3, {
         duration: attack,
         easing: cubicOut,
       });
@@ -55,11 +49,7 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
     } else {
-      bottomY.set(1, {
-        duration: release,
-        easing: cubicOut,
-      });
-      topY.set(10, {
+      y.set(1, {
         duration: release,
         easing: cubicOut,
       });
@@ -73,24 +63,12 @@
       b.set(keyColour.b, { duration: release });
     }
   });
-
-  const color = derived([r, g, b], ([r, g, b]) => {
-    return `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`;
-  });
 </script>
 
 <Instance
   position.x={x}
-  position.y={$topY}
+  position.y={y.current}
   position.z={0}
-  scale.y={$scale}
-  color={$color}
-/>
-
-<Instance
-  position.x={x}
-  position.y={$bottomY}
-  position.z={0}
-  scale.y={$scale}
-  color={$color}
+  scale.y={scale.current}
+  color={`rgb(${Math.floor(r.current)},${Math.floor(g.current)},${Math.floor(b.current)})`}
 />

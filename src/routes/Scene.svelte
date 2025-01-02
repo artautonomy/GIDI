@@ -9,12 +9,12 @@
     InstancedMesh,
     Text,
   } from "@threlte/extras";
-  import { spring, tweened } from "svelte/motion";
+  import { Spring, Tween } from "svelte/motion";
   import { cubicOut, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "./store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import Mirror from "./Sandbox/Instance/Mirror.svelte";
+  import Mirror from "./play/Instance/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -29,8 +29,8 @@
 
   let mobile = $state(false);
 
-  const introZoom = tweened(0);
-  const buttonScale = spring(6);
+  const introZoom = new Tween(0);
+  const buttonScale = new Spring(6);
 
   const title = "Welcome to GIDI";
 
@@ -87,7 +87,7 @@
         easing: cubicOut,
       });
       setTimeout(() => {
-        goto("./Setup");
+        goto("./style");
       }, 750);
     }, 750);
   }
@@ -98,7 +98,7 @@
   position={cameraPosition}
   near={0.001}
   far={5000}
-  zoom={$introZoom}
+  zoom={introZoom.current}
 >
   <OrbitControls
     autoRotateSpeed={2}
@@ -193,7 +193,7 @@
       metalness={1.0}
       roughness={0.1}
     />
-    <T.BoxGeometry args={[$buttonScale, 1.5, 2]} />
+    <T.BoxGeometry args={[buttonScale.current, 1.5, 2]} />
     <T.MeshStandardMaterial
       color={midiMessages.length === 0 ? "darkred" : "green"}
     />

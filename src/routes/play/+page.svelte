@@ -2,21 +2,19 @@
   import { Canvas } from "@threlte/core";
   import Scene from "./Scene.svelte";
   import { MIDI, Settings } from "../store";
-  import { tweened } from "svelte/motion";
+  import { Tween } from "svelte/motion";
   import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
-
-  const menuOpacity = tweened(0);
-
+  const menuOpacity = new Tween(0);
   $effect(() => {
     if ($Settings.edit) {
       menuOpacity.set(1, {
-        delay: 500,
-        duration: 1000,
+        delay: 250,
+        duration: 750,
         easing: cubicInOut,
       });
     } else {
       menuOpacity.set(0, {
-        duration: 1000,
+        duration: 750,
         easing: cubicInOut,
       });
     }
@@ -62,7 +60,7 @@ export let Settings = writable({
 })
 -->
 
-<menu style="opacity:{$menuOpacity}">
+<menu style="opacity:{menuOpacity.current}">
   <button
     onclick={() => {
       $Settings.edit = false;

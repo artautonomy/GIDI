@@ -9,14 +9,14 @@
     Text,
     useCursor,
   } from "@threlte/extras";
-  import { tweened } from "svelte/motion";
+  import { Tween } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
 
-  import Cube from "../Sandbox/Instance/Cube.svelte";
-  import Mirror from "../Sandbox/Instance/Mirror.svelte";
+  import Cube from "../play/Instance/Cube.svelte";
+  import Mirror from "../play/Instance/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -30,17 +30,22 @@
 
   let styleIndex = $state(0);
 
-  let colour = $state($Settings.colours.key);
+  let highlighted = $state($Settings.colours.key);
+
+  let selected = $state(false);
 
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
   });
+
   onDestroy(unsubscribe);
 
   function setupScene(choice: string) {
-    colour = { r: 0, g: 100, b: 0 };
+    $Settings.scene = choice;
 
-    $Settings.orbitControls = false;
+    selected = true;
+
+    highlighted = { r: 77, g: 144, b: 57 };
 
     introZoom.set(0, {
       delay: 250,
@@ -49,20 +54,29 @@
     });
 
     setTimeout(() => {
-      cameraPosition = [5, 1, 3];
       setTimeout(() => {
-        $Settings.orbitControls = true;
-        $Settings.scene = choice;
-        goto("../Sandbox");
+        goto("../play");
       }, 750);
     }, 750);
   }
 
   const { onPointerEnter, onPointerLeave } = useCursor();
+  const {
+    hovering,
+    onPointerEnter: onPointerEnterStyle,
+    onPointerLeave: onPointerLeaveStyle,
+  } = useCursor();
   interactivity();
 
-  let cameraPosition = $state([10, 10, 20]);
-  const introZoom = tweened(0);
+  $effect(() => {
+    if (!$hovering && !selected) {
+      highlighted = $Settings.colours.key;
+    } else {
+      highlighted = { r: 77, g: 144, b: 57 };
+    }
+  });
+  let cameraPosition = $state([7.5, 10, 20]);
+  const introZoom = new Tween(0);
 
   introZoom.set(50, {
     duration: 1000,
@@ -77,7 +91,7 @@
   position={cameraPosition}
   near={0.001}
   far={5000}
-  zoom={$introZoom}
+  zoom={introZoom.current}
 >
   <OrbitControls
     enableDamping
@@ -111,8 +125,8 @@
 {#each midiMessages.slice(0, 5) as note, index}
   <T.Group
     position.y={-window.innerHeight / 200}
-    onpointerenter={onPointerEnter}
-    onpointerleave={onPointerLeave}
+    onpointerenter={onPointerEnterStyle}
+    onpointerleave={onPointerLeaveStyle}
     onclick={() => setupScene(styles[styleIndex])}
   >
     <InstancedMesh>
@@ -125,7 +139,7 @@
           velocity={note.velocity}
           attack={$Settings.attack}
           release={$Settings.release}
-          keyColour={colour}
+          keyColour={highlighted}
           expressionColour={$Settings.colours.expression}
         />
       {:else}
@@ -134,21 +148,22 @@
           velocity={note.velocity}
           attack={$Settings.attack}
           release={$Settings.release}
-          keyColour={colour}
+          keyColour={highlighted}
           expressionColour={$Settings.colours.expression}
         />
       {/if}
     </InstancedMesh>
     <Text
-      fontSize={0.5}
+      fontSize={0.4}
       text={styles[styleIndex]}
       textAlign={"center"}
       anchorX={"center"}
+      position.x={-0.5}
       position.y={3}
-      position.z={3.75}
+      position.z={3.9}
       color={"white"}
-      onpointerenter={onPointerEnter}
-      onpointerleave={onPointerLeave}
+      onpointerenter={onPointerEnterStyle}
+      onpointerleave={onPointerLeaveStyle}
       onclick={() => setupScene(styles[styleIndex])}
     />
   </T.Group>
@@ -156,25 +171,25 @@
 <Billboard position.y={-window.innerHeight / 140}>
   <T.Mesh
     scale={0.75}
-    position.x={2}
+    position.x={3}
     rotation.z={-Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
     onclick={() => (styleIndex === 0 ? styleIndex++ : (styleIndex = 0))}
   >
     <T.ConeGeometry />
-    <T.MeshBasicMaterial color={"orange"} />
+    <T.MeshBasicMaterial color={"orange"} shadow />
   </T.Mesh>
   <T.Mesh
     scale={0.75}
-    position.x={-2}
+    position.x={-3}
     rotation.z={Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
     onclick={() => (styleIndex === 1 ? styleIndex-- : (styleIndex = 1))}
   >
     <T.ConeGeometry />
-    <T.MeshBasicMaterial color={"orange"} />
+    <T.MeshBasicMaterial color={"orange"} shadow />
   </T.Mesh>
 </Billboard>
 <T.DirectionalLight intensity={1} position={[1, 0, 11]} />
