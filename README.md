@@ -1,38 +1,24 @@
-# sv
+# GIDI
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+[GIDI](https://gidi.uk) is a free, open source web application for musicians using MIDI. By interpreting MIDI messages it can visualise performances on a web browser.
 
-## Creating a project
+_Note: Please toggle sound on for videos - GitHub disables sound by default._
 
-If you're seeing this, you've probably already done this step. Congrats!
+https://github.com/artautonomy/GIDI/assets/19935725/8cd677d0-e58d-412a-9022-c0df4d146616
 
-```bash
-# create a new project in the current directory
-npx sv create
+https://github.com/artautonomy/GIDI/assets/19935725/84fe4174-b07a-404c-a98e-8e5918ec0c12
 
-# create a new project in my-app
-npx sv create my-app
-```
+## How to use GIDI
 
-## Developing
+1. Plug in a MIDI instrument to your PC using a MIDI to USB cable (or for newer MIDI instruments simply a USB-C)
+2. Go to [gidi.uk](https://gidi.uk)
+3. Start playing, GIDI will initialize when MIDI is recognised
+4. Select a 'Style' (Cube, Mirror, Keyboard)
+5. Play
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Help Improve GIDI
 
-```bash
-npm run dev
+GIDI is a new web app and can be improved, you can either:
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- Leave feedback on socials (bottom right on GIDI)
+- Perform a pull request and collaborate

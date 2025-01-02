@@ -60,7 +60,10 @@ export let Settings = writable({
 })
 -->
 
-<menu style="opacity:{menuOpacity.current}">
+<menu
+  style="opacity:{menuOpacity.current}; --keyColour: rgb({$Settings.colours.key
+    .r} {$Settings.colours.key.g} {$Settings.colours.key.b})"
+>
   <button
     onclick={() => {
       $Settings.edit = false;
@@ -175,7 +178,7 @@ export let Settings = writable({
   }
   menu {
     position: absolute;
-    background-color: blueviolet;
+    background-color: var(--keyColour);
     top: 0;
     height: 75vh;
     width: 20vw;
