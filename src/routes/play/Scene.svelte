@@ -42,7 +42,7 @@
     if (tips == "Press and hold the mouse to rotate the scene") {
       tips = "To zoom in and out use the mousewheel";
     }
-  }, 5000);
+  }, 4000);
 
   const introZoom = new Tween(0, {
     delay: 250,
@@ -142,10 +142,12 @@
       fillOpacity={hintText.current}
       text={tips}
       color={"orange"}
+      font={$Settings.font}
       fontSize={window.innerWidth / 6250}
       textAlign={"center"}
       anchorX={"center"}
       position.y={window.innerHeight / 1250}
+      outlineBlur={0.1}
     />
   </Billboard>
 {/if}

@@ -8,6 +8,7 @@ export let Settings = writable({
 
     edit: false,
     scene : 'Cube',
+    font: "src/lib/assets/fonts/Oxanium-Regular.ttf",
     orbitControls: false,
     autoRotate: true,
     autoRotateSpeed: 1,
@@ -16,23 +17,25 @@ export let Settings = writable({
     colours: {
         background: {
 
-            r: 27,
-            g: 11,
-            b: 40
+            r: 0,
+            g: 0,
+            b: 39
         },
         key: {
 
-            r: 122,
-            g: 5,
-            b: 122
+            r: 222,
+            g: 177,
+            b: 22
         },
         expression: {
 
-            r: 1,
-            g: 23,
-            b: 211
-        }
+            r: 222,
+            g: 66,
+            b: 11
+        },
+        
 
-    }
+    },
+    
     
 })

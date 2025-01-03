@@ -104,17 +104,21 @@
   <Text
     text={"Style"}
     color={"orange"}
+    font={$Settings.font}
     fontSize={window.innerWidth / 4000}
     textAlign={"center"}
     anchorX={"center"}
     position.y={window.innerWidth / 1250}
+    outlineBlur={0.1}
   />
   <Text
     text={"Play notes to sample, click to confirm style"}
     color={"white"}
+    font={$Settings.font}
     fontSize={window.innerWidth / 7000}
     textAlign={"center"}
     anchorX={"center"}
+    outlineBlur={0.1}
   />
 </Billboard>
 <!-- Show sample of styles -->
@@ -150,12 +154,14 @@
       {/if}
     </InstancedMesh>
     <Text
+      font={$Settings.font}
       fontSize={0.4}
+      outlineBlur={0.06}
       text={styles[styleIndex]}
       textAlign={"center"}
       anchorX={"center"}
       position.x={-0.5}
-      position.y={3}
+      position.y={2.95}
       position.z={3.9}
       color={"white"}
       onpointerenter={onPointerEnterStyle}

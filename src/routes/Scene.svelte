@@ -119,26 +119,32 @@
       <Text
         text={title}
         color={"orange"}
+        font={$Settings.font}
         fontSize={window.innerWidth / 4000}
         textAlign={"center"}
         anchorX={"center"}
         position.y={window.innerWidth / 1250}
+        outlineBlur={0.1}
       />
       <Text
         text={summary + "\n\n\n\nTo start using GIDI follow the steps below:"}
+        font={$Settings.font}
         fontSize={window.innerWidth / 7000}
         textAlign={"center"}
         smooth={1}
         anchorX={"center"}
+        outlineBlur={0.1}
       />
       <Text
         text={"1. Connect a MIDI instrument to your device\n\n2. Play a note\n\n3. If the box turns green you are connected"}
+        font={$Settings.font}
         fontSize={window.innerWidth / 6250}
         color={"orange"}
         textAlign={"left"}
         smooth={1}
         anchorX={"center"}
         position.y={-window.innerWidth / 500}
+        outlineBlur={0.1}
       />
     </T.Mesh>
   </Billboard>
@@ -153,6 +159,7 @@
       text={midiMessages.length === 0
         ? "Connect A MIDI Device"
         : "MIDI Connected"}
+      font={$Settings.font}
       fontSize={0.5}
       textAlign={"center"}
       smooth={1}
@@ -160,19 +167,23 @@
       anchorY={"middle"}
       position={[0, 0.8, 0]}
       rotation={[-1.553343, 0, 0]}
+      outlineBlur={0.06}
     />
     <Text
       text={midiMessages.length === 0 ? "No MIDI Device Found" : "Initialising"}
+      font={$Settings.font}
       fontSize={0.5}
       textAlign={"center"}
       smooth={1}
       anchorX={"center"}
       anchorY={"middle"}
       position={[0, 0, 1.02]}
+      outlineBlur={0.06}
     />
 
     <Text
       text={midiMessages.length === 0 ? "No MIDI Device Found" : "Initialising"}
+      font={$Settings.font}
       fontSize={0.5}
       textAlign={"center"}
       smooth={1}
@@ -180,6 +191,7 @@
       anchorY={"middle"}
       position={[0, 0, -1.02]}
       rotation.y={3.14}
+      outlineBlur={0.06}
     />
 
     <T.MeshStandardMaterial

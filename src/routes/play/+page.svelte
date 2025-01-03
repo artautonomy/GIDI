@@ -30,10 +30,10 @@
 
   let menuColour = $state(
     colord(
-      `rgb(${$Settings.colours.key.r}, ${$Settings.colours.key.g}, ${$Settings.colours.key.b})`
+      `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
     )
       .invert()
-      .desaturate(0.5)
+      .desaturate(0.3)
       .darken(0.1)
   );
 
@@ -68,10 +68,10 @@
 
       setTimeout(() => {
         menuColour = colord(
-          `rgb(${$Settings.colours.key.r}, ${$Settings.colours.key.g}, ${$Settings.colours.key.b})`
+          `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
         )
           .invert()
-          .desaturate(0.5)
+          .desaturate(0.3)
           .darken(0.1);
       }, 2000);
     }}>Close</button
@@ -194,5 +194,51 @@
     top: 0;
     height: 75vh;
     width: 20vw;
+  }
+  select {
+    border-style: solid;
+    color:var(--menuTextColour)
+    border-width: 1px;
+    background: rgba(0, 0, 0, 0);
+    width: 75%;
+    outline: 0;
+    box-shadow: 0.5px 1.5px 3px var(--menuTextColour);
+    border-color: #fff;
+    height: 20px;
+    margin-bottom: 1vh;
+  }
+  select * {
+    color: #000;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none !important;
+    border-style: solid;
+    color: #fff;
+    border-width: 1px;
+    background: rgba(0, 0, 0, 0);
+    height: 10px;
+    width: 75%;
+    outline: 0;
+    box-shadow: 0.5px 1.5px 3px var(--menuTextColour)
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background: var(--menuTextColour);
+    height: 10px;
+    width: 10px;
+  }
+
+  input[type="checkbox"] {
+    -webkit-appearance: none !important;
+    height: 15px;
+    width: 15px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--menuTextColour);
+    box-shadow: 0.5px 1.5px 3px var(--menuTextColour);
+  }
+  input[type="checkbox"]:checked {
+    background-color:var(--menuTextColour)
   }
 </style>

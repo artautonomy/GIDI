@@ -51,7 +51,7 @@
     right: 0;
     bottom: 0;
     width: auto;
-    height: 3vh;
+    height: 2.25vh;
   }
   a {
     height: 55%;
@@ -60,7 +60,7 @@
   socials {
     display: flex;
     height: 100%;
-    width: 120px;
+    width: 110px;
     float: right;
     align-items: center;
     flex-wrap: nowrap;
