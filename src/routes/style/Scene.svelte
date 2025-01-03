@@ -104,7 +104,7 @@
   <Text
     text={"Style"}
     color={"orange"}
-    fontSize={window.innerWidth / 3000}
+    fontSize={window.innerWidth / 4000}
     textAlign={"center"}
     anchorX={"center"}
     position.y={window.innerWidth / 1250}
@@ -112,7 +112,7 @@
   <Text
     text={"Play notes to sample, click to confirm style"}
     color={"white"}
-    fontSize={window.innerWidth / 6000}
+    fontSize={window.innerWidth / 7000}
     textAlign={"center"}
     anchorX={"center"}
   />

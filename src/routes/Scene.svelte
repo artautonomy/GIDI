@@ -89,7 +89,7 @@
       setTimeout(() => {
         goto("./style");
       }, 750);
-    }, 750);
+    }, 2000);
   }
 </script>
 
@@ -119,21 +119,21 @@
       <Text
         text={title}
         color={"orange"}
-        fontSize={window.innerWidth / 3000}
+        fontSize={window.innerWidth / 4000}
         textAlign={"center"}
         anchorX={"center"}
         position.y={window.innerWidth / 1250}
       />
       <Text
         text={summary + "\n\n\n\nTo start using GIDI follow the steps below:"}
-        fontSize={window.innerWidth / 6000}
+        fontSize={window.innerWidth / 7000}
         textAlign={"center"}
         smooth={1}
         anchorX={"center"}
       />
       <Text
         text={"1. Connect a MIDI instrument to your device\n\n2. Play a note\n\n3. If the box turns green you are connected"}
-        fontSize={window.innerWidth / 5000}
+        fontSize={window.innerWidth / 6250}
         color={"orange"}
         textAlign={"left"}
         smooth={1}
@@ -144,7 +144,7 @@
   </Billboard>
 
   <T.Mesh
-    position={[0, -window.innerHeight / 250, 0]}
+    position={[0, -window.innerWidth / 300, 0]}
     interactive
     onpointerenter={() => buttonScale.set(8)}
     onpointerleave={() => buttonScale.set(6)}

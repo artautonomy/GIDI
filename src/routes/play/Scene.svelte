@@ -32,6 +32,10 @@
 
   let cameraPosition = $state([10, 10, 20]);
 
+  let menuOpened = $state(false);
+
+  let selected = $state($Settings.colours.key);
+
   let tips = $state("Press and hold the mouse to rotate the scene");
 
   setTimeout(() => {
@@ -58,19 +62,24 @@
 
   introZoom.target = 50;
 
-  let selected = $state($Settings.colours.key);
+  function openMenu() {
+    $Settings.edit = true;
 
+    selected = $Settings.colours.key;
+
+    introZoom.set(25, {
+      duration: 1000,
+      easing: cubicOut,
+    });
+
+    hintText.target = 0;
+
+    setTimeout(() => {
+      menuOpened = true;
+    }, 1100);
+  }
   $effect(() => {
-    if ($Settings.edit) {
-      hintText.target = 0;
-
-      selected = $Settings.colours.key;
-
-      introZoom.set(25, {
-        duration: 1000,
-        easing: cubicOut,
-      });
-    } else {
+    if (!$Settings.edit) {
       introZoom.set(50, {
         duration: 1000,
         easing: cubicIn,
@@ -87,9 +96,9 @@
 
     if ($hovering) {
       selected = {
-        r: 255 - $Settings.colours.key.r,
-        g: 255 - $Settings.colours.key.g,
-        b: 255 - $Settings.colours.key.b,
+        r: 255 - $Settings.colours.background.r,
+        g: 255 - $Settings.colours.background.g,
+        b: 255 - $Settings.colours.background.b,
       };
     } else {
       selected = $Settings.colours.key;
@@ -118,32 +127,35 @@
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
-<Billboard position.y={-window.innerHeight / 175}>
-  <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
-    <T.ConeGeometry />
-    <T.MeshBasicMaterial
+
+{#if !menuOpened}
+  <Billboard position.y={-window.innerHeight / 175}>
+    <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
+      <T.ConeGeometry />
+      <T.MeshBasicMaterial
+        color={"orange"}
+        transparent={true}
+        opacity={hintText.current}
+      />
+    </T.Mesh>
+    <Text
+      fillOpacity={hintText.current}
+      text={tips}
       color={"orange"}
-      transparent={true}
-      opacity={hintText.current}
+      fontSize={window.innerWidth / 6250}
+      textAlign={"center"}
+      anchorX={"center"}
+      position.y={window.innerHeight / 1250}
     />
-  </T.Mesh>
-  <Text
-    fillOpacity={hintText.current}
-    text={tips}
-    color={"orange"}
-    fontSize={window.innerWidth / 5000}
-    textAlign={"center"}
-    anchorX={"center"}
-    position.y={window.innerHeight / 1250}
-  />
-</Billboard>
+  </Billboard>
+{/if}
 <Align auto precise>
   <!-- Show sample of styles -->
   {#each midiMessages as note, index}
     <T.Group
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
-      onclick={() => ($Settings.edit = true)}
+      onclick={() => openMenu()}
     >
       <InstancedMesh>
         <T.BoxGeometry />
@@ -152,8 +164,8 @@
           <Cube
             x={index}
             velocity={note.velocity}
-            attack={$Settings.attack}
-            release={$Settings.release}
+            attack={$hovering ? 250 : $Settings.attack}
+            release={$hovering ? 250 : $Settings.release}
             keyColour={selected}
             expressionColour={$Settings.colours.expression}
           />
@@ -161,8 +173,8 @@
           <Mirror
             x={index}
             velocity={note.velocity}
-            attack={$Settings.attack}
-            release={$Settings.release}
+            attack={$hovering ? 250 : $Settings.attack}
+            release={$hovering ? 250 : $Settings.release}
             keyColour={selected}
             expressionColour={$Settings.colours.expression}
           />
