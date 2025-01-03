@@ -98,10 +98,6 @@
     autoRotateSpeed={$Settings.autoRotateSpeed}
     autoRotate={$Settings.autoRotate}
     enabled={$Settings.orbitControls}
-    on:start={(camera) => {
-      cameraPosition = camera.target.object.position;
-      introZoom.set(camera.target.object.zoom, { duration: 0 });
-    }}
   ></OrbitControls>
 </T.OrthographicCamera>
 <Billboard position.y={7}>

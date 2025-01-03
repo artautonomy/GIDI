@@ -19,10 +19,6 @@
 
   const { scene } = $state(useThrelte());
 
-  const { r, g, b } = $Settings.colours.background;
-
-  scene.background = new Color(`rgb(${r},${g},${b})`);
-
   let midiMessages = $state([{}]);
 
   const unsubscribe = MIDI.subscribe((notes) => {
@@ -37,6 +33,12 @@
   let cameraPosition = $state([10, 10, 20]);
 
   let tips = $state("Press and hold the mouse to rotate the scene");
+
+  setTimeout(() => {
+    if (tips == "Press and hold the mouse to rotate the scene") {
+      tips = "To zoom in and out use the mousewheel";
+    }
+  }, 5000);
 
   const introZoom = new Tween(0, {
     delay: 250,
@@ -69,19 +71,28 @@
         easing: cubicOut,
       });
     } else {
-      if ($hovering) {
-        selected = {
-          r: 255 - $Settings.colours.key.r,
-          g: 255 - $Settings.colours.key.g,
-          b: 255 - $Settings.colours.key.b,
-        };
-      } else {
-        selected = $Settings.colours.key;
-      }
       introZoom.set(50, {
         duration: 1000,
         easing: cubicIn,
       });
+    }
+  });
+
+  $effect(() => {
+    if (scene) {
+      scene.background = new Color(
+        `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
+      );
+    }
+
+    if ($hovering) {
+      selected = {
+        r: 255 - $Settings.colours.key.r,
+        g: 255 - $Settings.colours.key.g,
+        b: 255 - $Settings.colours.key.b,
+      };
+    } else {
+      selected = $Settings.colours.key;
     }
   });
 
@@ -101,12 +112,9 @@
     autoRotateSpeed={$Settings.autoRotateSpeed}
     autoRotate={$Settings.autoRotate}
     enabled={$Settings.orbitControls}
-    on:start={(camera) => {
-      cameraPosition = camera.target.object.position;
-    }}
-    onend={() => {
+    onstart={(e) => {
       hintArrow.target = 0.75;
-      tips = "To open the menu click here";
+      tips = "To edit the scene click here";
     }}
   ></OrbitControls>
 </T.OrthographicCamera>

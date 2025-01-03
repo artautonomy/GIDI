@@ -18,9 +18,9 @@
 
   const { scene } = $state(useThrelte());
 
-  const { r, g, b } = $Settings.colours.background;
-
-  scene.background = new Color(`rgb(${r},${g},${b})`);
+  scene.background = new Color(
+    `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
+  );
 
   interactivity();
 
@@ -107,10 +107,6 @@
     enableDamping
     enablePan={false}
     enableZoom={false}
-    on:start={(camera) => {
-      cameraPosition = camera.target.object.position;
-      introZoom.set(camera.target.object.zoom, { duration: 0 });
-    }}
   ></OrbitControls>
 </T.OrthographicCamera>
 

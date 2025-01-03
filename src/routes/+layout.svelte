@@ -4,6 +4,7 @@
   import instagram from "../lib/assets/socials/instagram.png?enhanced";
   import youtube from "../lib/assets/socials/youtube.png?enhanced";
   import github from "../lib/assets/socials/github.png?enhanced";
+  import { Settings } from "./store";
 
   let { children } = $props();
 
@@ -47,10 +48,10 @@
   footer {
     display: block;
     position: absolute;
+    right: 0;
     bottom: 0;
-    width: 100vw;
+    width: auto;
     height: 3vh;
-    background-color: rgb(112, 128, 144);
   }
   a {
     height: 55%;
