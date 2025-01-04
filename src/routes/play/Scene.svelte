@@ -45,7 +45,6 @@
   }, 4000);
 
   const introZoom = new Tween(0, {
-    delay: 250,
     duration: 1000,
     easing: cubicIn,
   });
@@ -76,7 +75,7 @@
 
     setTimeout(() => {
       menuOpened = true;
-    }, 1100);
+    }, 2000);
   }
   $effect(() => {
     if (!$Settings.edit) {
@@ -147,7 +146,6 @@
       textAlign={"center"}
       anchorX={"center"}
       position.y={window.innerHeight / 1250}
-      outlineBlur={0.1}
     />
   </Billboard>
 {/if}

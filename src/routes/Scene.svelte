@@ -1,6 +1,7 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
+  import { colord, random } from "colord";
   import {
     Align,
     Billboard,
@@ -8,12 +9,14 @@
     OrbitControls,
     InstancedMesh,
     Text,
+    useCursor,
   } from "@threlte/extras";
   import { Spring, Tween } from "svelte/motion";
   import { cubicOut, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "./store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
+  import Cube from "./play/Instance/Cube.svelte";
   import Mirror from "./play/Instance/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
@@ -28,56 +31,92 @@
   let mobileNotes: { note: number; velocity: number }[] = $state([]);
 
   let mobile = $state(false);
+  let tips = $state("Swipe to rotate the scene");
+  let cubeClicked = $state(false);
 
   const introZoom = new Tween(0);
   const buttonScale = new Spring(6);
+
+  const hintText = new Tween(1, {
+    duration: 1000,
+    easing: cubicInOut,
+  });
+
+  const hintArrow = new Tween(0, {
+    duration: 1000,
+    easing: cubicInOut,
+  });
+
+  const navigationArrows = new Tween(0, {
+    duration: 1000,
+    easing: cubicInOut,
+  });
+
+  const styles = ["Cube", "Mirror"];
+
+  let styleIndex = $state(0);
 
   const title = "Welcome to GIDI";
 
   const summary =
     "GIDI is a free, open source web application for musicians using MIDI devices\n\nBy reading MIDI messages it can visualise a performance on a web browser";
 
-  introZoom.set(50, {
-    delay: 200,
-    duration: 1000,
-    easing: cubicInOut,
-  });
+  const { onPointerEnter, onPointerLeave } = useCursor();
 
   let midiMessages = $state([{}]);
 
-  // if PC
+  // if PC read MIDI
   if (window.innerWidth > window.innerHeight) {
+    introZoom.set(50, {
+      delay: 200,
+      duration: 1000,
+      easing: cubicInOut,
+    });
+
     const unsubscribe = MIDI.subscribe((notes) => {
       midiMessages = notes;
     });
 
     onDestroy(unsubscribe);
   }
-  //if Mobile
+  //if Mobile created sample MIDI
   else {
+    introZoom.set(35, {
+      delay: 200,
+      duration: 1000,
+      easing: cubicInOut,
+    });
+
     mobile = true;
     let oldIndex: number;
 
-    $Settings.attack = 2000;
+    $Settings.attack = 75;
+    $Settings.release = 1000;
 
     for (let i = 0; i < 5; i++) {
       mobileNotes = [...mobileNotes, { note: i, velocity: 0 }];
     }
-    setInterval(() => {
-      let index = Math.floor(Math.random() * 5);
+    setInterval(
+      () => {
+        let index = Math.floor(Math.random() * 5);
 
-      while (index == oldIndex) {
-        index = Math.floor(Math.random() * 5);
-      }
+        while (index == oldIndex) {
+          index = Math.floor(Math.random() * 5);
+        }
 
-      mobileNotes[index].velocity = 127;
+        mobileNotes[index].velocity = 50;
 
-      setTimeout(() => {
-        mobileNotes[index].velocity = 0;
-      }, Math.floor(2000));
+        setTimeout(
+          () => {
+            mobileNotes[index].velocity = 0;
+          },
+          Math.floor(Math.random() * 1000)
+        );
 
-      oldIndex = index;
-    }, Math.floor(1000));
+        oldIndex = index;
+      },
+      Math.floor((Math.random() + 0.5) * 500)
+    );
   }
 
   function Setup() {
@@ -101,12 +140,15 @@
   zoom={introZoom.current}
 >
   <OrbitControls
-    autoRotateSpeed={2}
-    autoRotate={true}
     enabled={mobile}
+    autoRotate={!mobile}
     enableDamping
     enablePan={false}
     enableZoom={false}
+    onstart={(e) => {
+      hintArrow.target = 0.75;
+      tips = "To shuffle colours tap here";
+    }}
   ></OrbitControls>
 </T.OrthographicCamera>
 
@@ -211,54 +253,128 @@
 {:else}
   <!-- Splash Screen-->
   <Billboard>
-    <T.Mesh position={[0, 5.5, 0]}>
+    <T.Mesh position={[0, 8, 0]}>
       <Text
         text={title}
         color={"orange"}
-        fontSize={window.innerWidth / 1000}
+        font={$Settings.font}
+        fontSize={window.innerWidth / 600}
         textAlign={"center"}
         anchorX={"center"}
-        position.y={window.innerHeight / 250}
+        position.y={window.innerHeight / 350}
       />
       <Text
         text={summary}
-        fontSize={window.innerWidth / 2000}
+        font={$Settings.font}
+        fontSize={window.innerWidth / 1500}
         textAlign={"center"}
         smooth={1}
         anchorX={"center"}
-        position.y={window.innerHeight / 450}
+        position.y={window.innerHeight / 750}
       />
 
       <Text
-        text={"Revisit this site on a computer to begin"}
-        fontSize={window.innerWidth / 1750}
+        text={"Try the demo below or revisit this site on a computer"}
+        font={$Settings.font}
+        fontSize={window.innerWidth / 1250}
         textAlign={"center"}
         color={"orange"}
         smooth={1}
         anchorX={"center"}
-        position.y={window.innerHeight / 1800}
+        position.y={-window.innerHeight / 1250}
       />
     </T.Mesh>
   </Billboard>
-  <T.Group position={[0, -window.innerHeight / 200, 0]}>
+  <T.Group
+    position={[0, -window.innerHeight / 140, 0]}
+    onpointerenter={onPointerEnter}
+    onpointerleave={onPointerLeave}
+    onclick={() => {
+      hintText.target = 0;
+      navigationArrows.target = 0.75;
+
+      $Settings.colours.key = random().toRgb();
+      $Settings.colours.expression = {
+        r: 255 - $Settings.colours.key.r,
+        g: 255 - $Settings.colours.key.g,
+        b: 255 - $Settings.colours.key.b,
+      };
+    }}
+  >
     <Align>
       {#each mobileNotes as note, index}
         <InstancedMesh>
           <T.BoxGeometry />
           <T.MeshStandardMaterial shadow />
-          <Mirror
-            x={index}
-            velocity={note.velocity}
-            attack={$Settings.attack}
-            release={$Settings.release}
-            keyColour={$Settings.colours.key}
-            expressionColour={$Settings.colours.expression}
-            styleHover={false}
-          />
+          {#if styles[styleIndex] == "Cube"}
+            <Cube
+              x={index - 2}
+              velocity={note.velocity}
+              attack={$Settings.attack}
+              release={$Settings.release}
+              keyColour={$Settings.colours.key}
+              expressionColour={$Settings.colours.expression}
+            />
+          {:else}
+            <Mirror
+              x={index - 2}
+              velocity={note.velocity}
+              attack={$Settings.attack}
+              release={$Settings.release}
+              keyColour={$Settings.colours.key}
+              expressionColour={$Settings.colours.expression}
+            />
+          {/if}
         </InstancedMesh>
       {/each}
     </Align>
   </T.Group>
+  {#if !cubeClicked}
+    <Billboard position.y={-window.innerHeight / 80}>
+      <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
+        <T.ConeGeometry />
+        <T.MeshBasicMaterial
+          color={"orange"}
+          transparent={true}
+          opacity={hintText.current}
+        />
+      </T.Mesh>
+      <Text
+        fillOpacity={hintText.current}
+        text={tips}
+        color={"orange"}
+        font={$Settings.font}
+        fontSize={window.innerWidth / 1250}
+        textAlign={"center"}
+        anchorX={"center"}
+        position.y={window.innerHeight / 1250}
+      />
+    </Billboard>
+  {/if}
+  <Billboard position.y={-window.innerHeight / 85}>
+    <T.Mesh
+      scale={navigationArrows.current}
+      position.x={3}
+      rotation.z={-Math.PI / 2}
+      onpointerenter={onPointerEnter}
+      onpointerleave={onPointerLeave}
+      onclick={() => (styleIndex === 0 ? styleIndex++ : (styleIndex = 0))}
+    >
+      <T.ConeGeometry />
+      <T.MeshBasicMaterial color={"orange"} shadow />
+    </T.Mesh>
+    <T.Mesh
+      scale={navigationArrows.current}
+      position.x={-3}
+      rotation.z={Math.PI / 2}
+      onpointerenter={onPointerEnter}
+      onpointerleave={onPointerLeave}
+      onclick={() => (styleIndex === 1 ? styleIndex-- : (styleIndex = 1))}
+    >
+      <T.ConeGeometry />
+      <T.MeshBasicMaterial color={"orange"} shadow />
+    </T.Mesh>
+  </Billboard>
 {/if}
 
 <T.DirectionalLight intensity={1} position={[5, 0, 11]} />

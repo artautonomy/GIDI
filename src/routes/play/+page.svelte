@@ -3,7 +3,7 @@
   import Scene from "./Scene.svelte";
   import { MIDI, Settings } from "../store";
   import { Tween } from "svelte/motion";
-  import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
+  import { cubicInOut } from "svelte/easing";
   import ColorPicker from "svelte-awesome-color-picker";
   import { colord } from "colord";
 
@@ -62,32 +62,54 @@
     ? 'black'
     : 'white'}"
 >
-  <button
-    onclick={() => {
-      $Settings.edit = false;
-
-      setTimeout(() => {
-        menuColour = colord(
-          `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
-        )
-          .invert()
-          .desaturate(0.3)
-          .darken(0.1);
-      }, 2000);
-    }}>Close</button
-  >
   <h1>Settings</h1>
 
   <setting>
+    <h2>Scene</h2>
+
     <label for="mirror">Styles</label>
     <select name="styles" id="styles" bind:value={$Settings.scene}>
       <option value="Cube">Cube</option>
       <option value="Mirror">Mirror</option>
     </select>
+    <label for="remapKeys">Remap Keys</label>
+    <button id="remapKeys" onclick={() => MIDI.set([])}>Reset</button>
+
+    <label for="autoRotate">Autorotate</label>
+    <input
+      id="autoRotate"
+      type="checkbox"
+      onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
+    />
+    <label for="rotateSpeed">Rotate Speed</label>
+    <input
+      type="range"
+      min="1"
+      max="3"
+      step="0.1"
+      id="rotateSpeed"
+      bind:value={$Settings.autoRotateSpeed}
+    />
+    <label for="attack">Attack</label>
+    <input
+      type="range"
+      min="0"
+      max="2500"
+      id="attack"
+      bind:value={$Settings.attack}
+    />
+    <label for="release">Release</label>
+    <input
+      type="range"
+      min="0"
+      max="2500"
+      id="release"
+      bind:value={$Settings.release}
+    />
   </setting>
 
   <setting>
-    <label for="Colours">Colours</label>
+    <h2>Colours</h2>
     <label for="Key Colour">Key Colour</label>
     <ColorPicker
       --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
@@ -138,72 +160,84 @@
       }}
     />
   </setting>
-  <setting>
-    <label for="remapKeys">Remap Keys</label>
-    <button id="remapKeys" onclick={() => MIDI.set([])}>Reset</button>
 
-    <label for="autoRotate">Autorotate</label>
-    <input
-      id="autoRotate"
-      type="checkbox"
-      onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
-    />
-    <label for="rotateSpeed">Rotate Speed</label>
-    <input
-      type="range"
-      min="1"
-      max="3"
-      step="0.1"
-      id="rotateSpeed"
-      bind:value={$Settings.autoRotateSpeed}
-    />
-    <label for="attack">Attack</label>
-    <input
-      type="range"
-      min="0"
-      max="2500"
-      id="attack"
-      bind:value={$Settings.attack}
-    />
-    <label for="release">Release</label>
-    <input
-      type="range"
-      min="0"
-      max="2500"
-      id="release"
-      bind:value={$Settings.release}
-    />
-  </setting>
+  <button
+    id="save"
+    onclick={() => {
+      $Settings.edit = false;
+
+      setTimeout(() => {
+        menuColour = colord(
+          `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
+        )
+          .invert()
+          .desaturate(0.3)
+          .darken(0.1);
+      }, 2000);
+    }}>Close</button
+  >
 </menu>
 
 <style>
-  setting {
-    display: block;
+  @font-face {
+    font-family: "Oxanium";
+    src: url("src/lib/assets/fonts/Oxanium-Regular.ttf");
   }
-  h1 {
-    color: var(--menuTextColour);
-  }
-  label {
+  button {
+    font-family: "Oxanium";
+    background-color: var(--menuTextColour);
+    color: var(--keyColour);
     display: block;
-    color: var(--menuTextColour);
+    width: 50%;
+    height: 5%;
+    margin: 2.5% 25%;
+    cursor: pointer;
+  }
+  button#save {
+    margin-top: 5%;
   }
 
   menu {
+    font-family: "Oxanium";
     position: absolute;
     background-color: var(--keyColour);
     top: 0;
     height: 75vh;
     width: 20vw;
+    margin: 0;
+    padding: 0;
   }
+  setting {
+    display: block;
+    text-align: center;
+  }
+  h1 {
+    color: var(--menuTextColour);
+    text-align: center;
+    font-size: 1.7em;
+  }
+  h2 {
+    color: var(--menuTextColour);
+    text-align: center;
+    font-size: 1.2em;
+  }
+  label {
+    display: block;
+    font-size: 0.9em;
+    color: var(--menuTextColour);
+    margin-top: 2.5%;
+    margin-bottom: 0.25%;
+  }
+
   select {
     border-style: solid;
-    color:var(--menuTextColour)
+    color: var(--menuTextColour);
     border-width: 1px;
     background: rgba(0, 0, 0, 0);
     width: 75%;
     outline: 0;
-    box-shadow: 0.5px 1.5px 3px var(--menuTextColour);
-    border-color: #fff;
+    box-shadow: 0.5px 1px 2px var(--menuTextColour);
+    border-color: var(--menuTextColour);
     height: 20px;
     margin-bottom: 1vh;
   }
@@ -214,13 +248,13 @@
   input[type="range"] {
     -webkit-appearance: none !important;
     border-style: solid;
-    color: #fff;
+    color: var(--menuTextColour);
     border-width: 1px;
     background: rgba(0, 0, 0, 0);
     height: 10px;
     width: 75%;
     outline: 0;
-    box-shadow: 0.5px 1.5px 3px var(--menuTextColour)
+    box-shadow: 0.5px 1px 2px var(--menuTextColour);
   }
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none !important;
@@ -231,14 +265,17 @@
 
   input[type="checkbox"] {
     -webkit-appearance: none !important;
+    cursor: pointer;
     height: 15px;
     width: 15px;
     border-style: solid;
     border-width: 1px;
     border-color: var(--menuTextColour);
-    box-shadow: 0.5px 1.5px 3px var(--menuTextColour);
+    box-shadow: 0.5px 1px 2px var(--menuTextColour);
   }
   input[type="checkbox"]:checked {
-    background-color:var(--menuTextColour)
+    background-color: var(--menuTextColour);
+    border-color: green;
+    border-width: 2px;
   }
 </style>

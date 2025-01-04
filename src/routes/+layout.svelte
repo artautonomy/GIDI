@@ -45,28 +45,54 @@
     height: 100vh; /* Full height of viewport */
     overflow: hidden; /* Prevent scrollbars */
   }
-  footer {
-    display: block;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: auto;
-    height: 2.25vh;
+
+  @media (max-width: 600px) {
+    socials {
+      display: flex;
+      height: 100%;
+      width: 100vw;
+      float: right;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      flex-direction: row;
+    }
+    footer {
+      display: block;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: auto;
+      height: 5vh;
+    }
+    a {
+      height: 55%;
+    }
   }
-  a {
-    height: 55%;
+  @media (min-width: 600px) {
+    socials {
+      display: flex;
+      height: 100%;
+      width: 110px;
+      float: right;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      flex-direction: row;
+    }
+    footer {
+      display: block;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: auto;
+      height: 2.25vh;
+    }
+    a {
+      height: 55%;
+    }
   }
 
-  socials {
-    display: flex;
-    height: 100%;
-    width: 110px;
-    float: right;
-    align-items: center;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    flex-direction: row;
-  }
   .icons {
     height: 100%;
     width: auto;

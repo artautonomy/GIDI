@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
   import { Instance } from "@threlte/extras";
   import { cubicOut } from "svelte/easing";
   import { Tween } from "svelte/motion";
-  import { derived } from "svelte/store";
 
   interface Props {
     x: number;
@@ -21,7 +18,6 @@
       g: number;
       b: number;
     };
-    styleHover: boolean;
   }
 
   let { x, velocity, attack, release, keyColour, expressionColour }: Props =

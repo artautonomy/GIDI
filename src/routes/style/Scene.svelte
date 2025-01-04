@@ -20,9 +20,9 @@
 
   const { scene } = $state(useThrelte());
 
-  const { r, g, b } = $Settings.colours.background;
-
-  scene.background = new Color(`rgb(${r},${g},${b})`);
+  scene.background = new Color(
+    `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
+  );
 
   let midiMessages = $state([{}]);
 
