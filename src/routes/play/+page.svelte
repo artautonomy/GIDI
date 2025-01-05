@@ -193,12 +193,14 @@
     background-color: var(--menuTextColour);
     color: var(--keyColour);
     display: block;
-    width: 50%;
-    height: 5%;
-    margin: 2.5% 25%;
+    width: 25%;
+    height: 10%;
+    margin: 2.5% 37.5%;
     cursor: pointer;
   }
   button#save {
+    width: 50%;
+    height: 5%;
     position: absolute;
     bottom: 0;
     margin: 0 25% 2%;
@@ -206,7 +208,7 @@
   button:hover {
     font-weight: bold;
     background-color: rgb(135, 238, 149);
-    color: var(--menuTextColour);
+    color: black;
   }
 
   menu {

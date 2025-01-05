@@ -4,7 +4,6 @@
   import instagram from "../lib/assets/socials/instagram.png?enhanced";
   import youtube from "../lib/assets/socials/youtube.png?enhanced";
   import github from "../lib/assets/socials/github.png?enhanced";
-  import { Settings } from "./store";
 
   let { children } = $props();
 

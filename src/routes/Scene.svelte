@@ -94,7 +94,7 @@
     $Settings.release = 1000;
 
     for (let i = 0; i < 5; i++) {
-      mobileNotes = [...mobileNotes, { note: i, velocity: 0 }];
+      mobileNotes.push({ note: i, velocity: 0 });
     }
     setInterval(
       () => {

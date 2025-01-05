@@ -1,5 +1,12 @@
 {
-	"/": [],
-	"/play": [],
-	"/style": []
+	"/": [
+		"src/routes/+layout.js",
+		"src/routes/+layout.js"
+	],
+	"/play": [
+		"src/routes/+layout.js"
+	],
+	"/style": [
+		"src/routes/+layout.js"
+	]
 }
