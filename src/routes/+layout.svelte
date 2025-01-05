@@ -1,9 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import MIDI from "./Read/MIDI.svelte";
-  import instagram from "../lib/assets/socials/instagram.png?enhanced";
-  import youtube from "../lib/assets/socials/youtube.png?enhanced";
-  import github from "../lib/assets/socials/github.png?enhanced";
+  import MIDI from "../lib/scenes/MIDI.svelte";
 
   let { children } = $props();
 
@@ -23,16 +20,16 @@
 <footer>
   <socials>
     <a href="https://github.com/artautonomy/GIDI" aria-label="github"
-      ><enhanced:img src={github} class="icons" alt="github" /></a
+      ><img src="/socials/github.png" class="icons" alt="github" /></a
     >
     <a
       href="https://www.youtube.com/channel/UCiPYshK5e29AYbO1dFYWbGQ"
       aria-label="youtube"
-      ><enhanced:img src={youtube} class="icons" alt="youtube" /></a
+      ><img src="/socials/youtube.png" class="icons" alt="youtube" /></a
     >
 
     <a href="https://www.instagram.com/artautonomy/" aria-label="instagram"
-      ><enhanced:img src={instagram} class="icons" alt="instagram" /></a
+      ><img src="/socials/instagram.png" class="icons" alt="instagram" /></a
     >
   </socials>
 </footer>

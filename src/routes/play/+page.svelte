@@ -1,7 +1,7 @@
 <script>
   import { Canvas } from "@threlte/core";
-  import Scene from "./Scene.svelte";
-  import { MIDI, Settings } from "../store";
+  import Scene from "../../lib/scenes/Play.svelte";
+  import { MIDI, Settings } from "../../lib/store";
   import { Tween } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
   import ColorPicker from "svelte-awesome-color-picker";
@@ -186,7 +186,7 @@
 <style>
   @font-face {
     font-family: "Oxanium";
-    src: url("src/lib/assets/fonts/Oxanium-Bold.ttf");
+    src: url("/fonts/Oxanium-Bold.ttf");
   }
   button {
     font-family: "Oxanium";

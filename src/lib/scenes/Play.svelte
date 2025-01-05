@@ -14,8 +14,8 @@
   import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
-  import Cube from "./Instance/Cube.svelte";
-  import Mirror from "./Instance/Mirror.svelte";
+  import Cube from "./instances/Cube.svelte";
+  import Mirror from "./instances/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
 

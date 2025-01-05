@@ -15,8 +15,8 @@
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
 
-  import Cube from "../play/Instance/Cube.svelte";
-  import Mirror from "../play/Instance/Mirror.svelte";
+  import Cube from "./instances/Cube.svelte";
+  import Mirror from "./instances/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
 

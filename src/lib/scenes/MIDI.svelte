@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { MIDI, Settings } from "../store";
+  import { MIDI, Settings } from "../../lib/store";
   let notes: { note: number; velocity: number }[] = $state([]);
 
   let midiAccess;

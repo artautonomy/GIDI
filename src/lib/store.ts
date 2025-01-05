@@ -9,7 +9,7 @@ export let Settings = writable({
     edit: false,
     reset: false,
     scene : 'Cube',
-    font: "src/lib/assets/fonts/Oxanium-Regular.ttf",
+    font: "/fonts/Oxanium-Regular.ttf",
     orbitControls: false,
     autoRotate: true,
     autoRotateSpeed: 2,

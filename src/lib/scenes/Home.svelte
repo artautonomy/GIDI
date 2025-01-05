@@ -1,7 +1,7 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
-  import { colord, random } from "colord";
+  import { random } from "colord";
   import {
     Align,
     Billboard,
@@ -13,11 +13,11 @@
   } from "@threlte/extras";
   import { Spring, Tween } from "svelte/motion";
   import { cubicOut, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "./store";
+  import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import Cube from "./play/Instance/Cube.svelte";
-  import Mirror from "./play/Instance/Mirror.svelte";
+  import Cube from "./instances/Cube.svelte";
+  import Mirror from "./instances/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
 
