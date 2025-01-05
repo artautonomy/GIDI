@@ -241,6 +241,7 @@
   }
 
   select {
+    font-family: "Oxanium";
     border-style: solid;
     color: var(--menuTextColour);
     border-width: 1px;
