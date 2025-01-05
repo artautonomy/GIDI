@@ -34,7 +34,7 @@ declare module '$env/static/private' {
 	export const COMPUTERNAME: string;
 	export const ComSpec: string;
 	export const DriverData: string;
-	export const EFC_8040: string;
+	export const EFC_2724: string;
 	export const ELECTRON_NO_ASAR: string;
 	export const ELECTRON_RUN_AS_NODE: string;
 	export const FPS_BROWSER_APP_PROFILE_STRING: string;
@@ -76,6 +76,7 @@ declare module '$env/static/private' {
 	export const VSCODE_ESM_ENTRYPOINT: string;
 	export const VSCODE_HANDLES_UNCAUGHT_ERRORS: string;
 	export const VSCODE_IPC_HOOK: string;
+	export const VSCODE_L10N_BUNDLE_LOCATION: string;
 	export const VSCODE_NLS_CONFIG: string;
 	export const VSCODE_PID: string;
 	export const windir: string;
@@ -119,7 +120,7 @@ declare module '$env/dynamic/private' {
 		COMPUTERNAME: string;
 		ComSpec: string;
 		DriverData: string;
-		EFC_8040: string;
+		EFC_2724: string;
 		ELECTRON_NO_ASAR: string;
 		ELECTRON_RUN_AS_NODE: string;
 		FPS_BROWSER_APP_PROFILE_STRING: string;
@@ -161,6 +162,7 @@ declare module '$env/dynamic/private' {
 		VSCODE_ESM_ENTRYPOINT: string;
 		VSCODE_HANDLES_UNCAUGHT_ERRORS: string;
 		VSCODE_IPC_HOOK: string;
+		VSCODE_L10N_BUNDLE_LOCATION: string;
 		VSCODE_NLS_CONFIG: string;
 		VSCODE_PID: string;
 		windir: string;

@@ -62,18 +62,14 @@
     ? 'black'
     : 'white'}"
 >
-  <h1>Settings</h1>
-
   <setting>
-    <h2>Scene</h2>
+    <h1>Scene</h1>
 
-    <label for="mirror">Styles</label>
+    <label for="mirror">Style</label>
     <select name="styles" id="styles" bind:value={$Settings.scene}>
       <option value="Cube">Cube</option>
       <option value="Mirror">Mirror</option>
     </select>
-    <label for="remapKeys">Remap Keys</label>
-    <button id="remapKeys" onclick={() => MIDI.set([])}>Reset</button>
 
     <label for="autoRotate">Autorotate</label>
     <input
@@ -90,26 +86,10 @@
       id="rotateSpeed"
       bind:value={$Settings.autoRotateSpeed}
     />
-    <label for="attack">Attack</label>
-    <input
-      type="range"
-      min="0"
-      max="2500"
-      id="attack"
-      bind:value={$Settings.attack}
-    />
-    <label for="release">Release</label>
-    <input
-      type="range"
-      min="0"
-      max="2500"
-      id="release"
-      bind:value={$Settings.release}
-    />
   </setting>
 
   <setting>
-    <h2>Colours</h2>
+    <h1>Colours</h1>
     <label for="Key Colour">Key Colour</label>
     <ColorPicker
       --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
@@ -160,7 +140,32 @@
       }}
     />
   </setting>
-
+  <setting
+    ><h1>Notes</h1>
+    <label for="attack">Attack</label>
+    <input
+      type="range"
+      min="0"
+      max="2500"
+      id="attack"
+      bind:value={$Settings.attack}
+    />
+    <label for="release">Release</label>
+    <input
+      type="range"
+      min="0"
+      max="2500"
+      id="release"
+      bind:value={$Settings.release}
+    />
+    <label for="remapKeys">Remap Keys</label>
+    <button
+      id="remapKeys"
+      onclick={() => {
+        $Settings.reset = true;
+      }}>Remap</button
+    ></setting
+  >
   <button
     id="save"
     onclick={() => {
@@ -181,7 +186,7 @@
 <style>
   @font-face {
     font-family: "Oxanium";
-    src: url("src/lib/assets/fonts/Oxanium-Regular.ttf");
+    src: url("src/lib/assets/fonts/Oxanium-Bold.ttf");
   }
   button {
     font-family: "Oxanium";
@@ -194,7 +199,14 @@
     cursor: pointer;
   }
   button#save {
-    margin-top: 5%;
+    position: absolute;
+    bottom: 0;
+    margin: 0 25% 2%;
+  }
+  button:hover {
+    font-weight: bold;
+    background-color: rgb(135, 238, 149);
+    color: var(--menuTextColour);
   }
 
   menu {
@@ -214,18 +226,15 @@
   h1 {
     color: var(--menuTextColour);
     text-align: center;
-    font-size: 1.7em;
+    font-size: 1.5em;
+    text-decoration: underline;
   }
-  h2 {
-    color: var(--menuTextColour);
-    text-align: center;
-    font-size: 1.2em;
-  }
+
   label {
     display: block;
     font-size: 0.9em;
     color: var(--menuTextColour);
-    margin-top: 2.5%;
+    margin-top: 5%;
     margin-bottom: 0.25%;
   }
 

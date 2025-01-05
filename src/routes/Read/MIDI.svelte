@@ -1,11 +1,18 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { MIDI } from "../store";
+  import { MIDI, Settings } from "../store";
   let notes: { note: number; velocity: number }[] = $state([]);
 
   let midiAccess;
   let inputs = [];
 
+  $effect(() => {
+    if ($Settings.reset) {
+      notes = [];
+      MIDI.set(notes);
+      $Settings.reset = false;
+    }
+  });
   const handleMIDIMessage = (message) => {
     const note = message.data[1];
     const velocity = message.data[2];

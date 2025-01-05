@@ -331,7 +331,7 @@
   </T.Group>
   {#if !cubeClicked}
     <Billboard position.y={-window.innerHeight / 80}>
-      <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
+      <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 550}>
         <T.ConeGeometry />
         <T.MeshBasicMaterial
           color={"orange"}

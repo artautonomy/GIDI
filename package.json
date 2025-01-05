@@ -1,6 +1,6 @@
 {
-	"name": "gidis5",
-	"version": "0.0.1",
+	"name": "GIDI",
+	"version": "1.0.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
