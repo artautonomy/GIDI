@@ -48,6 +48,7 @@
   });
 
   const navigationArrows = new Tween(0, {
+    delay:1000,
     duration: 1000,
     easing: cubicInOut,
   });
@@ -145,6 +146,9 @@
     enableDamping
     enablePan={false}
     enableZoom={false}
+    rotateSpeed={2}
+    maxPolarAngle={Math.PI / 1.7} 
+    minPolarAngle={Math.PI / 4} 
     onstart={(e) => {
       hintArrow.target = 0.75;
       tips = "To shuffle colours tap here";
@@ -286,7 +290,7 @@
     </T.Mesh>
   </Billboard>
   <T.Group
-    position={[0, -window.innerHeight / 140, 0]}
+    position={[0, -window.innerHeight / 200, 0]}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
     onclick={() => {
@@ -330,7 +334,7 @@
     </Align>
   </T.Group>
   {#if !cubeClicked}
-    <Billboard position.y={-window.innerHeight / 80}>
+    <Billboard position.y={-window.innerHeight / 100}>
       <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 550}>
         <T.ConeGeometry />
         <T.MeshBasicMaterial
@@ -351,7 +355,7 @@
       />
     </Billboard>
   {/if}
-  <Billboard position.y={-window.innerHeight / 85}>
+  <Billboard position.y={-window.innerHeight / 100}>
     <T.Mesh
       scale={navigationArrows.current}
       position.x={3}
