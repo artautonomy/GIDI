@@ -478,22 +478,22 @@ const options = {
   root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => `<!doctype html>
-<html lang="en">
-	<head>
-		<title>GIDI</title>
-	
-		<!-- Metadata -->
-		<meta charset='utf-8'>
-		<meta name='description' content='GIDI is a free, open source web application for musicians which combines MIDI and ThreeJS to provide augmentation of a live performance.'>
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		
-		<!-- Favicons -->
-		<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
-		<link rel="manifest" href="/favicons/site.webmanifest">
-		` + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover" style="margin:0;background-color:rgb(0,0,0)">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
+    app: ({ head, body, assets: assets2, nonce, env }) => `<!doctype html>\r
+<html lang="en">\r
+	<head>\r
+		<title>GIDI</title>\r
+	\r
+		<!-- Metadata -->\r
+		<meta charset='utf-8'>\r
+		<meta name='description' content='GIDI is a free, open source web application for musicians which combines MIDI and ThreeJS to provide augmentation of a live performance.'>\r
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">\r
+		\r
+		<!-- Favicons -->\r
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">\r
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">\r
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">\r
+		<link rel="manifest" href="/favicons/site.webmanifest">\r
+		` + head + '\r\n	</head>\r\n	<body data-sveltekit-preload-data="hover" style="margin:0;background-color:rgb(27,11,40)">\r\n		<div style="display: contents">' + body + "</div>\r\n	</body>\r\n</html>\r\n",
     error: ({ status, message }) => '<!doctype html>\r\n<html lang="en">\r\n	<head>\r\n		<meta charset="utf-8" />\r\n		<title>' + message + `</title>\r
 \r
 		<style>\r
@@ -565,7 +565,7 @@ const options = {
 		<div class="error">\r
 			<span class="status">` + status + '</span>\r\n			<div class="message">\r\n				<h1>' + message + "</h1>\r\n			</div>\r\n		</div>\r\n	</body>\r\n</html>\r\n"
   },
-  version_hash: "1xfpddg"
+  version_hash: "1ecqyvu"
 };
 async function get_hooks() {
   return {};
