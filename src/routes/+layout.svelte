@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import MIDI from "../lib/scenes/MIDI.svelte";
+  import MIDI from "$lib/scenes/MIDI.svelte";
 
   let { children } = $props();
 

@@ -1,7 +1,7 @@
 <script>
   import { Canvas } from "@threlte/core";
-  import Scene from "../../lib/scenes/Play.svelte";
-  import { MIDI, Settings } from "../../lib/store";
+  import Scene from "$lib/scenes/Play.svelte";
+  import { Settings } from "$lib/store";
   import { Tween } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
   import ColorPicker from "svelte-awesome-color-picker";
@@ -103,7 +103,10 @@
       textInputModes={["rgb"]}
       sliderDirection="vertical"
       on:input={(event) => {
-        $Settings.colours.key = event.detail.rgb;
+        $Settings.colours.key =
+          event.detail.rgb === undefined
+            ? { r: 255, g: 255, b: 255 }
+            : event.detail.rgb;
       }}
     />
     <label for="Expression Colour">Expression Colour</label>
@@ -119,7 +122,10 @@
       textInputModes={["hsv"]}
       sliderDirection="vertical"
       on:input={(event) => {
-        $Settings.colours.expression = event.detail.rgb;
+        $Settings.colours.expression =
+          event.detail.rgb === undefined
+            ? { r: 255, g: 255, b: 255 }
+            : event.detail.rgb;
       }}
     />
     <label for="Background Colour">Background Colour</label>
@@ -136,7 +142,10 @@
       textInputModes={["rgb"]}
       sliderDirection="vertical"
       on:input={(event) => {
-        $Settings.colours.background = event.detail.rgb;
+        $Settings.colours.background =
+          event.detail.rgb === undefined
+            ? { r: 255, g: 255, b: 255 }
+            : event.detail.rgb;
       }}
     />
   </setting>
@@ -258,6 +267,7 @@
   }
 
   input[type="range"] {
+    appearance: none !important;
     -webkit-appearance: none !important;
     border-style: solid;
     color: var(--menuTextColour);
@@ -276,6 +286,7 @@
   }
 
   input[type="checkbox"] {
+    appearance: none !important;
     -webkit-appearance: none !important;
     cursor: pointer;
     height: 15px;
