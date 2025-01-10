@@ -2,6 +2,7 @@
   import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
   import {
+    Align,
     Billboard,
     InstancedMesh,
     interactivity,
@@ -120,9 +121,10 @@
     anchorX={"center"}
     outlineBlur={0.1}
   />
-</Billboard>
+</Billboard> 
+<Align y={false} auto precise>
 <!-- Show sample of styles -->
-{#each midiMessages.slice(0, 5) as note, index}
+{#each midiMessages as note, index}
   <T.Group
     position.y={-window.innerHeight / 200}
     onpointerenter={onPointerEnterStyle}
@@ -170,6 +172,7 @@
     />
   </T.Group>
 {/each}
+</Align>
 <Billboard position.y={-window.innerHeight / 140}>
   <T.Mesh
     scale={0.75}

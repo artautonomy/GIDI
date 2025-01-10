@@ -6,9 +6,10 @@ export let MIDI = writable<Messages[]>([]);
 
 export let Settings = writable({
 
+    page: 'home',
+    scene : 'Cube',
     edit: false,
     reset: false,
-    scene : 'Cube',
     font: "/fonts/Oxanium-Regular.ttf",
     orbitControls: false,
     autoRotate: true,

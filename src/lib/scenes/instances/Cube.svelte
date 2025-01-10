@@ -31,12 +31,13 @@
 
   $effect(() => {
     if (velocity > 0) {
-      y.set(3, {
+      
+      y.set(1 + velocity/63, {
         duration: attack,
         easing: cubicOut,
       });
 
-      scale.set(5, {
+      scale.set(1 + velocity/63 * 2, {
         duration: attack,
         easing: cubicOut,
       });

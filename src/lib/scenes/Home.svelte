@@ -1,7 +1,7 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
-  import { random } from "colord";
+  import { colord,random } from "colord";
   import {
     Align,
     Billboard,
@@ -89,6 +89,7 @@
     });
 
     mobile = true;
+    
     let oldIndex: number;
 
     $Settings.attack = 75;
@@ -97,6 +98,7 @@
     for (let i = 0; i < 5; i++) {
       mobileNotes.push({ note: i, velocity: 0 });
     }
+    setTimeout(() => {
     setInterval(
       () => {
         let index = Math.floor(Math.random() * 5);
@@ -105,7 +107,7 @@
           index = Math.floor(Math.random() * 5);
         }
 
-        mobileNotes[index].velocity = 50;
+        mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
 
         setTimeout(
           () => {
@@ -117,8 +119,9 @@
         oldIndex = index;
       },
       Math.floor((Math.random() + 0.5) * 500)
-    );
+    )},500);
   }
+  
 
   function Setup() {
     setTimeout(() => {
@@ -297,12 +300,8 @@
       hintText.target = 0;
       navigationArrows.target = 0.75;
 
-      $Settings.colours.key = random().toRgb();
-      $Settings.colours.expression = {
-        r: 255 - $Settings.colours.key.r,
-        g: 255 - $Settings.colours.key.g,
-        b: 255 - $Settings.colours.key.b,
-      };
+      $Settings.colours.key = random().toRgb()
+      $Settings.colours.expression = colord($Settings.colours.key).invert().hue(45).toRgb()
     }}
   >
     <Align>
