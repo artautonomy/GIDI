@@ -1,8 +1,8 @@
 import { writable } from "svelte/store";
 
-type Messages = { note: number; velocity: number }
+type MIDIMessage = { note: number; velocity: number }
 
-export let MIDI = writable<Messages[]>([]);
+export let MIDI = writable<MIDIMessage[]>([]);
 
 export let Settings = writable({
 

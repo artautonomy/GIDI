@@ -19,13 +19,16 @@
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
 
+
   const { scene } = $state(useThrelte());
 
   scene.background = new Color(
     `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
   );
+  
+  type MIDIMessage = { note: number; velocity: number }
 
-  let midiMessages = $state([{}]);
+  let midiMessages = $state<MIDIMessage[]>([]);
 
   const styles = ["Cube", "Mirror"];
 
@@ -76,7 +79,6 @@
       highlighted = { r: 77, g: 144, b: 57 };
     }
   });
-  let cameraPosition = $state([7.5, 10, 20]);
   const introZoom = new Tween(0);
 
   introZoom.set(50, {
@@ -89,7 +91,7 @@
 
 <T.OrthographicCamera
   makeDefault
-  position={cameraPosition}
+  position={[7.5, 10, 20]}
   near={0.001}
   far={5000}
   zoom={introZoom.current}

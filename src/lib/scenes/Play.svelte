@@ -19,7 +19,9 @@
 
   const { scene } = $state(useThrelte());
 
-  let midiMessages = $state([{}]);
+  type MIDIMessage = { note: number; velocity: number }
+
+  let midiMessages = $state<MIDIMessage[]>([]);
 
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
@@ -29,8 +31,6 @@
   const { hovering, onPointerEnter, onPointerLeave } = useCursor();
 
   interactivity();
-
-  let cameraPosition = $state([10, 10, 20]);
 
   let menuOpened = $state(false);
 
@@ -110,7 +110,7 @@
 
 <T.OrthographicCamera
   makeDefault
-  position={cameraPosition}
+  position={[10, 10, 20]}
   near={0.001}
   far={5000}
   zoom={introZoom.current}
@@ -149,7 +149,7 @@
     />
   </Billboard>
 {/if}
-<Align auto precise>
+<Align y={false} auto precise>
   <!-- Show sample of styles -->
   {#each midiMessages as note, index}
     <T.Group
