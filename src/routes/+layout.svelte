@@ -22,8 +22,8 @@
     ><img src="/socials/github.png" class="icons" alt="github" /></a
   >
   <a href="https://www.paypal.com/paypalme/GIDIWebApp" aria-label="paypal"
-  ><img src="/socials/paypal.png" class="icons" alt="paypal" /></a
-  >  
+    ><img src="/socials/paypal.png" class="icons" alt="paypal" /></a
+  >
   <a href="https://www.instagram.com/artautonomy" aria-label="instagram"
     ><img src="/socials/instagram.png" class="icons" alt="instagram" /></a
   >
@@ -35,6 +35,21 @@
     width: 100vw; /* Full width of viewport */
     height: 100vh; /* Full height of viewport */
     overflow: hidden; /* Prevent scrollbars */
+  }
+
+  socials {
+    opacity: 0;
+    animation-name: fade-in;
+    animation-delay: 1s;
+    animation-duration: 5s;
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @media (max-width: 600px) {
@@ -58,16 +73,16 @@
   @media (min-width: 600px) {
     socials {
       position: absolute;
-        right: 0;
-        bottom: 0;
-        height: 2.75vh;
-        display: flex;
-        width: 175px;
-        float: right;
-        align-items: center;
-        flex-wrap: nowrap;
-        justify-content:space-around;
-        flex-direction: row;
+      right: 0;
+      bottom: 0;
+      height: 2.75vh;
+      display: flex;
+      width: 175px;
+      float: right;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      flex-direction: row;
     }
 
     a {
