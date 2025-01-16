@@ -13,11 +13,11 @@
 </script>
 
 <MIDI />
-<threlte style:display={!loaded ? "none" : "block"}>
+<threlte style:display={loaded ? "block" : "none"}>
   {@render children()}
 </threlte>
 
-<socials>
+<socials style="--opacity: {loaded ? 1 : 0};">
   <a href="https://github.com/artautonomy/GIDI" aria-label="github"
     ><img src="/socials/github.png" class="icons" alt="github" /></a
   >
@@ -38,18 +38,8 @@
   }
 
   socials {
-    opacity: 0;
-    animation-name: fade-in;
-    animation-delay: 1s;
-    animation-duration: 5s;
-  }
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    opacity: var(--opacity, 1);
+    transition: opacity 2.4s 1.2s ease;
   }
 
   @media (max-width: 600px) {
