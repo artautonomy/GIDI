@@ -17,22 +17,23 @@
   {@render children()}
 </threlte>
 
-<footer>
-  <socials>
-    <a href="https://github.com/artautonomy/GIDI" aria-label="github"
-      ><img src="/socials/github.png" class="icons" alt="github" /></a
-    >
-    <a
-      href="https://www.youtube.com/channel/UCiPYshK5e29AYbO1dFYWbGQ"
-      aria-label="youtube"
-      ><img src="/socials/youtube.png" class="icons" alt="youtube" /></a
-    >
+<socials>
+  <a href="https://github.com/artautonomy/GIDI" aria-label="github"
+    ><img src="/socials/github.png" class="icons" alt="github" /></a
+  >
+  <a
+    href="https://www.youtube.com/channel/UCiPYshK5e29AYbO1dFYWbGQ"
+    aria-label="youtube"
+    ><img src="/socials/youtube.png" class="icons" alt="youtube" /></a
+  >
 
-    <a href="https://www.instagram.com/artautonomy/" aria-label="instagram"
-      ><img src="/socials/instagram.png" class="icons" alt="instagram" /></a
-    >
-  </socials>
-</footer>
+  <a href="https://www.instagram.com/artautonomy" aria-label="instagram"
+    ><img src="/socials/instagram.png" class="icons" alt="instagram" /></a
+  >
+  <a href="https://www.paypal.com/paypalme/GIDIWebApp" aria-label="paypal"
+  ><img src="/socials/paypal.png" class="icons" alt="paypal" /></a
+  >  
+</socials>
 
 <style>
   threlte {
@@ -45,7 +46,10 @@
   @media (max-width: 600px) {
     socials {
       display: flex;
-      height: 100%;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: 5vh;
       width: 100vw;
       float: right;
       align-items: center;
@@ -53,37 +57,25 @@
       justify-content: space-around;
       flex-direction: row;
     }
-    footer {
-      display: block;
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: auto;
-      height: 5vh;
-    }
     a {
       height: 55%;
     }
   }
   @media (min-width: 600px) {
     socials {
-      display: flex;
-      height: 100%;
-      width: 110px;
-      float: right;
-      align-items: center;
-      flex-wrap: nowrap;
-      justify-content: space-around;
-      flex-direction: row;
-    }
-    footer {
-      display: block;
       position: absolute;
-      right: 0;
-      bottom: 0;
-      width: auto;
-      height: 2.25vh;
+        right: 0;
+        bottom: 0;
+        height: 2.75vh;
+        display: flex;
+        width: 275px;
+        float: right;
+        align-items: center;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        flex-direction: row;
     }
+
     a {
       height: 55%;
     }
