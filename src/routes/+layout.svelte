@@ -21,18 +21,12 @@
   <a href="https://github.com/artautonomy/GIDI" aria-label="github"
     ><img src="/socials/github.png" class="icons" alt="github" /></a
   >
-  <a
-    href="https://www.youtube.com/channel/UCiPYshK5e29AYbO1dFYWbGQ"
-    aria-label="youtube"
-    ><img src="/socials/youtube.png" class="icons" alt="youtube" /></a
-  >
-
-  <a href="https://www.instagram.com/artautonomy" aria-label="instagram"
-    ><img src="/socials/instagram.png" class="icons" alt="instagram" /></a
-  >
   <a href="https://www.paypal.com/paypalme/GIDIWebApp" aria-label="paypal"
   ><img src="/socials/paypal.png" class="icons" alt="paypal" /></a
   >  
+  <a href="https://www.instagram.com/artautonomy" aria-label="instagram"
+    ><img src="/socials/instagram.png" class="icons" alt="instagram" /></a
+  >
 </socials>
 
 <style>
@@ -54,7 +48,7 @@
       float: right;
       align-items: center;
       flex-wrap: nowrap;
-      justify-content: space-around;
+      justify-content: space-evenly;
       flex-direction: row;
     }
     a {
@@ -68,11 +62,11 @@
         bottom: 0;
         height: 2.75vh;
         display: flex;
-        width: 275px;
+        width: 175px;
         float: right;
         align-items: center;
         flex-wrap: nowrap;
-        justify-content: space-around;
+        justify-content:space-around;
         flex-direction: row;
     }
 

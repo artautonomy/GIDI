@@ -127,32 +127,12 @@
   ></OrbitControls>
 </T.OrthographicCamera>
 
-{#if !menuOpened}
-  <Billboard position.y={-window.innerHeight / 175}>
-    <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
-      <T.ConeGeometry />
-      <T.MeshBasicMaterial
-        color={"orange"}
-        transparent={true}
-        opacity={hintText.current}
-      />
-    </T.Mesh>
-    <Text
-      fillOpacity={hintText.current}
-      text={tips}
-      color={"orange"}
-      font={$Settings.font}
-      fontSize={window.innerWidth / 6250}
-      textAlign={"center"}
-      anchorX={"center"}
-      position.y={window.innerHeight / 1250}
-    />
-  </Billboard>
-{/if}
+
 <Align y={false} auto precise>
   <!-- Show sample of styles -->
   {#each midiMessages as note, index}
     <T.Group
+      position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
       onclick={() => openMenu()}
@@ -183,6 +163,29 @@
     </T.Group>
   {/each}
 </Align>
+
+{#if !menuOpened}
+  <Billboard position.y={-window.innerHeight / 120}>
+    <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
+      <T.ConeGeometry />
+      <T.MeshBasicMaterial
+        color={"orange"}
+        transparent={true}
+        opacity={hintText.current}
+      />
+    </T.Mesh>
+    <Text
+      fillOpacity={hintText.current}
+      text={tips}
+      color={"orange"}
+      font={$Settings.font}
+      fontSize={window.innerWidth / 6250}
+      textAlign={"center"}
+      anchorX={"center"}
+      position.y={window.innerHeight / 1250}
+    />
+  </Billboard>
+{/if}
 
 <T.DirectionalLight intensity={1} position={[1, 0, 11]} />
 <T.DirectionalLight intensity={1} position={[-5, 0, -11]} />
