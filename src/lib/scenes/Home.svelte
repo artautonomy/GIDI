@@ -1,7 +1,7 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
-  import { colord,random } from "colord";
+  import { colord, random } from "colord";
   import {
     Align,
     Billboard,
@@ -27,7 +27,6 @@
 
   interactivity();
 
-  let cameraPosition = $state([5, 3, 4]);
   let mobileNotes: { note: number; velocity: number }[] = $state([]);
 
   let mobile = $state(false);
@@ -48,7 +47,7 @@
   });
 
   const navigationArrows = new Tween(0, {
-    delay:1000,
+    delay: 1000,
     duration: 1000,
     easing: cubicInOut,
   });
@@ -89,7 +88,7 @@
     });
 
     mobile = true;
-    
+
     let oldIndex: number;
 
     $Settings.attack = 75;
@@ -99,29 +98,29 @@
       mobileNotes.push({ note: i, velocity: 0 });
     }
     setTimeout(() => {
-    setInterval(
-      () => {
-        let index = Math.floor(Math.random() * 5);
+      setInterval(
+        () => {
+          let index = Math.floor(Math.random() * 5);
 
-        while (index == oldIndex) {
-          index = Math.floor(Math.random() * 5);
-        }
+          while (index == oldIndex) {
+            index = Math.floor(Math.random() * 5);
+          }
 
-        mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
+          mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
 
-        setTimeout(
-          () => {
-            mobileNotes[index].velocity = 0;
-          },
-          Math.floor(Math.random() * 1000)
-        );
+          setTimeout(
+            () => {
+              mobileNotes[index].velocity = 0;
+            },
+            Math.floor(Math.random() * 1000)
+          );
 
-        oldIndex = index;
-      },
-      Math.floor((Math.random() + 0.5) * 500)
-    )},500);
+          oldIndex = index;
+        },
+        Math.floor((Math.random() + 0.5) * 500)
+      );
+    }, 500);
   }
-  
 
   function Setup() {
     setTimeout(() => {
@@ -138,7 +137,7 @@
 
 <T.OrthographicCamera
   makeDefault
-  position={cameraPosition}
+  position={[5, 3, 4]}
   near={0.001}
   far={5000}
   zoom={introZoom.current}
@@ -150,15 +149,39 @@
     enablePan={false}
     enableZoom={false}
     rotateSpeed={2}
-    maxPolarAngle={Math.PI / 1.7} 
-    minPolarAngle={Math.PI / 4} 
+    maxPolarAngle={Math.PI / 1.7}
+    minPolarAngle={Math.PI / 4}
     onstart={(e) => {
       hintArrow.target = 0.75;
       tips = "To shuffle colours tap here";
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
-
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, 5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, -5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[5, 0, 0]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[-5, 0, 0]}
+/>
+<T.AmbientLight
+  castShadow
+  intensity={$Settings.lighting.above}
+  position={[0, 15, 0]}
+/>
 <!-- if PC -->
 {#if window.innerWidth > window.innerHeight}
   {midiMessages.length > 0 ? Setup() : null}
@@ -300,8 +323,11 @@
       hintText.target = 0;
       navigationArrows.target = 0.75;
 
-      $Settings.colours.key = random().toRgb()
-      $Settings.colours.expression = colord($Settings.colours.key).invert().hue(45).toRgb()
+      $Settings.colours.key = random().toRgb();
+      $Settings.colours.expression = colord($Settings.colours.key)
+        .invert()
+        .hue(45)
+        .toRgb();
     }}
   >
     <Align>
@@ -356,6 +382,7 @@
   {/if}
   <Billboard position.y={-window.innerHeight / 100}>
     <T.Mesh
+      receiveShadow
       scale={navigationArrows.current}
       position.x={3}
       rotation.z={-Math.PI / 2}
@@ -379,7 +406,3 @@
     </T.Mesh>
   </Billboard>
 {/if}
-
-<T.DirectionalLight intensity={1} position={[5, 0, 11]} />
-<T.DirectionalLight intensity={1} position={[-5, 0, -11]} />
-<T.AmbientLight intensity={0.3} position={[0, 50, 0]} />

@@ -1,5 +1,5 @@
 import "clsx";
-import { a5 as current_component, C as getContext, y as setContext, z as pop, x as push, M as bind_props } from "./index.js";
+import { a5 as current_component, F as getContext, y as setContext, z as pop, x as push, M as bind_props } from "./index.js";
 import "mitt";
 import * as THREE from "three";
 import { REVISION, DefaultLoadingManager, Vector3, Sphere, Matrix4, Ray, Vector2, Mesh, ShaderChunk, Box3, Color } from "three";

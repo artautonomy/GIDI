@@ -31,13 +31,12 @@
 
   $effect(() => {
     if (velocity > 0) {
-      
-      y.set(1 + velocity/63, {
+      y.set(1 + velocity / 63, {
         duration: attack,
         easing: cubicOut,
       });
 
-      scale.set(1 + velocity/63 * 2, {
+      scale.set(1 + (velocity / 63) * 2, {
         duration: attack,
         easing: cubicOut,
       });
@@ -63,6 +62,7 @@
 </script>
 
 <Instance
+  receiveShadow
   position.x={x}
   position.y={y.current}
   position.z={0}

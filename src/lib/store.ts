@@ -25,19 +25,25 @@ export let Settings = writable({
         },
         key: {
 
-            r: 222,
-            g: 177,
-            b: 22
+            r: 192,
+            g: 147,
+            b: 0
         },
         expression: {
 
-            r: 222,
-            g: 66,
-            b: 11
+            r: 202,
+            g: 44,
+            b: 0
         },
         
 
     },
+    lighting: {
+
+        above: 0.5,
+        front: 2.5,
+        side: 0.5
+    }
     
     
 })

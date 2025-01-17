@@ -1,12 +1,13 @@
-type Messages = {
+type MIDIMessage = {
     note: number;
     velocity: number;
 };
-export declare let MIDI: import("svelte/store").Writable<Messages[]>;
+export declare let MIDI: import("svelte/store").Writable<MIDIMessage[]>;
 export declare let Settings: import("svelte/store").Writable<{
+    page: string;
+    scene: string;
     edit: boolean;
     reset: boolean;
-    scene: string;
     font: string;
     orbitControls: boolean;
     autoRotate: boolean;
@@ -29,6 +30,11 @@ export declare let Settings: import("svelte/store").Writable<{
             g: number;
             b: number;
         };
+    };
+    lighting: {
+        above: number;
+        front: number;
+        side: number;
     };
 }>;
 export {};

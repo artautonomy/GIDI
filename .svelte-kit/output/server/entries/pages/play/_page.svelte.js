@@ -1,23 +1,11 @@
-import { D as escape_html, G as noop, I as render_effect, u as get, x as push, J as fallback, A as add_styles, K as stringify, M as bind_props, z as pop, N as copy_payload, O as assign_payload, P as slot, E as store_get, F as unsubscribe_stores, Q as css_props } from "../../../chunks/index.js";
+import { I as noop, J as render_effect, u as get, x as push, K as fallback, A as add_styles, C as stringify, M as bind_props, z as pop, N as copy_payload, O as assign_payload, G as escape_html, P as slot, D as store_get, E as unsubscribe_stores, Q as css_props } from "../../../chunks/index.js";
 import { t as tick, C as Canvas } from "../../../chunks/common.js";
-import "clsx";
+import { a as attr, S as Settings } from "../../../chunks/store.js";
 import "mitt";
 import "@threejs-kit/instanced-sprite-mesh";
 import { a as source, s as set } from "../../../chunks/sources.js";
-import { w as writable } from "../../../chunks/index2.js";
+import "clsx";
 import { colord } from "colord";
-const replacements = {
-  translate: /* @__PURE__ */ new Map([
-    [true, "yes"],
-    [false, "no"]
-  ])
-};
-function attr(name, value, is_boolean = false) {
-  if (value == null || !value && is_boolean || value === "" && name === "class") return "";
-  const normalized = name in replacements && replacements[name].get(value) || value;
-  const assignment = is_boolean ? "" : `="${escape_html(normalized, true)}"`;
-  return ` ${name}${assignment}`;
-}
 const now = () => Date.now();
 const raf = {
   // don't access requestAnimationFrame eagerly outside method
@@ -42,34 +30,6 @@ function loop(callback) {
     }
   };
 }
-let Settings = writable({
-  edit: false,
-  reset: false,
-  scene: "Cube",
-  font: "/fonts/Oxanium-Regular.ttf",
-  orbitControls: false,
-  autoRotate: true,
-  autoRotateSpeed: 2,
-  attack: 20,
-  release: 750,
-  colours: {
-    background: {
-      r: 4,
-      g: 2,
-      b: 25
-    },
-    key: {
-      r: 222,
-      g: 177,
-      b: 22
-    },
-    expression: {
-      r: 222,
-      g: 66,
-      b: 11
-    }
-  }
-});
 function is_date(obj) {
   return Object.prototype.toString.call(obj) === "[object Date]";
 }
@@ -755,7 +715,7 @@ function _page($$payload, $$props) {
   let $$inner_payload;
   function $$render_inner($$payload2) {
     Canvas($$payload2);
-    $$payload2.out += `<!----> <menu${attr("style", `opacity:${stringify(menuOpacity.current)}; --keyColour:${stringify(menuColour.toHex())}; --menuTextColour: ${stringify(menuColour.isLight() ? "black" : "white")}`)} class="svelte-1wj37j7"><setting class="svelte-1wj37j7"><h1 class="svelte-1wj37j7">Scene</h1> <label for="mirror" class="svelte-1wj37j7">Style</label> <select name="styles" id="styles" class="svelte-1wj37j7"><option value="Cube" class="svelte-1wj37j7">Cube</option><option value="Mirror" class="svelte-1wj37j7">Mirror</option></select> <label for="autoRotate" class="svelte-1wj37j7">Autorotate</label> <input id="autoRotate" type="checkbox" class="svelte-1wj37j7"> <label for="rotateSpeed" class="svelte-1wj37j7">Rotate Speed</label> <input type="range" min="1" max="3" step="0.1" id="rotateSpeed"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).autoRotateSpeed)} class="svelte-1wj37j7"></setting> <setting class="svelte-1wj37j7"><h1 class="svelte-1wj37j7">Colours</h1> <label for="Key Colour" class="svelte-1wj37j7">Key Colour</label> `;
+    $$payload2.out += `<!----> <menu${attr("style", `opacity:${stringify(menuOpacity.current)}; --keyColour:${stringify(menuColour.toHex())}; --menuTextColour: ${stringify(menuColour.isLight() ? "black" : "white")}`)} class="svelte-10r149r"><setting class="svelte-10r149r"><setting class="svelte-10r149r"><h1 class="svelte-10r149r">Notes</h1> <label for="Key Colour" class="svelte-10r149r">Key Colour</label> `;
     css_props(
       $$payload2,
       true,
@@ -782,7 +742,7 @@ function _page($$payload, $$props) {
         });
       }
     );
-    $$payload2.out += ` <label for="Expression Colour" class="svelte-1wj37j7">Expression Colour</label> `;
+    $$payload2.out += ` <label for="Expression Colour" class="svelte-10r149r">Expression Colour</label> `;
     css_props(
       $$payload2,
       true,
@@ -809,7 +769,7 @@ function _page($$payload, $$props) {
         });
       }
     );
-    $$payload2.out += ` <label for="Background Colour" class="svelte-1wj37j7">Background Colour</label> `;
+    $$payload2.out += `</setting> <setting class="svelte-10r149r"><label for="attack" class="svelte-10r149r">Attack</label> <input type="range" min="0" max="2500" id="attack"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).attack)} class="svelte-10r149r"> <label for="release" class="svelte-10r149r">Release</label> <input type="range" min="0" max="2500" id="release"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).release)} class="svelte-10r149r"> <button id="remap" class="svelte-10r149r">Remap</button></setting> <h1 class="svelte-10r149r">Scene</h1> <label for="Background Colour" class="svelte-10r149r">Background Colour</label> `;
     css_props(
       $$payload2,
       true,
@@ -836,7 +796,7 @@ function _page($$payload, $$props) {
         });
       }
     );
-    $$payload2.out += `</setting> <setting class="svelte-1wj37j7"><h1 class="svelte-1wj37j7">Notes</h1> <label for="attack" class="svelte-1wj37j7">Attack</label> <input type="range" min="0" max="2500" id="attack"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).attack)} class="svelte-1wj37j7"> <label for="release" class="svelte-1wj37j7">Release</label> <input type="range" min="0" max="2500" id="release"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).release)} class="svelte-1wj37j7"> <label for="remapKeys" class="svelte-1wj37j7">Remap Keys</label> <button id="remapKeys" class="svelte-1wj37j7">Remap</button></setting> <button id="save" class="svelte-1wj37j7">Close</button></menu>`;
+    $$payload2.out += ` <h2 class="svelte-10r149r">Style</h2> <select name="styles" id="styles" class="svelte-10r149r"><option value="Cube" class="svelte-10r149r">Cube</option><option value="Mirror" class="svelte-10r149r">Mirror</option></select> <h2 class="svelte-10r149r">Lighting</h2> <label for="frontLighting" class="svelte-10r149r">Front</label> <input type="range" min="0.1" max="3.1" step="0.1" id="frontLighting"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).lighting.front)} class="svelte-10r149r"> <label for="backLighting" class="svelte-10r149r">Side</label> <input type="range" min="0.1" max="3.1" step="0.1" id="backLighting"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).lighting.side)} class="svelte-10r149r"> <label for="aboveLighting" class="svelte-10r149r">Above</label> <input type="range" min="0.1" max="3.1" step="0.1" id="aboveLighting"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).lighting.above)} class="svelte-10r149r"> <h2 class="svelte-10r149r">Autorotate</h2> <input id="autoRotate" type="checkbox" class="svelte-10r149r"> <label for="rotateSpeed" class="svelte-10r149r">Speed</label> <input type="range" min="1" max="3" step="0.1" id="rotateSpeed"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).autoRotateSpeed)} class="svelte-10r149r"></setting> <button id="close" class="svelte-10r149r">Close</button></menu>`;
   }
   do {
     $$settled = true;

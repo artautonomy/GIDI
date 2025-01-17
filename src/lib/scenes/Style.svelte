@@ -19,14 +19,13 @@
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
 
-
   const { scene } = $state(useThrelte());
 
   scene.background = new Color(
     `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
   );
-  
-  type MIDIMessage = { note: number; velocity: number }
+
+  type MIDIMessage = { note: number; velocity: number };
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
@@ -103,6 +102,33 @@
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>
+
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, 5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, -5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[5, 0, 0]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[-5, 0, 0]}
+/>
+<T.AmbientLight
+  castShadow
+  intensity={$Settings.lighting.above}
+  position={[0, 15, 0]}
+/>
+
 <Billboard position.y={7}>
   <Text
     text={"Style"}
@@ -123,57 +149,57 @@
     anchorX={"center"}
     outlineBlur={0.1}
   />
-</Billboard> 
+</Billboard>
 <Align y={false} auto precise>
-<!-- Show sample of styles -->
-{#each midiMessages as note, index}
-  <T.Group
-    position.y={-window.innerHeight / 200}
-    onpointerenter={onPointerEnterStyle}
-    onpointerleave={onPointerLeaveStyle}
-    onclick={() => setupScene(styles[styleIndex])}
-  >
-    <InstancedMesh>
-      <T.BoxGeometry />
-      <T.MeshStandardMaterial shadow />
-
-      {#if styles[styleIndex] == "Cube"}
-        <Cube
-          x={index - 2}
-          velocity={note.velocity}
-          attack={$Settings.attack}
-          release={$Settings.release}
-          keyColour={highlighted}
-          expressionColour={$Settings.colours.expression}
-        />
-      {:else}
-        <Mirror
-          x={index - 2}
-          velocity={note.velocity}
-          attack={$Settings.attack}
-          release={$Settings.release}
-          keyColour={highlighted}
-          expressionColour={$Settings.colours.expression}
-        />
-      {/if}
-    </InstancedMesh>
-    <Text
-      font={$Settings.font}
-      fontSize={0.4}
-      outlineBlur={0.06}
-      text={styles[styleIndex]}
-      textAlign={"center"}
-      anchorX={"center"}
-      position.x={-0.5}
-      position.y={2.95}
-      position.z={3.9}
-      color={"white"}
+  <!-- Show sample of styles -->
+  {#each midiMessages as note, index}
+    <T.Group
+      position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnterStyle}
       onpointerleave={onPointerLeaveStyle}
       onclick={() => setupScene(styles[styleIndex])}
-    />
-  </T.Group>
-{/each}
+    >
+      <InstancedMesh>
+        <T.BoxGeometry />
+        <T.MeshStandardMaterial shadow />
+
+        {#if styles[styleIndex] == "Cube"}
+          <Cube
+            x={index - 2}
+            velocity={note.velocity}
+            attack={$Settings.attack}
+            release={$Settings.release}
+            keyColour={highlighted}
+            expressionColour={$Settings.colours.expression}
+          />
+        {:else}
+          <Mirror
+            x={index - 2}
+            velocity={note.velocity}
+            attack={$Settings.attack}
+            release={$Settings.release}
+            keyColour={highlighted}
+            expressionColour={$Settings.colours.expression}
+          />
+        {/if}
+      </InstancedMesh>
+      <Text
+        font={$Settings.font}
+        fontSize={0.4}
+        outlineBlur={0.06}
+        text={styles[styleIndex]}
+        textAlign={"center"}
+        anchorX={"center"}
+        position.x={-0.5}
+        position.y={2.95}
+        position.z={3.9}
+        color={"white"}
+        onpointerenter={onPointerEnterStyle}
+        onpointerleave={onPointerLeaveStyle}
+        onclick={() => setupScene(styles[styleIndex])}
+      />
+    </T.Group>
+  {/each}
 </Align>
 <Billboard position.y={-window.innerHeight / 140}>
   <T.Mesh
@@ -199,6 +225,3 @@
     <T.MeshBasicMaterial color={"orange"} shadow />
   </T.Mesh>
 </Billboard>
-<T.DirectionalLight intensity={1} position={[1, 0, 11]} />
-<T.DirectionalLight intensity={1} position={[-5, 0, -11]} />
-<T.AmbientLight intensity={0.3} position={[0, 1, 0]} />

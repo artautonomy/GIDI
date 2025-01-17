@@ -19,7 +19,7 @@
 
   const { scene } = $state(useThrelte());
 
-  type MIDIMessage = { note: number; velocity: number }
+  type MIDIMessage = { note: number; velocity: number };
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
@@ -110,7 +110,7 @@
 
 <T.OrthographicCamera
   makeDefault
-  position={[10, 10, 20]}
+  position={[7.5, 10, 20]}
   near={0.001}
   far={5000}
   zoom={introZoom.current}
@@ -127,6 +127,31 @@
   ></OrbitControls>
 </T.OrthographicCamera>
 
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, 5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, -5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[5, 0, 0]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[-5, 0, 0]}
+/>
+<T.AmbientLight
+  castShadow
+  intensity={$Settings.lighting.above}
+  position={[0, 15, 0]}
+/>
 
 <Align y={false} auto precise>
   <!-- Show sample of styles -->
@@ -186,7 +211,3 @@
     />
   </Billboard>
 {/if}
-
-<T.DirectionalLight intensity={1} position={[1, 0, 11]} />
-<T.DirectionalLight intensity={1} position={[-5, 0, -11]} />
-<T.AmbientLight intensity={0.3} position={[0, 1, 0]} />

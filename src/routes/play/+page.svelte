@@ -63,71 +63,73 @@
     : 'white'}"
 >
   <setting>
+    <setting>
+      <h1>Notes</h1>
+      <label for="Key Colour">Key Colour</label>
+      <ColorPicker
+        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --picker-height="150px"
+        --picker-width="150px"
+        --slider-width="15px"
+        --picker-indicator-size="10px"
+        bind:rgb
+        label=""
+        isAlpha={false}
+        textInputModes={["rgb"]}
+        sliderDirection="vertical"
+        on:input={(event) => {
+          $Settings.colours.key =
+            event.detail.rgb === undefined
+              ? { r: 255, g: 255, b: 255 }
+              : event.detail.rgb;
+        }}
+      />
+      <label for="Expression Colour">Expression Colour</label>
+      <ColorPicker
+        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --picker-height="150px"
+        --picker-width="150px"
+        --slider-width="15px"
+        --picker-indicator-size="10px"
+        bind:hsv
+        label=""
+        isAlpha={false}
+        textInputModes={["hsv"]}
+        sliderDirection="vertical"
+        on:input={(event) => {
+          $Settings.colours.expression =
+            event.detail.rgb === undefined
+              ? { r: 255, g: 255, b: 255 }
+              : event.detail.rgb;
+        }}
+      />
+    </setting>
+    <setting>
+      <label for="attack">Attack</label>
+      <input
+        type="range"
+        min="0"
+        max="2500"
+        id="attack"
+        bind:value={$Settings.attack}
+      />
+      <label for="release">Release</label>
+      <input
+        type="range"
+        min="0"
+        max="2500"
+        id="release"
+        bind:value={$Settings.release}
+      />
+      <button
+        id="remap"
+        onclick={() => {
+          $Settings.reset = true;
+        }}>Remap</button
+      ></setting
+    >
     <h1>Scene</h1>
 
-    <label for="mirror">Style</label>
-    <select name="styles" id="styles" bind:value={$Settings.scene}>
-      <option value="Cube">Cube</option>
-      <option value="Mirror">Mirror</option>
-    </select>
-
-    <label for="autoRotate">Autorotate</label>
-    <input
-      id="autoRotate"
-      type="checkbox"
-      onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
-    />
-    <label for="rotateSpeed">Rotate Speed</label>
-    <input
-      type="range"
-      min="1"
-      max="3"
-      step="0.1"
-      id="rotateSpeed"
-      bind:value={$Settings.autoRotateSpeed}
-    />
-  </setting>
-
-  <setting>
-    <h1>Colours</h1>
-    <label for="Key Colour">Key Colour</label>
-    <ColorPicker
-      --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
-      --picker-height="150px"
-      --picker-width="150px"
-      --slider-width="15px"
-      --picker-indicator-size="10px"
-      bind:rgb
-      label=""
-      isAlpha={false}
-      textInputModes={["rgb"]}
-      sliderDirection="vertical"
-      on:input={(event) => {
-        $Settings.colours.key =
-          event.detail.rgb === undefined
-            ? { r: 255, g: 255, b: 255 }
-            : event.detail.rgb;
-      }}
-    />
-    <label for="Expression Colour">Expression Colour</label>
-    <ColorPicker
-      --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
-      --picker-height="150px"
-      --picker-width="150px"
-      --slider-width="15px"
-      --picker-indicator-size="10px"
-      bind:hsv
-      label=""
-      isAlpha={false}
-      textInputModes={["hsv"]}
-      sliderDirection="vertical"
-      on:input={(event) => {
-        $Settings.colours.expression =
-          event.detail.rgb === undefined
-            ? { r: 255, g: 255, b: 255 }
-            : event.detail.rgb;
-      }}
-    />
     <label for="Background Colour">Background Colour</label>
 
     <ColorPicker
@@ -148,35 +150,60 @@
             : event.detail.rgb;
       }}
     />
+    <h2>Style</h2>
+    <select name="styles" id="styles" bind:value={$Settings.scene}>
+      <option value="Cube">Cube</option>
+      <option value="Mirror">Mirror</option>
+    </select>
+    <h2>Lighting</h2>
+    <label for="frontLighting">Front</label>
+    <input
+      type="range"
+      min="0.1"
+      max="3.1"
+      step="0.1"
+      id="frontLighting"
+      bind:value={$Settings.lighting.front}
+    />
+    <label for="backLighting">Side</label>
+    <input
+      type="range"
+      min="0.1"
+      max="3.1"
+      step="0.1"
+      id="backLighting"
+      bind:value={$Settings.lighting.side}
+    />
+    <label for="aboveLighting">Above</label>
+    <input
+      type="range"
+      min="0.1"
+      max="3.1"
+      step="0.1"
+      id="aboveLighting"
+      bind:value={$Settings.lighting.above}
+    />
+
+    <h2>Autorotate</h2>
+
+    <input
+      id="autoRotate"
+      type="checkbox"
+      onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
+    />
+    <label for="rotateSpeed">Speed</label>
+    <input
+      type="range"
+      min="1"
+      max="3"
+      step="0.1"
+      id="rotateSpeed"
+      bind:value={$Settings.autoRotateSpeed}
+    />
   </setting>
-  <setting
-    ><h1>Notes</h1>
-    <label for="attack">Attack</label>
-    <input
-      type="range"
-      min="0"
-      max="2500"
-      id="attack"
-      bind:value={$Settings.attack}
-    />
-    <label for="release">Release</label>
-    <input
-      type="range"
-      min="0"
-      max="2500"
-      id="release"
-      bind:value={$Settings.release}
-    />
-    <label for="remapKeys">Remap Keys</label>
-    <button
-      id="remapKeys"
-      onclick={() => {
-        $Settings.reset = true;
-      }}>Remap</button
-    ></setting
-  >
+
   <button
-    id="save"
+    id="close"
     onclick={() => {
       $Settings.edit = false;
 
@@ -207,12 +234,15 @@
     margin: 2.5% 37.5%;
     cursor: pointer;
   }
-  button#save {
+  button#close {
     width: 50%;
     height: 5%;
     position: absolute;
     bottom: 0;
     margin: 0 25% 2%;
+  }
+  button#remap {
+    margin-top: 7.5%;
   }
   button:hover {
     font-weight: bold;
@@ -220,25 +250,15 @@
     color: black;
   }
 
-  menu {
-    font-family: "Oxanium";
-    position: absolute;
-    background-color: var(--keyColour);
-    top: 0;
-    height: 75vh;
-    width: 20vw;
-    margin: 0;
-    padding: 0;
-  }
-  setting {
-    display: block;
-    text-align: center;
-  }
   h1 {
     color: var(--menuTextColour);
-    text-align: center;
     font-size: 1.5em;
     text-decoration: underline;
+  }
+  h2 {
+    color: var(--menuTextColour);
+    font-size: 1.3em;
+    margin-bottom: 1.5%;
   }
 
   label {
@@ -300,5 +320,20 @@
     background-color: var(--menuTextColour);
     border-color: green;
     border-width: 2px;
+  }
+
+  menu {
+    font-family: "Oxanium";
+    position: absolute;
+    background-color: var(--keyColour);
+    top: 0;
+    height: 75vh;
+    width: 20vw;
+    margin: 0;
+    padding: 0;
+  }
+  setting {
+    display: block;
+    text-align: center;
   }
 </style>

@@ -62,6 +62,14 @@
       "_equality.js"
     ]
   },
+  "_store.js": {
+    "file": "chunks/store.js",
+    "name": "store",
+    "imports": [
+      "_index.js",
+      "_index2.js"
+    ]
+  },
   "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/error.svelte": {
     "file": "entries/fallbacks/error.svelte.js",
     "name": "entries/fallbacks/error.svelte",
@@ -96,10 +104,11 @@
     "src": "src/routes/+layout.svelte",
     "isEntry": true,
     "imports": [
-      "_index.js"
+      "_index.js",
+      "_store.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.CLLg-RLl.css"
+      "_app/immutable/assets/_layout.B17Qf3hk.css"
     ]
   },
   "src/routes/+page.svelte": {
@@ -120,11 +129,11 @@
     "imports": [
       "_index.js",
       "_common.js",
-      "_sources.js",
-      "_index2.js"
+      "_store.js",
+      "_sources.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.B67uYi5F.css"
+      "_app/immutable/assets/_page.u7naYlYP.css"
     ]
   },
   "src/routes/style/+page.svelte": {

@@ -19,7 +19,9 @@
 
   const { scene } = $state(useThrelte());
 
-  let midiMessages = $state([{}]);
+  type MIDIMessage = { note: number; velocity: number };
+
+  let midiMessages = $state<MIDIMessage[]>([]);
 
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
@@ -29,8 +31,6 @@
   const { hovering, onPointerEnter, onPointerLeave } = useCursor();
 
   interactivity();
-
-  let cameraPosition = $state([10, 10, 20]);
 
   let menuOpened = $state(false);
 
@@ -110,7 +110,7 @@
 
 <T.OrthographicCamera
   makeDefault
-  position={cameraPosition}
+  position={[7.5, 10, 20]}
   near={0.001}
   far={5000}
   zoom={introZoom.current}
@@ -127,32 +127,37 @@
   ></OrbitControls>
 </T.OrthographicCamera>
 
-{#if !menuOpened}
-  <Billboard position.y={-window.innerHeight / 175}>
-    <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
-      <T.ConeGeometry />
-      <T.MeshBasicMaterial
-        color={"orange"}
-        transparent={true}
-        opacity={hintText.current}
-      />
-    </T.Mesh>
-    <Text
-      fillOpacity={hintText.current}
-      text={tips}
-      color={"orange"}
-      font={$Settings.font}
-      fontSize={window.innerWidth / 6250}
-      textAlign={"center"}
-      anchorX={"center"}
-      position.y={window.innerHeight / 1250}
-    />
-  </Billboard>
-{/if}
-<Align auto precise>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, 5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.front}
+  position={[0, 0, -5]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[5, 0, 0]}
+/>
+<T.DirectionalLight
+  castShadow
+  intensity={$Settings.lighting.side}
+  position={[-5, 0, 0]}
+/>
+<T.AmbientLight
+  castShadow
+  intensity={$Settings.lighting.above}
+  position={[0, 15, 0]}
+/>
+
+<Align y={false} auto precise>
   <!-- Show sample of styles -->
   {#each midiMessages as note, index}
     <T.Group
+      position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
       onclick={() => openMenu()}
@@ -184,6 +189,25 @@
   {/each}
 </Align>
 
-<T.DirectionalLight intensity={1} position={[1, 0, 11]} />
-<T.DirectionalLight intensity={1} position={[-5, 0, -11]} />
-<T.AmbientLight intensity={0.3} position={[0, 1, 0]} />
+{#if !menuOpened}
+  <Billboard position.y={-window.innerHeight / 120}>
+    <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
+      <T.ConeGeometry />
+      <T.MeshBasicMaterial
+        color={"orange"}
+        transparent={true}
+        opacity={hintText.current}
+      />
+    </T.Mesh>
+    <Text
+      fillOpacity={hintText.current}
+      text={tips}
+      color={"orange"}
+      font={$Settings.font}
+      fontSize={window.innerWidth / 6250}
+      textAlign={"center"}
+      anchorX={"center"}
+      position.y={window.innerHeight / 1250}
+    />
+  </Billboard>
+{/if}
