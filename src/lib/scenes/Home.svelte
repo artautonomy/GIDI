@@ -1,7 +1,6 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
-  import { colord, random } from "colord";
   import {
     Align,
     Billboard,
@@ -55,6 +54,14 @@
   const styles = ["Cube", "Mirror"];
 
   let styleIndex = $state(0);
+
+  let notesIndex = $state(0);
+
+  const notesColours = [
+    { key: { r: 141, g: 154, b: 203 }, expression: { r: 254, g: 228, b: 129 } },
+    { key: { r: 0, g: 83, b: 56 }, expression: { r: 255, g: 5, b: 86 } },
+    { key: { r: 77, g: 12, b: 55 }, expression: { r: 255, g: 122, b: 255 } },
+  ];
 
   const title = "Welcome to GIDI";
 
@@ -319,11 +326,14 @@
       hintText.target = 0;
       navigationArrows.target = 0.75;
 
-      $Settings.colours.key = random().toRgb();
-      $Settings.colours.expression = colord($Settings.colours.key)
-        .invert()
-        .hue(45)
-        .toRgb();
+      $Settings.colours.key = notesColours[notesIndex].key;
+      $Settings.colours.expression = notesColours[notesIndex].expression;
+
+      if (notesIndex >= notesColours.length - 1) {
+        notesIndex = 0;
+      } else {
+        notesIndex++;
+      }
     }}
   >
     <Align>

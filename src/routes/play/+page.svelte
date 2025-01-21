@@ -273,8 +273,7 @@
   h1 {
     color: var(--menuTextColour);
     font-size: 1.3em;
-    margin-bottom: 4%;
-    margin-top: 10%;
+    margin-top: 30px;
     text-decoration: underline;
   }
 
@@ -282,8 +281,8 @@
     display: block;
     font-size: 0.9em;
     color: var(--menuTextColour);
-    margin-top: 7.5%;
-    margin-bottom: 3.75%;
+    margin-top: 20px;
+    margin-bottom: 10px;
   }
 
   select {
