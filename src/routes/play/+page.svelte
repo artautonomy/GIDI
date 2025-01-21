@@ -7,6 +7,8 @@
   import ColorPicker from "svelte-awesome-color-picker";
   import { colord } from "colord";
 
+  let setting = $state("notes");
+
   const menuOpacity = new Tween(0);
 
   let rgb = $state({
@@ -62,74 +64,94 @@
     ? 'black'
     : 'white'}"
 >
-  <setting>
-    <setting>
-      <h1>Notes</h1>
-      <label for="Key Colour">Key Colour</label>
-      <ColorPicker
-        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
-        --picker-height="150px"
-        --picker-width="150px"
-        --slider-width="15px"
-        --picker-indicator-size="10px"
-        bind:rgb
-        label=""
-        isAlpha={false}
-        textInputModes={["rgb"]}
-        sliderDirection="vertical"
-        on:input={(event) => {
-          $Settings.colours.key =
-            event.detail.rgb === undefined
-              ? { r: 255, g: 255, b: 255 }
-              : event.detail.rgb;
-        }}
-      />
-      <label for="Expression Colour">Expression Colour</label>
-      <ColorPicker
-        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
-        --picker-height="150px"
-        --picker-width="150px"
-        --slider-width="15px"
-        --picker-indicator-size="10px"
-        bind:hsv
-        label=""
-        isAlpha={false}
-        textInputModes={["hsv"]}
-        sliderDirection="vertical"
-        on:input={(event) => {
-          $Settings.colours.expression =
-            event.detail.rgb === undefined
-              ? { r: 255, g: 255, b: 255 }
-              : event.detail.rgb;
-        }}
-      />
-    </setting>
-    <setting>
-      <label for="attack">Attack</label>
-      <input
-        type="range"
-        min="0"
-        max="2500"
-        id="attack"
-        bind:value={$Settings.attack}
-      />
-      <label for="release">Release</label>
-      <input
-        type="range"
-        min="0"
-        max="2500"
-        id="release"
-        bind:value={$Settings.release}
-      />
-      <button
-        id="remap"
-        onclick={() => {
-          $Settings.reset = true;
-        }}>Remap</button
-      ></setting
+  <settings>
+    <button
+      class="setting"
+      onclick={() => (setting = "notes")}
+      style="background-color:{setting === 'notes'
+        ? 'rgb(33, 122, 67)'
+        : '--menuTextColor'}">Notes</button
     >
-    <h1>Scene</h1>
+    <button
+      class="setting"
+      onclick={() => (setting = "scene")}
+      style="background-color:{setting === 'scene'
+        ? 'rgb(33, 122, 67)'
+        : '--menuTextColor'}">Scene</button
+    >
+  </settings>
 
+  {#if setting === "notes"}
+    <h1>Colours</h1>
+    <label for="note">Note</label>
+    <ColorPicker
+      --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+      --picker-height="150px"
+      --picker-width="150px"
+      --slider-width="15px"
+      --picker-indicator-size="10px"
+      bind:rgb
+      label=""
+      isAlpha={false}
+      textInputModes={["rgb"]}
+      sliderDirection="vertical"
+      on:input={(event) => {
+        $Settings.colours.key =
+          event.detail.rgb === undefined
+            ? { r: 255, g: 255, b: 255 }
+            : event.detail.rgb;
+      }}
+    />
+    <label for="expression">Expression</label>
+    <ColorPicker
+      --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+      --picker-height="150px"
+      --picker-width="150px"
+      --slider-width="15px"
+      --picker-indicator-size="10px"
+      bind:hsv
+      label=""
+      isAlpha={false}
+      textInputModes={["hsv"]}
+      sliderDirection="vertical"
+      on:input={(event) => {
+        $Settings.colours.expression =
+          event.detail.rgb === undefined
+            ? { r: 255, g: 255, b: 255 }
+            : event.detail.rgb;
+      }}
+    />
+    <h1>ADSR</h1>
+    <label for="attack">Attack</label>
+    <input
+      type="range"
+      min="0"
+      max="4000"
+      step="0.1"
+      id="attack"
+      bind:value={$Settings.attack}
+    />
+    <label for="release">Release</label>
+    <input
+      type="range"
+      min="0"
+      max="4000"
+      step="0.1"
+      id="release"
+      bind:value={$Settings.release}
+    />
+    <button
+      id="remap"
+      onclick={() => {
+        $Settings.reset = true;
+      }}>Remap</button
+    >
+  {:else if setting === "scene"}
+    <h1>Style</h1>
+    <select name="styles" id="styles" bind:value={$Settings.scene}>
+      <option value="Cube">Cube</option>
+      <option value="Mirror">Mirror</option>
+    </select>
     <label for="Background Colour">Background Colour</label>
 
     <ColorPicker
@@ -150,57 +172,53 @@
             : event.detail.rgb;
       }}
     />
-    <h2>Style</h2>
-    <select name="styles" id="styles" bind:value={$Settings.scene}>
-      <option value="Cube">Cube</option>
-      <option value="Mirror">Mirror</option>
-    </select>
-    <h2>Lighting</h2>
-    <label for="frontLighting">Front</label>
+    <h1>Light Intensity</h1>
+    <label for="frontLighting">Front Light</label>
     <input
       type="range"
-      min="0.1"
-      max="3.1"
+      min="0"
+      max="5.1"
       step="0.1"
       id="frontLighting"
       bind:value={$Settings.lighting.front}
     />
-    <label for="backLighting">Side</label>
+    <label for="backLighting">Side Light</label>
     <input
       type="range"
-      min="0.1"
-      max="3.1"
+      min="0"
+      max="5.1"
       step="0.1"
       id="backLighting"
       bind:value={$Settings.lighting.side}
     />
-    <label for="aboveLighting">Above</label>
+    <label for="aboveLighting">Above Light</label>
     <input
       type="range"
-      min="0.1"
-      max="3.1"
+      min="0"
+      max="5.1"
       step="0.1"
       id="aboveLighting"
       bind:value={$Settings.lighting.above}
     />
 
-    <h2>Autorotate</h2>
+    <h1>Autorotate</h1>
 
     <input
       id="autoRotate"
       type="checkbox"
       onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
+      checked={$Settings.autoRotate}
     />
     <label for="rotateSpeed">Speed</label>
     <input
       type="range"
-      min="1"
-      max="3"
+      min="0.5"
+      max="10"
       step="0.1"
       id="rotateSpeed"
       bind:value={$Settings.autoRotateSpeed}
     />
-  </setting>
+  {/if}
 
   <button
     id="close"
@@ -230,19 +248,21 @@
     color: var(--keyColour);
     display: block;
     width: 25%;
-    height: 10%;
+    height: 5%;
     margin: 2.5% 37.5%;
     cursor: pointer;
+    border-style: none;
   }
   button#close {
-    width: 50%;
-    height: 5%;
+    width: 75%;
+    height: 3.5%;
     position: absolute;
     bottom: 0;
-    margin: 0 25% 2%;
+    margin: 0 12.5% 2%;
   }
   button#remap {
-    margin-top: 7.5%;
+    width: 60%;
+    margin: 10% 20%;
   }
   button:hover {
     font-weight: bold;
@@ -252,21 +272,18 @@
 
   h1 {
     color: var(--menuTextColour);
-    font-size: 1.5em;
-    text-decoration: underline;
-  }
-  h2 {
-    color: var(--menuTextColour);
     font-size: 1.3em;
-    margin-bottom: 1.5%;
+    margin-bottom: 4%;
+    margin-top: 10%;
+    text-decoration: underline;
   }
 
   label {
     display: block;
     font-size: 0.9em;
     color: var(--menuTextColour);
-    margin-top: 5%;
-    margin-bottom: 0.25%;
+    margin-top: 7.5%;
+    margin-bottom: 3.75%;
   }
 
   select {
@@ -309,8 +326,8 @@
     appearance: none !important;
     -webkit-appearance: none !important;
     cursor: pointer;
-    height: 15px;
-    width: 15px;
+    height: 17.5px;
+    width: 17.5px;
     border-style: solid;
     border-width: 1px;
     border-color: var(--menuTextColour);
@@ -318,22 +335,30 @@
   }
   input[type="checkbox"]:checked {
     background-color: var(--menuTextColour);
-    border-color: green;
+    border-color: rgb(33, 122, 67);
     border-width: 2px;
   }
 
   menu {
     font-family: "Oxanium";
+    display: block;
     position: absolute;
+    text-align: center;
     background-color: var(--keyColour);
     top: 0;
-    height: 75vh;
+    height: 66vh;
     width: 20vw;
     margin: 0;
     padding: 0;
   }
-  setting {
-    display: block;
-    text-align: center;
+
+  settings {
+    display: flex;
+    justify-content: center;
+  }
+
+  .setting {
+    width: 40%;
+    margin: 2.5%;
   }
 </style>

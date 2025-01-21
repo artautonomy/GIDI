@@ -13,9 +13,9 @@ export let Settings = writable({
     font: "/fonts/Oxanium-Regular.ttf",
     orbitControls: false,
     autoRotate: true,
-    autoRotateSpeed: 2,
-    attack: 20,
-    release: 750,
+    autoRotateSpeed: 1.1,
+    attack: 10,
+    release: 500,
     colours: {
         background: {
 

@@ -177,11 +177,7 @@
   intensity={$Settings.lighting.side}
   position={[-5, 0, 0]}
 />
-<T.AmbientLight
-  castShadow
-  intensity={$Settings.lighting.above}
-  position={[0, 15, 0]}
-/>
+<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 <!-- if PC -->
 {#if window.innerWidth > window.innerHeight}
   {midiMessages.length > 0 ? Setup() : null}
