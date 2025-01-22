@@ -7,7 +7,7 @@ export let MIDI = writable<MIDIMessage[]>([]);
 export let Settings = writable({
 
     page: 'home',
-    scene : 'Cube',
+    scene : 'Piano',
     edit: false,
     reset: false,
     font: "/fonts/Oxanium-Regular.ttf",

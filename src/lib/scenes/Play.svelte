@@ -15,6 +15,7 @@
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Cube from "./instances/Cube.svelte";
+  import Piano from "./instances/Piano.svelte";
   import Mirror from "./instances/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
@@ -151,7 +152,7 @@
 
 <Align y={false} auto precise>
   <!-- Show sample of styles -->
-  {#each midiMessages as note, index}
+  {#each midiMessages as noteNumber, index}
     <T.Group
       position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnter}
@@ -164,16 +165,26 @@
         {#if $Settings.scene == "Cube"}
           <Cube
             x={index}
-            velocity={note.velocity}
+            velocity={noteNumber.velocity}
             attack={$hovering ? 250 : $Settings.attack}
             release={$hovering ? 250 : $Settings.release}
             keyColour={selected}
             expressionColour={$Settings.colours.expression}
           />
-        {:else}
+        {:else if $Settings.scene == "Piano"}
+          <Piano
+            x={index}
+            noteNumber={noteNumber.note}
+            velocity={noteNumber.velocity}
+            attack={$hovering ? 250 : $Settings.attack}
+            release={$hovering ? 250 : $Settings.release}
+            keyColour={selected}
+            expressionColour={$Settings.colours.expression}
+          />
+        {:else if $Settings.scene == "Mirror"}
           <Mirror
             x={index}
-            velocity={note.velocity}
+            velocity={noteNumber.velocity}
             attack={$hovering ? 250 : $Settings.attack}
             release={$hovering ? 250 : $Settings.release}
             keyColour={selected}
