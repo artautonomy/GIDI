@@ -20,7 +20,20 @@
 
   const { scene } = $state(useThrelte());
 
-  type MIDIMessage = { note: number; velocity: number };
+  type MIDIMessage = {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
@@ -78,6 +91,84 @@
       menuOpened = true;
     }, 2000);
   }
+
+  function pianoNoteNumberPosition(noteNumber: number, index: number) {
+    type MIDIMessage = { note: number; velocity: number };
+
+    const keyboardNotes = [
+      "C",
+      "C#",
+      "D",
+      "D#",
+      "E",
+      "F",
+      "F#",
+      "G",
+      "G#",
+      "A",
+      "A#",
+      "B",
+    ];
+
+    const getSharpNotes = (notes: MIDIMessage[]) => {
+      return notes.filter((item: MIDIMessage) => {
+        const noteName = keyboardNotes[item.note % 12];
+        return noteName.includes("#");
+      });
+    };
+
+    const getNonSharpNotes = (notes: MIDIMessage[]) => {
+      return notes.filter((item: MIDIMessage) => {
+        const noteName = keyboardNotes[item.note % 12];
+        return !noteName.includes("#");
+      });
+    };
+
+    const nonSharpNotes = getNonSharpNotes(midiMessages);
+
+    const SharpNotes = getSharpNotes(midiMessages);
+
+    let positionX = nonSharpNotes.findIndex(
+      (note: MIDIMessage) => note.note == noteNumber
+    );
+
+    let positionY = 0;
+
+    let positionZ = -1.5;
+
+    let scaleX = 1;
+
+    let scaleY = 1;
+
+    let scaleZ = 3;
+
+    const noteName = keyboardNotes[noteNumber % 12];
+
+    if (noteName.includes("#")) {
+      positionX =
+        SharpNotes.findIndex((note: MIDIMessage) => note.note == noteNumber) +
+        0.5;
+
+      if (noteName == "F#" || noteName == "G#" || noteName == "A#") {
+        positionX =
+          SharpNotes.findIndex((note: MIDIMessage) => note.note == noteNumber) +
+          1;
+      }
+
+      positionY = 0.75;
+      positionZ = -2;
+
+      scaleX = 0.2;
+      scaleY = 0.5;
+      scaleZ = 2;
+    }
+
+    return {
+      position: { x: positionX, y: positionY, z: positionZ },
+      scale: { x: scaleX, y: scaleY, z: scaleZ },
+    };
+  }
+
   $effect(() => {
     if (!$Settings.edit) {
       introZoom.set(50, {
@@ -164,7 +255,8 @@
         <T.MeshStandardMaterial shadow />
         {#if $Settings.scene == "Cube"}
           <Cube
-            x={index}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
             velocity={noteNumber.velocity}
             attack={$hovering ? 250 : $Settings.attack}
             release={$hovering ? 250 : $Settings.release}
@@ -173,8 +265,8 @@
           />
         {:else if $Settings.scene == "Piano"}
           <Piano
-            x={index}
-            noteNumber={noteNumber.note}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
             velocity={noteNumber.velocity}
             attack={$hovering ? 250 : $Settings.attack}
             release={$hovering ? 250 : $Settings.release}
@@ -183,7 +275,8 @@
           />
         {:else if $Settings.scene == "Mirror"}
           <Mirror
-            x={index}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
             velocity={noteNumber.velocity}
             attack={$hovering ? 250 : $Settings.attack}
             release={$hovering ? 250 : $Settings.release}

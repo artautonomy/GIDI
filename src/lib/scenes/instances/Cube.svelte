@@ -4,7 +4,16 @@
   import { Tween } from "svelte/motion";
 
   interface Props {
-    x: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
     velocity: number;
     attack: number;
     release: number;
@@ -20,11 +29,18 @@
     };
   }
 
-  let { x, velocity, attack, release, keyColour, expressionColour }: Props =
-    $props();
+  let {
+    position,
+    scale,
+    velocity,
+    attack,
+    release,
+    keyColour,
+    expressionColour,
+  }: Props = $props();
 
   const y = new Tween(1);
-  const scale = new Tween(1);
+  const yScale = new Tween(1);
   const r = new Tween(keyColour.r);
   const g = new Tween(keyColour.g);
   const b = new Tween(keyColour.b);
@@ -36,7 +52,7 @@
         easing: cubicOut,
       });
 
-      scale.set(1 + (velocity / 63) * 2, {
+      yScale.set(scale.y + (velocity / 63) * 2, {
         duration: attack,
         easing: cubicOut,
       });
@@ -49,7 +65,7 @@
         duration: release,
         easing: cubicOut,
       });
-      scale.set(1, {
+      yScale.set(scale.y, {
         duration: release,
         easing: cubicOut,
       });
@@ -63,9 +79,9 @@
 
 <Instance
   receiveShadow
-  position.x={x}
+  position.x={position.x}
   position.y={y.current}
-  position.z={0}
-  scale.y={scale.current}
+  position.z={position.z}
+  scale.y={yScale.current}
   color={`rgb(${Math.floor(r.current)},${Math.floor(g.current)},${Math.floor(b.current)})`}
 />

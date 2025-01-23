@@ -123,11 +123,7 @@
   intensity={$Settings.lighting.side}
   position={[-5, 0, 0]}
 />
-<T.AmbientLight
-  castShadow
-  intensity={$Settings.lighting.above}
-  position={[0, 15, 0]}
-/>
+<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Billboard position.y={7}>
   <Text

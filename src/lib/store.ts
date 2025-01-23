@@ -1,6 +1,19 @@
 import { writable } from "svelte/store";
 
-type MIDIMessage = { note: number; velocity: number }
+type MIDIMessage = { 
+    note: number; 
+    velocity: number, 
+    position: {
+        x:number,
+        y:number,
+        z:number
+    },
+    scale: {
+        x:number,
+        y:number,
+        z:number
+    }
+}
 
 export let MIDI = writable<MIDIMessage[]>([]);
 
@@ -44,6 +57,4 @@ export let Settings = writable({
         front: 2.5,
         side: 0.5
     }
-    
-    
 })
