@@ -32,7 +32,21 @@
       const velocity = message.data[2];
       // Check if the note already exists in the notes array
       const noteExists = notes.some((key) => key.note === note);
-
+      const keyboardNotes = [
+        "C",
+        "C#",
+        "D",
+        "D#",
+        "E",
+        "F",
+        "F#",
+        "G",
+        "G#",
+        "A",
+        "A#",
+        "B",
+      ];
+      console.log(keyboardNotes[note % 12]);
       if (!noteExists) {
         if ($Settings.scene !== "Piano") {
           // If note does not exist, add it to the notes array
@@ -115,43 +129,15 @@
               //console.log(note, noteFound, index + offset);
               const noteName = keyboardNotes[(index + offset) % 12];
 
-              console.log(index + offset, noteName);
               if (noteName.includes("#")) {
-                if (noteName === "C#") {
-                  positionX = -0.5;
-                } else if (noteName === "D#") {
-                  positionX = -1.5;
-                } else if (noteName === "F#") {
-                  positionX = -2.5;
-                } else if (noteName === "G#") {
-                  positionX = -3.5;
-                } else if (noteName === "A#") {
-                  positionX = -4.5;
-                }
-
                 positionY = 0.75;
                 positionZ = -0.5;
                 scaleX = 0.5;
                 scaleY = 0.5;
                 scaleZ = 2;
               } else {
-                if (noteName === "D") {
-                  positionX = -1;
-                } else if (noteName === "E") {
-                  positionX = -2;
-                } else if (noteName === "F") {
-                  positionX = -2;
-                } else if (noteName === "G") {
-                  positionX = -3;
-                } else if (noteName === "A") {
-                  positionX = -4;
-                } else if (noteName === "B") {
-                  positionX = -5;
-                }
-
                 positionY = 0;
                 positionZ = 0;
-
                 scaleX = 1;
                 scaleY = 1;
                 scaleZ = 3;
@@ -173,6 +159,47 @@
               ];
             }
           }
+
+          let whiteKeys = notes.filter((key) => key.scale.x === 1);
+          let blackKeys = notes.filter((key) => key.scale.x === 0.5);
+
+          whiteKeys = whiteKeys.map((key, index) => {
+            return {
+              note: key.note,
+              velocity: key.velocity,
+              position: {
+                x: index,
+                y: key.position.y,
+                z: key.position.z,
+              },
+              scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+            };
+          });
+
+          blackKeys = blackKeys.map((key, index) => {
+            const noteName = keyboardNotes[key.note % 12];
+            let offset = 0;
+            if (noteName === "F#" || noteName === "G#" || noteName === "A#") {
+              offset = 1.5;
+            } else {
+              offset = 0.5;
+            }
+
+            return {
+              note: key.note,
+              velocity: key.velocity,
+              position: {
+                x: index + offset,
+                y: key.position.y,
+                z: key.position.z,
+              },
+              scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+            };
+          });
+
+          notes = [...whiteKeys, ...blackKeys];
+
+          notes = notes.toSorted((a, b) => a.note - b.note);
 
           console.log(notes);
         }
