@@ -53,8 +53,6 @@
           let scaleY = 1;
           let scaleZ = 1;
 
-          let lastMessage = note;
-
           const keyboardNotes = [
             "C",
             "C#",
@@ -70,51 +68,113 @@
             "B",
           ];
 
-          const noteName = keyboardNotes[note % 12];
+          //if first note
+          if (notes.length < 1) {
+            const noteName = keyboardNotes[note % 12];
 
-          if (noteName.includes("#")) {
-            positionX = 1.5;
-            positionY = 1;
+            const noteFound = notes.some((item) => item.note === note);
+
+            if (!noteFound) {
+              if (noteName.includes("#")) {
+                positionX = 0.5;
+                positionY = 1;
+                scaleX = 0.5;
+              } else {
+                positionX = 0;
+                positionY = 0;
+                scaleX = 1;
+              }
+              //map notes missed
+              notes = [
+                ...notes,
+                {
+                  note: note,
+                  velocity: 0,
+                  position: {
+                    x: notes.length + positionX,
+                    y: positionY,
+                    z: 0,
+                  },
+                  scale: { x: scaleX, y: scaleY, z: scaleZ },
+                },
+              ];
+            }
+          } else {
+            const offset = notes[0].note < note ? notes[0].note : note;
+
+            const endNoteIndex =
+              notes[notes.length - 1].note > note
+                ? notes[notes.length - 1].note - offset
+                : note - offset;
+
+            const octave = 0;
+
+            notes = [];
+
+            for (let index = 0; index <= endNoteIndex; index++) {
+              //console.log(note, noteFound, index + offset);
+              const noteName = keyboardNotes[(index + offset) % 12];
+
+              console.log(index + offset, noteName);
+              if (noteName.includes("#")) {
+                if (noteName === "C#") {
+                  positionX = -0.5;
+                } else if (noteName === "D#") {
+                  positionX = -1.5;
+                } else if (noteName === "F#") {
+                  positionX = -2.5;
+                } else if (noteName === "G#") {
+                  positionX = -3.5;
+                } else if (noteName === "A#") {
+                  positionX = -4.5;
+                }
+
+                positionY = 0.75;
+                positionZ = -0.5;
+                scaleX = 0.5;
+                scaleY = 0.5;
+                scaleZ = 2;
+              } else {
+                if (noteName === "D") {
+                  positionX = -1;
+                } else if (noteName === "E") {
+                  positionX = -2;
+                } else if (noteName === "F") {
+                  positionX = -2;
+                } else if (noteName === "G") {
+                  positionX = -3;
+                } else if (noteName === "A") {
+                  positionX = -4;
+                } else if (noteName === "B") {
+                  positionX = -5;
+                }
+
+                positionY = 0;
+                positionZ = 0;
+
+                scaleX = 1;
+                scaleY = 1;
+                scaleZ = 3;
+              }
+
+              //map notes missed
+              notes = [
+                ...notes,
+                {
+                  note: index + offset,
+                  velocity: 0,
+                  position: {
+                    x: index + positionX,
+                    y: positionY,
+                    z: positionZ,
+                  },
+                  scale: { x: scaleX, y: scaleY, z: scaleZ },
+                },
+              ];
+            }
           }
 
-          notes = [
-            ...notes,
-            {
-              note: note,
-              velocity: 0,
-              position: { x: notes.length, y: positionY, z: 0 },
-              scale: { x: scaleX, y: scaleY, z: scaleZ },
-            },
-          ];
-
-          notes = notes.toSorted((a, b) => a.note - b.note);
-
-          notes.forEach((message) => {
-            //if note is more a semitone
-            if (message.note - lastMessage > 1) {
-              for (let i = lastMessage; i < message.note; i++) {
-                if (!notes.some((message) => message.note === i)) {
-                  //map notes missed
-                  notes = [
-                    ...notes,
-                    {
-                      note: i,
-                      velocity: 0,
-                      position: {
-                        x: notes.length + positionX,
-                        y: positionY,
-                        z: 0,
-                      },
-                      scale: { x: scaleX, y: scaleY, z: scaleZ },
-                    },
-                  ];
-                }
-              }
-            }
-
-            lastMessage = message.note;
-          });
-          notes = notes.toSorted((a, b) => a.note - b.note);
+          console.log(notes);
         }
       } else {
         // If note exists, update the velocity

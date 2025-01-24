@@ -26,7 +26,20 @@
 
   interactivity();
 
-  let mobileNotes: { note: number; velocity: number }[] = $state([]);
+  let mobileNotes: {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  }[] = $state([]);
 
   let mobile = $state(false);
   let tips = $state("Swipe to rotate the scene");
@@ -102,7 +115,12 @@
     $Settings.release = 1000;
 
     for (let i = 0; i < 5; i++) {
-      mobileNotes.push({ note: i, velocity: 0 });
+      mobileNotes.push({
+        note: i,
+        velocity: 0,
+        position: { x: i, y: 0, z: 0 },
+        scale: { x: 1, y: 1, z: 1 },
+      });
     }
     setTimeout(() => {
       setInterval(
@@ -337,14 +355,15 @@
     }}
   >
     <Align>
-      {#each mobileNotes as note, index}
+      {#each mobileNotes as noteNumber, index}
         <InstancedMesh>
           <T.BoxGeometry />
           <T.MeshStandardMaterial shadow />
           {#if styles[styleIndex] == "Cube"}
             <Cube
-              x={index - 2}
-              velocity={note.velocity}
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
               attack={$Settings.attack}
               release={$Settings.release}
               keyColour={$Settings.colours.key}
@@ -352,8 +371,9 @@
             />
           {:else}
             <Mirror
-              x={index - 2}
-              velocity={note.velocity}
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
               attack={$Settings.attack}
               release={$Settings.release}
               keyColour={$Settings.colours.key}
