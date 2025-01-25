@@ -18,6 +18,7 @@
 
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
+  import Piano from "./instances/Piano.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -25,11 +26,24 @@
     `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
   );
 
-  type MIDIMessage = { note: number; velocity: number };
+  type MIDIMessage = {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
-  const styles = ["Cube", "Mirror"];
+  const styles = ["Piano", "Cube", "Mirror"];
 
   let styleIndex = $state(0);
 
@@ -42,6 +56,20 @@
   });
 
   onDestroy(unsubscribe);
+
+  function styleBack() {
+    styleIndex > 0 ? styleIndex-- : (styleIndex = styles.length - 1);
+    $Settings.styleReset = true;
+    $Settings.scene = styles[styleIndex];
+  }
+
+  function styleNext() {
+    styleIndex >= 0 && styleIndex < styles.length - 1
+      ? styleIndex++
+      : (styleIndex = 0);
+    $Settings.styleReset = true;
+    $Settings.scene = styles[styleIndex];
+  }
 
   function setupScene(choice: string) {
     $Settings.scene = choice;
@@ -148,7 +176,7 @@
 </Billboard>
 <Align y={false} auto precise>
   <!-- Show sample of styles -->
-  {#each midiMessages as note, index}
+  {#each midiMessages as noteNumber, index}
     <T.Group
       position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnterStyle}
@@ -159,19 +187,31 @@
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow />
 
-        {#if styles[styleIndex] == "Cube"}
+        {#if styles[styleIndex] === "Cube"}
           <Cube
-            x={index - 2}
-            velocity={note.velocity}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
             attack={$Settings.attack}
             release={$Settings.release}
             keyColour={highlighted}
             expressionColour={$Settings.colours.expression}
           />
+        {:else if styles[styleIndex] === "Piano"}
+          <Piano
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
+            attack={$hovering ? 250 : $Settings.attack}
+            release={$hovering ? 250 : $Settings.release}
+            keyColour={highlighted}
+            expressionColour={$Settings.colours.expression}
+          />
         {:else}
           <Mirror
-            x={index - 2}
-            velocity={note.velocity}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
             attack={$Settings.attack}
             release={$Settings.release}
             keyColour={highlighted}
@@ -204,7 +244,7 @@
     rotation.z={-Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
-    onclick={() => (styleIndex === 0 ? styleIndex++ : (styleIndex = 0))}
+    onclick={() => styleNext()}
   >
     <T.ConeGeometry />
     <T.MeshBasicMaterial color={"orange"} shadow />
@@ -215,7 +255,7 @@
     rotation.z={Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
-    onclick={() => (styleIndex === 1 ? styleIndex-- : (styleIndex = 1))}
+    onclick={() => styleBack()}
   >
     <T.ConeGeometry />
     <T.MeshBasicMaterial color={"orange"} shadow />

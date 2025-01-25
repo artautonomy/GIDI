@@ -20,32 +20,127 @@
   let inputs = [];
 
   $effect(() => {
-    if ($Settings.reset) {
+    if ($Settings.remap) {
       notes = [];
       MIDI.set(notes);
-      $Settings.reset = false;
+      $Settings.remap = false;
+    }
+
+    if ($Settings.styleReset) {
+      if ($Settings.scene !== "Piano") {
+        notes = notes.map((key, index) => {
+          return {
+            note: key.note,
+            velocity: key.velocity,
+            position: {
+              x: index,
+              y: 0,
+              z: 0,
+            },
+            scale: { x: 1, y: 1, z: 1 },
+          };
+        });
+      } else {
+        const offset = notes[0].note;
+
+        const keyboardNotes = [
+          "C",
+          "C#",
+          "D",
+          "D#",
+          "E",
+          "F",
+          "F#",
+          "G",
+          "G#",
+          "A",
+          "A#",
+          "B",
+        ];
+
+        const firstNoteName = keyboardNotes[offset % 12];
+
+        let whiteNote: {
+          note: number;
+          velocity: number;
+          position: {
+            x: number;
+            y: number;
+            z: number;
+          };
+          scale: {
+            x: number;
+            y: number;
+            z: number;
+          };
+        };
+
+        let offsetWhiteKeys = 0;
+
+        let offsetBlackKey = 0;
+        let whiteKeys = notes.filter((key) => key.scale.x === 1);
+        let blackKeys = notes.filter((key) => key.scale.x === 0.5);
+
+        whiteKeys = whiteKeys.map((key, index) => {
+          return {
+            note: key.note,
+            velocity: key.velocity,
+            position: {
+              x: index + offsetWhiteKeys,
+              y: key.position.y,
+              z: key.position.z,
+            },
+            scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+          };
+        });
+
+        blackKeys = blackKeys.map((key, index) => {
+          //if first note white
+          if (!firstNoteName.includes("#")) {
+            whiteNote = whiteKeys.find(
+              (element) => element.note === key.note - 1
+            );
+
+            offsetBlackKey = whiteNote.position.x + 0.5;
+          } else {
+            if (index === 0) {
+              offsetBlackKey = 0.5;
+            } else {
+              whiteNote = whiteKeys.find(
+                (element) => element.note === key.note - 1
+              );
+
+              offsetBlackKey = whiteNote.position.x + 0.5;
+            }
+          }
+
+          return {
+            note: key.note,
+            velocity: key.velocity,
+            position: {
+              x: offsetBlackKey,
+              y: key.position.y,
+              z: key.position.z,
+            },
+            scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+          };
+        });
+
+        notes = [...whiteKeys, ...blackKeys];
+
+        notes = notes.toSorted((a, b) => a.note - b.note);
+      }
+      $Settings.styleReset = false;
     }
   });
   const handleMIDIMessage = (message: MIDIMessageEvent) => {
     if (message.data) {
       const note = message.data[1];
       const velocity = message.data[2];
+
       // Check if the note already exists in the notes array
       const noteExists = notes.some((key) => key.note === note);
-      const keyboardNotes = [
-        "C",
-        "C#",
-        "D",
-        "D#",
-        "E",
-        "F",
-        "F#",
-        "G",
-        "G#",
-        "A",
-        "A#",
-        "B",
-      ];
+
       //console.log(keyboardNotes[note % 12]);
       if (!noteExists) {
         if ($Settings.scene !== "Piano") {

@@ -143,13 +143,14 @@
     <button
       id="remap"
       onclick={() => {
-        $Settings.reset = true;
+        $Settings.remap = true;
       }}>Remap</button
     >
   {:else if setting === "scene"}
     <h1>Style</h1>
     <select name="styles" id="styles" bind:value={$Settings.scene}>
       <option value="Cube">Cube</option>
+      <option value="Piano">Piano</option>
       <option value="Mirror">Mirror</option>
     </select>
     <label for="Background Colour">Background Colour</label>
