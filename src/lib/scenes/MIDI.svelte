@@ -16,11 +16,43 @@
     };
   }[] = $state([]);
 
+  let pianoNotes: {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  }[] = $state([]);
+
+  let padNotes: {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  }[] = $state([]);
+
   let midiAccess;
   let inputs = [];
 
   $effect(() => {
     if ($Settings.remap) {
+      pianoNotes = [];
+      padNotes = [];
       notes = [];
       MIDI.set(notes);
       $Settings.remap = false;
@@ -28,108 +60,24 @@
 
     if ($Settings.styleReset) {
       if ($Settings.scene !== "Piano") {
-        notes = notes.map((key, index) => {
-          return {
-            note: key.note,
-            velocity: key.velocity,
-            position: {
-              x: index,
-              y: 0,
-              z: 0,
+        if (padNotes.length < 1) {
+          padNotes = [
+            ...padNotes,
+            {
+              note: notes[0].note,
+              velocity: notes[0].velocity,
+              position: { x: padNotes.length, y: 0, z: 0 },
+              scale: { x: 1, y: 1, z: 1 },
             },
-            scale: { x: 1, y: 1, z: 1 },
-          };
-        });
+          ];
+        }
+        notes = padNotes;
       } else {
-        const offset = notes[0].note;
-
-        const keyboardNotes = [
-          "C",
-          "C#",
-          "D",
-          "D#",
-          "E",
-          "F",
-          "F#",
-          "G",
-          "G#",
-          "A",
-          "A#",
-          "B",
-        ];
-
-        const firstNoteName = keyboardNotes[offset % 12];
-
-        let whiteNote: {
-          note: number;
-          velocity: number;
-          position: {
-            x: number;
-            y: number;
-            z: number;
-          };
-          scale: {
-            x: number;
-            y: number;
-            z: number;
-          };
-        };
-
-        let offsetWhiteKeys = 0;
-
-        let offsetBlackKey = 0;
-        let whiteKeys = notes.filter((key) => key.scale.x === 1);
-        let blackKeys = notes.filter((key) => key.scale.x === 0.5);
-
-        whiteKeys = whiteKeys.map((key, index) => {
-          return {
-            note: key.note,
-            velocity: key.velocity,
-            position: {
-              x: index + offsetWhiteKeys,
-              y: key.position.y,
-              z: key.position.z,
-            },
-            scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
-          };
-        });
-
-        blackKeys = blackKeys.map((key, index) => {
-          //if first note white
-          if (!firstNoteName.includes("#")) {
-            whiteNote = whiteKeys.find(
-              (element) => element.note === key.note - 1
-            );
-
-            offsetBlackKey = whiteNote.position.x + 0.5;
-          } else {
-            if (index === 0) {
-              offsetBlackKey = 0.5;
-            } else {
-              whiteNote = whiteKeys.find(
-                (element) => element.note === key.note - 1
-              );
-
-              offsetBlackKey = whiteNote.position.x + 0.5;
-            }
-          }
-
-          return {
-            note: key.note,
-            velocity: key.velocity,
-            position: {
-              x: offsetBlackKey,
-              y: key.position.y,
-              z: key.position.z,
-            },
-            scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
-          };
-        });
-
-        notes = [...whiteKeys, ...blackKeys];
-
-        notes = notes.toSorted((a, b) => a.note - b.note);
+        notes = pianoNotes;
       }
+
+      MIDI.set(notes);
+
       $Settings.styleReset = false;
     }
   });
@@ -137,20 +85,24 @@
     if (message.data) {
       const note = message.data[1];
       const velocity = message.data[2];
+      let noteExists;
+
+      if ($Settings.scene !== "Piano") {
+        noteExists = padNotes.some((key) => key.note === note);
+      } else {
+        noteExists = pianoNotes.some((key) => key.note === note);
+      }
 
       // Check if the note already exists in the notes array
-      const noteExists = notes.some((key) => key.note === note);
-
-      //console.log(keyboardNotes[note % 12]);
       if (!noteExists) {
         if ($Settings.scene !== "Piano") {
           // If note does not exist, add it to the notes array
-          notes = [
-            ...notes,
+          padNotes = [
+            ...padNotes,
             {
               note,
               velocity,
-              position: { x: notes.length, y: 0, z: 0 },
+              position: { x: padNotes.length, y: 0, z: 0 },
               scale: { x: 1, y: 1, z: 1 },
             },
           ];
@@ -178,10 +130,10 @@
           ];
 
           //if first note
-          if (notes.length < 1) {
+          if (pianoNotes.length < 1) {
             const noteName = keyboardNotes[note % 12];
 
-            const noteFound = notes.some((item) => item.note === note);
+            const noteFound = pianoNotes.some((item) => item.note === note);
 
             if (!noteFound) {
               if (noteName.includes("#")) {
@@ -192,19 +144,19 @@
                 scaleZ = 2;
               } else {
                 positionY = 0;
-                positionZ = 0;
+                positionZ = -1;
                 scaleX = 1;
                 scaleY = 1;
                 scaleZ = 3;
               }
-              //map notes missed
-              notes = [
-                ...notes,
+              //map pianoNotes missed
+              pianoNotes = [
+                ...pianoNotes,
                 {
                   note: note,
                   velocity: 0,
                   position: {
-                    x: notes.length,
+                    x: pianoNotes.length,
                     y: positionY,
                     z: 0,
                   },
@@ -213,14 +165,15 @@
               ];
             }
           } else {
-            const offset = notes[0].note < note ? notes[0].note : note;
+            const offset =
+              pianoNotes[0].note < note ? pianoNotes[0].note : note;
 
             const endNoteIndex =
-              notes[notes.length - 1].note > note
-                ? notes[notes.length - 1].note - offset
+              pianoNotes[pianoNotes.length - 1].note > note
+                ? pianoNotes[pianoNotes.length - 1].note - offset
                 : note - offset;
 
-            notes = [];
+            pianoNotes = [];
 
             const firstNoteName = keyboardNotes[offset % 12];
 
@@ -249,21 +202,21 @@
 
               if (noteName.includes("#")) {
                 positionY = 0.75;
-                positionZ = -0.5;
+                positionZ = -1.5;
                 scaleX = 0.5;
                 scaleY = 0.5;
                 scaleZ = 2;
               } else {
                 positionY = 0;
-                positionZ = 0;
+                positionZ = -1;
                 scaleX = 1;
                 scaleY = 1;
                 scaleZ = 3;
               }
 
-              //map notes missed
-              notes = [
-                ...notes,
+              //map pianoNotes missed
+              pianoNotes = [
+                ...pianoNotes,
                 {
                   note: index + offset,
                   velocity: 0,
@@ -281,8 +234,8 @@
               offsetWhiteKeys = 1;
             }
 
-            let whiteKeys = notes.filter((key) => key.scale.x === 1);
-            let blackKeys = notes.filter((key) => key.scale.x === 0.5);
+            let whiteKeys = pianoNotes.filter((key) => key.scale.x === 1);
+            let blackKeys = pianoNotes.filter((key) => key.scale.x === 0.5);
 
             whiteKeys = whiteKeys.map((key, index) => {
               return {
@@ -329,28 +282,52 @@
               };
             });
 
-            notes = [...whiteKeys, ...blackKeys];
+            pianoNotes = [...whiteKeys, ...blackKeys];
 
-            notes = notes.toSorted((a, b) => a.note - b.note);
+            pianoNotes = pianoNotes.toSorted((a, b) => a.note - b.note);
           }
         }
       } else {
-        // If note exists, update the velocity
-        notes = notes.map((key) => {
-          if (key.note === note) {
-            return {
-              note,
-              velocity,
-              position: {
-                x: key.position.x,
-                y: key.position.y,
-                z: key.position.z,
-              },
-              scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
-            };
-          }
-          return key;
-        });
+        if ($Settings.scene !== "Piano") {
+          padNotes = padNotes.map((key) => {
+            if (key.note === note) {
+              return {
+                note,
+                velocity,
+                position: {
+                  x: key.position.x,
+                  y: key.position.y,
+                  z: key.position.z,
+                },
+                scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+              };
+            }
+            return key;
+          });
+        } else {
+          // If note exists, update the velocity
+          pianoNotes = pianoNotes.map((key) => {
+            if (key.note === note) {
+              return {
+                note,
+                velocity,
+                position: {
+                  x: key.position.x,
+                  y: key.position.y,
+                  z: key.position.z,
+                },
+                scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+              };
+            }
+            return key;
+          });
+        }
+      }
+
+      if ($Settings.scene !== "Piano") {
+        notes = padNotes;
+      } else {
+        notes = pianoNotes;
       }
 
       MIDI.set(notes);
@@ -371,5 +348,3 @@
     }
   });
 </script>
-
-<!-- <Ui keys={notes} on:remap={clearNotes} /> -->

@@ -48,7 +48,7 @@
 
   $effect(() => {
     if (velocity > 0) {
-      bottomY.set(1 + velocity / 63, {
+      bottomY.set(position.y + velocity / 63, {
         duration: attack,
         easing: cubicOut,
       });
@@ -67,7 +67,7 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
     } else {
-      bottomY.set(1, {
+      bottomY.set(position.y, {
         duration: release,
         easing: cubicOut,
       });

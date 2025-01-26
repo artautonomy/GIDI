@@ -39,6 +39,9 @@
       .darken(0.1)
   );
 
+  function styleChange() {
+    $Settings.styleReset = true;
+  }
   $effect(() => {
     if ($Settings.edit) {
       menuOpacity.set(1, {
@@ -148,9 +151,14 @@
     >
   {:else if setting === "scene"}
     <h1>Style</h1>
-    <select name="styles" id="styles" bind:value={$Settings.scene}>
-      <option value="Cube">Cube</option>
+    <select
+      name="styles"
+      id="styles"
+      bind:value={$Settings.scene}
+      onchange={styleChange}
+    >
       <option value="Piano">Piano</option>
+      <option value="Cube">Cube</option>
       <option value="Mirror">Mirror</option>
     </select>
     <label for="Background Colour">Background Colour</label>

@@ -175,18 +175,17 @@
   />
 </Billboard>
 <Align y={false} auto precise>
-  <!-- Show sample of styles -->
-  {#each midiMessages as noteNumber, index}
-    <T.Group
-      position.y={-window.innerHeight / 200}
-      onpointerenter={onPointerEnterStyle}
-      onpointerleave={onPointerLeaveStyle}
-      onclick={() => setupScene(styles[styleIndex])}
-    >
+  <T.Group
+    position.y={-window.innerHeight / 200}
+    onpointerenter={onPointerEnterStyle}
+    onpointerleave={onPointerLeaveStyle}
+    onclick={() => setupScene(styles[styleIndex])}
+  >
+    <!-- Show sample of styles -->
+    {#each midiMessages as noteNumber}
       <InstancedMesh>
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow />
-
         {#if styles[styleIndex] === "Cube"}
           <Cube
             position={noteNumber.position}
@@ -219,23 +218,26 @@
           />
         {/if}
       </InstancedMesh>
-      <Text
-        font={$Settings.font}
-        fontSize={0.4}
-        outlineBlur={0.06}
-        text={styles[styleIndex]}
-        textAlign={"center"}
-        anchorX={"center"}
-        position.x={-0.5}
-        position.y={2.95}
-        position.z={3.9}
-        color={"white"}
-        onpointerenter={onPointerEnterStyle}
-        onpointerleave={onPointerLeaveStyle}
-        onclick={() => setupScene(styles[styleIndex])}
-      />
-    </T.Group>
-  {/each}
+    {/each}
+
+    <Text
+      font={$Settings.font}
+      fontSize={0.4}
+      outlineBlur={0.06}
+      text={styles[styleIndex] === "Piano"
+        ? styles[styleIndex] + "\n(Automap)"
+        : styles[styleIndex]}
+      textAlign={"center"}
+      anchorX={"center"}
+      position.x={-1}
+      position.y={1}
+      position.z={2}
+      color={"white"}
+      onpointerenter={onPointerEnterStyle}
+      onpointerleave={onPointerLeaveStyle}
+      onclick={() => setupScene(styles[styleIndex])}
+    />
+  </T.Group>
 </Align>
 <Billboard position.y={-window.innerHeight / 140}>
   <T.Mesh
