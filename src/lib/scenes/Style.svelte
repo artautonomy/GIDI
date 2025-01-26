@@ -219,30 +219,13 @@
         {/if}
       </InstancedMesh>
     {/each}
-
-    <Text
-      font={$Settings.font}
-      fontSize={0.4}
-      outlineBlur={0.06}
-      text={styles[styleIndex] === "Piano"
-        ? styles[styleIndex] + "\n(Automap)"
-        : styles[styleIndex]}
-      textAlign={"center"}
-      anchorX={"center"}
-      position.x={-1}
-      position.y={1}
-      position.z={2}
-      color={"white"}
-      onpointerenter={onPointerEnterStyle}
-      onpointerleave={onPointerLeaveStyle}
-      onclick={() => setupScene(styles[styleIndex])}
-    />
   </T.Group>
 </Align>
 <Billboard position.y={-window.innerHeight / 140}>
   <T.Mesh
     scale={0.75}
-    position.x={3}
+    position.x={7}
+    position.z={10}
     rotation.z={-Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
@@ -251,9 +234,42 @@
     <T.ConeGeometry />
     <T.MeshBasicMaterial color={"orange"} shadow />
   </T.Mesh>
+  <Text
+    font={$Settings.font}
+    fontSize={0.45}
+    outlineBlur={0.06}
+    text={styles[styleIndex]}
+    textAlign={"center"}
+    anchorX={"center"}
+    position.x={0}
+    position.y={0.5}
+    position.z={10}
+    color={"white"}
+    onpointerenter={onPointerEnterStyle}
+    onpointerleave={onPointerLeaveStyle}
+    onclick={() => setupScene(styles[styleIndex])}
+  />
+  <Text
+    font={$Settings.font}
+    fontSize={0.3}
+    outlineBlur={0.06}
+    text={styles[styleIndex] === "Piano"
+      ? "Recommended for keyboards and synthesizers. Automapping enabled."
+      : "Recommended for pads and samplers."}
+    textAlign={"center"}
+    anchorX={"center"}
+    position.x={0}
+    position.y={-0.25}
+    position.z={10}
+    color={"white"}
+    onpointerenter={onPointerEnterStyle}
+    onpointerleave={onPointerLeaveStyle}
+    onclick={() => setupScene(styles[styleIndex])}
+  />
   <T.Mesh
     scale={0.75}
-    position.x={-3}
+    position.x={-7}
+    position.z={10}
     rotation.z={Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}

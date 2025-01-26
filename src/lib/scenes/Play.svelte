@@ -46,6 +46,7 @@
 
   interactivity();
 
+  let zoom = 50;
   let menuOpened = $state(false);
 
   let selected = $state($Settings.colours.key);
@@ -73,7 +74,7 @@
     easing: cubicInOut,
   });
 
-  introZoom.target = 50;
+  introZoom.target = zoom;
 
   function openMenu() {
     $Settings.edit = true;
@@ -90,83 +91,6 @@
     setTimeout(() => {
       menuOpened = true;
     }, 2000);
-  }
-
-  function pianoNoteNumberPosition(noteNumber: number, index: number) {
-    type MIDIMessage = { note: number; velocity: number };
-
-    const keyboardNotes = [
-      "C",
-      "C#",
-      "D",
-      "D#",
-      "E",
-      "F",
-      "F#",
-      "G",
-      "G#",
-      "A",
-      "A#",
-      "B",
-    ];
-
-    const getSharpNotes = (notes: MIDIMessage[]) => {
-      return notes.filter((item: MIDIMessage) => {
-        const noteName = keyboardNotes[item.note % 12];
-        return noteName.includes("#");
-      });
-    };
-
-    const getNonSharpNotes = (notes: MIDIMessage[]) => {
-      return notes.filter((item: MIDIMessage) => {
-        const noteName = keyboardNotes[item.note % 12];
-        return !noteName.includes("#");
-      });
-    };
-
-    const nonSharpNotes = getNonSharpNotes(midiMessages);
-
-    const SharpNotes = getSharpNotes(midiMessages);
-
-    let positionX = nonSharpNotes.findIndex(
-      (note: MIDIMessage) => note.note == noteNumber
-    );
-
-    let positionY = 0;
-
-    let positionZ = -1.5;
-
-    let scaleX = 1;
-
-    let scaleY = 1;
-
-    let scaleZ = 3;
-
-    const noteName = keyboardNotes[noteNumber % 12];
-
-    if (noteName.includes("#")) {
-      positionX =
-        SharpNotes.findIndex((note: MIDIMessage) => note.note == noteNumber) +
-        0.5;
-
-      if (noteName == "F#" || noteName == "G#" || noteName == "A#") {
-        positionX =
-          SharpNotes.findIndex((note: MIDIMessage) => note.note == noteNumber) +
-          1;
-      }
-
-      positionY = 0.75;
-      positionZ = -2;
-
-      scaleX = 0.2;
-      scaleY = 0.5;
-      scaleZ = 2;
-    }
-
-    return {
-      position: { x: positionX, y: positionY, z: positionZ },
-      scale: { x: scaleX, y: scaleY, z: scaleZ },
-    };
   }
 
   $effect(() => {
@@ -209,12 +133,18 @@
 >
   <OrbitControls
     enableDamping
+    enableZoom={!$Settings.edit}
     autoRotateSpeed={$Settings.autoRotateSpeed}
     autoRotate={$Settings.autoRotate}
     enabled={$Settings.orbitControls}
     onstart={(e) => {
       hintArrow.target = 0.75;
       tips = "To edit the scene click here";
+    }}
+    onend={(e) => {
+      zoom = e.target.object.zoom;
+
+      console.log(zoom);
     }}
   ></OrbitControls>
 </T.OrthographicCamera>

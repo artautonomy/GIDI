@@ -41,9 +41,25 @@
 
   const positionY = new Tween(1);
   const scaleY = new Tween(1);
-  const r = new Tween(keyColour.r);
-  const g = new Tween(keyColour.g);
-  const b = new Tween(keyColour.b);
+  let r = $state();
+  let g = $state();
+  let b = $state();
+
+  if (scale.x === 0.5) {
+    if (keyColour.r + keyColour.g + keyColour.b > 200) {
+      r = new Tween(0);
+      g = new Tween(0);
+      b = new Tween(0);
+    } else {
+      r = new Tween(255);
+      g = new Tween(255);
+      b = new Tween(255);
+    }
+  } else {
+    r = new Tween(keyColour.r);
+    g = new Tween(keyColour.g);
+    b = new Tween(keyColour.b);
+  }
 
   $effect(() => {
     if (velocity > 0) {
@@ -70,9 +86,30 @@
         easing: cubicOut,
       });
 
-      r.set(keyColour.r, { duration: release });
-      g.set(keyColour.g, { duration: release });
-      b.set(keyColour.b, { duration: release });
+      r.set(
+        scale.x === 0.5
+          ? keyColour.r + keyColour.g + keyColour.b > 200
+            ? 0
+            : 255
+          : keyColour.r,
+        { duration: release }
+      );
+      g.set(
+        scale.x === 0.5
+          ? keyColour.r + keyColour.g + keyColour.b > 200
+            ? 0
+            : 255
+          : keyColour.g,
+        { duration: release }
+      );
+      b.set(
+        scale.x === 0.5
+          ? keyColour.r + keyColour.g + keyColour.b > 200
+            ? 0
+            : 255
+          : keyColour.b,
+        { duration: release }
+      );
     }
   });
 </script>

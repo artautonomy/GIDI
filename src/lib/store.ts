@@ -26,6 +26,7 @@ export let Settings = writable({
     remap: false,
     font: "/fonts/Oxanium-Regular.ttf",
     orbitControls: false,
+    zoom: true,
     autoRotate: true,
     autoRotateSpeed: 1.1,
     attack: 10,
