@@ -55,8 +55,8 @@ export let Settings = writable({
     },
     lighting: {
 
-        above: 0.5,
-        front: 2.5,
-        side: 0.5
+        above: 1,
+        front: 1,
+        side: 3
     }
 })
