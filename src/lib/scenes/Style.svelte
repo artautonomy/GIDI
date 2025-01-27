@@ -186,8 +186,8 @@
       <InstancedMesh>
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow />
-        {#if styles[styleIndex] === "Cube"}
-          <Cube
+        {#if styles[styleIndex] === "Piano"}
+          <Piano
             position={noteNumber.position}
             scale={noteNumber.scale}
             velocity={noteNumber.velocity}
@@ -196,8 +196,8 @@
             keyColour={highlighted}
             expressionColour={$Settings.colours.expression}
           />
-        {:else if styles[styleIndex] === "Piano"}
-          <Piano
+        {:else if styles[styleIndex] === "Cube"}
+          <Cube
             position={noteNumber.position}
             scale={noteNumber.scale}
             velocity={noteNumber.velocity}

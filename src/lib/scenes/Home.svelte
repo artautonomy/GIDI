@@ -15,6 +15,7 @@
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
+  import Piano from "./instances/Piano.svelte";
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
 
@@ -27,6 +28,36 @@
   interactivity();
 
   let mobileNotes: {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  }[] = $state([]);
+
+  let padNotes: {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  }[] = $state([]);
+
+  let pianoNotes: {
     note: number;
     velocity: number;
     position: {
@@ -64,7 +95,7 @@
     easing: cubicInOut,
   });
 
-  const styles = ["Cube", "Mirror"];
+  const styles = ["Piano", "Cube", "Mirror"];
 
   let styleIndex = $state(0);
 
@@ -101,6 +132,43 @@
   }
   //if Mobile created sample MIDI
   else {
+    let positionX = 0;
+    let positionY = 0;
+    let positionZ = 0;
+    let scaleX = 1;
+    let scaleY = 1;
+    let scaleZ = 1;
+
+    let whiteNote: {
+      note: number;
+      velocity: number;
+      position: {
+        x: number;
+        y: number;
+        z: number;
+      };
+      scale: {
+        x: number;
+        y: number;
+        z: number;
+      };
+    };
+
+    const keyboardNotes = [
+      "C",
+      "C#",
+      "D",
+      "D#",
+      "E",
+      "F",
+      "F#",
+      "G",
+      "G#",
+      "A",
+      "A#",
+      "B",
+    ];
+
     introZoom.set(35, {
       delay: 200,
       duration: 1000,
@@ -113,15 +181,76 @@
 
     $Settings.attack = 75;
     $Settings.release = 1000;
-
-    for (let i = 0; i < 5; i++) {
-      mobileNotes.push({
+    for (let i = 0; i < 7; i++) {
+      padNotes.push({
         note: i,
         velocity: 0,
         position: { x: i, y: 0, z: 0 },
         scale: { x: 1, y: 1, z: 1 },
       });
     }
+    for (let i = 0; i < 12; i++) {
+      const noteName = keyboardNotes[i % 12];
+
+      if (noteName.includes("#")) {
+        positionY = 0.75;
+        positionZ = -1.5;
+        scaleX = 0.5;
+        scaleY = 0.5;
+        scaleZ = 2;
+      } else {
+        positionY = 0;
+        positionZ = -1;
+        scaleX = 1;
+        scaleY = 1;
+        scaleZ = 3;
+      }
+
+      pianoNotes.push({
+        note: i,
+        velocity: 0,
+        position: { x: i, y: positionY, z: positionZ },
+        scale: { x: scaleX, y: scaleY, z: scaleZ },
+      });
+    }
+    let whiteKeys = pianoNotes.filter((key) => key.scale.x === 1);
+    let blackKeys = pianoNotes.filter((key) => key.scale.x === 0.5);
+
+    whiteKeys = whiteKeys.map((key, index) => {
+      return {
+        note: key.note,
+        velocity: key.velocity,
+        position: {
+          x: index,
+          y: key.position.y,
+          z: key.position.z,
+        },
+        scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+      };
+    });
+
+    blackKeys = blackKeys.map((key, index) => {
+      //if first note white
+      whiteNote = whiteKeys.find((element) => element.note === key.note - 1);
+
+      return {
+        note: key.note,
+        velocity: key.velocity,
+        position: {
+          x: whiteNote.position.x + 0.5,
+          y: key.position.y,
+          z: key.position.z,
+        },
+        scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+      };
+    });
+
+    pianoNotes = [...whiteKeys, ...blackKeys];
+
+    pianoNotes = pianoNotes.toSorted((a, b) => a.note - b.note);
+
+    mobileNotes = pianoNotes;
+
     setTimeout(() => {
       setInterval(
         () => {
@@ -158,6 +287,31 @@
       }, 1000);
     }, 2000);
   }
+
+  function styleBack() {
+    styleIndex > 0 ? styleIndex-- : (styleIndex = styles.length - 1);
+
+    if (styles[styleIndex] === "Piano") {
+      mobileNotes = pianoNotes;
+    } else {
+      mobileNotes = padNotes;
+    }
+
+    $Settings.styleReset = true;
+  }
+
+  function styleNext() {
+    styleIndex >= 0 && styleIndex < styles.length - 1
+      ? styleIndex++
+      : (styleIndex = 0);
+
+    if (styles[styleIndex] === "Piano") {
+      mobileNotes = pianoNotes;
+    } else {
+      mobileNotes = padNotes;
+    }
+    $Settings.styleReset = true;
+  }
 </script>
 
 <T.OrthographicCamera
@@ -174,7 +328,7 @@
     enablePan={false}
     enableZoom={false}
     rotateSpeed={2}
-    maxPolarAngle={Math.PI / 1.7}
+    maxPolarAngle={Math.PI / 2.15}
     minPolarAngle={Math.PI / 4}
     onstart={(e) => {
       hintArrow.target = 0.75;
@@ -359,7 +513,17 @@
         <InstancedMesh>
           <T.BoxGeometry />
           <T.MeshStandardMaterial shadow />
-          {#if styles[styleIndex] == "Cube"}
+          {#if styles[styleIndex] == "Piano"}
+            <Piano
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.attack}
+              release={$Settings.release}
+              keyColour={$Settings.colours.key}
+              expressionColour={$Settings.colours.expression}
+            />
+          {:else if styles[styleIndex] === "Cube"}
             <Cube
               position={noteNumber.position}
               scale={noteNumber.scale}
@@ -385,8 +549,12 @@
     </Align>
   </T.Group>
   {#if !cubeClicked}
-    <Billboard position.y={-window.innerHeight / 100}>
-      <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 550}>
+    <Billboard position.y={-window.innerHeight / 80}>
+      <T.Mesh
+        scale={hintArrow.current}
+        position.y={window.innerHeight / 550}
+        position.z={7}
+      >
         <T.ConeGeometry />
         <T.MeshBasicMaterial
           color={"orange"}
@@ -403,29 +571,66 @@
         textAlign={"center"}
         anchorX={"center"}
         position.y={window.innerHeight / 1250}
+        position.z={7}
       />
     </Billboard>
   {/if}
-  <Billboard position.y={-window.innerHeight / 100}>
+  <Billboard position.y={-window.innerHeight / 90}>
     <T.Mesh
       receiveShadow
       scale={navigationArrows.current}
-      position.x={3}
+      position.x={4.5}
       rotation.z={-Math.PI / 2}
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
-      onclick={() => (styleIndex === 0 ? styleIndex++ : (styleIndex = 0))}
+      onclick={() => styleNext()}
     >
       <T.ConeGeometry />
       <T.MeshBasicMaterial color={"orange"} shadow />
     </T.Mesh>
+    <T.Mesh scale={navigationArrows.current}>
+      <Text
+        font={$Settings.font}
+        fontSize={0.6}
+        outlineBlur={0.06}
+        text={styles[styleIndex]}
+        textAlign={"center"}
+        anchorX={"center"}
+        position.x={0}
+        position.y={0.5}
+        position.z={7}
+        color={"white"}
+        }
+      />
+      <Text
+        font={$Settings.font}
+        fontSize={0.4}
+        outlineBlur={0.06}
+        text={styles[styleIndex] === "Piano"
+          ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
+          : "Recommended for pads and samplers."}
+        textAlign={"center"}
+        anchorX={"center"}
+        position.x={0}
+        position.y={-0.25}
+        position.z={7}
+        color={"white"}
+        }
+      />
+      <T.MeshBasicMaterial
+        color={"orange"}
+        transparent={true}
+        opacity={hintText.current}
+      />
+    </T.Mesh>
+
     <T.Mesh
       scale={navigationArrows.current}
-      position.x={-3}
+      position.x={-4.5}
       rotation.z={Math.PI / 2}
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
-      onclick={() => (styleIndex === 1 ? styleIndex-- : (styleIndex = 1))}
+      onclick={() => styleBack()}
     >
       <T.ConeGeometry />
       <T.MeshBasicMaterial color={"orange"} shadow />
