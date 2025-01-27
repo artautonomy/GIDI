@@ -2,15 +2,17 @@ import { writable } from "svelte/store";
 export let MIDI = writable([]);
 export let Settings = writable({
     page: 'home',
-    scene: 'Cube',
+    scene: 'Piano',
     edit: false,
-    reset: false,
+    styleReset: false,
+    remap: false,
     font: "/fonts/Oxanium-Regular.ttf",
     orbitControls: false,
+    zoom: true,
     autoRotate: true,
-    autoRotateSpeed: 2,
-    attack: 20,
-    release: 750,
+    autoRotateSpeed: 1.1,
+    attack: 10,
+    release: 500,
     colours: {
         background: {
             r: 4,
@@ -18,19 +20,19 @@ export let Settings = writable({
             b: 25
         },
         key: {
-            r: 222,
-            g: 177,
-            b: 22
+            r: 192,
+            g: 147,
+            b: 0
         },
         expression: {
-            r: 222,
-            g: 66,
-            b: 11
+            r: 202,
+            g: 44,
+            b: 0
         },
     },
     lighting: {
-        above: 0.5,
-        front: 2.5,
-        side: 0.5
+        above: 1,
+        front: 1,
+        side: 3
     }
 });

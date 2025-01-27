@@ -4,7 +4,16 @@
   import { Tween } from "svelte/motion";
 
   interface Props {
-    x: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
     velocity: number;
     attack: number;
     release: number;
@@ -20,19 +29,26 @@
     };
   }
 
-  let { x, velocity, attack, release, keyColour, expressionColour }: Props =
-    $props();
+  let {
+    position,
+    scale,
+    velocity,
+    attack,
+    release,
+    keyColour,
+    expressionColour,
+  }: Props = $props();
 
   const bottomY = new Tween(1);
   const topY = new Tween(6);
-  const scale = new Tween(1);
+  const scaleY = new Tween(1);
   const r = new Tween(keyColour.r);
   const g = new Tween(keyColour.g);
   const b = new Tween(keyColour.b);
 
   $effect(() => {
     if (velocity > 0) {
-      bottomY.set(1 + velocity / 63, {
+      bottomY.set(position.y + velocity / 63, {
         duration: attack,
         easing: cubicOut,
       });
@@ -42,7 +58,7 @@
         easing: cubicOut,
       });
 
-      scale.set(1 + (velocity / 63) * 2, {
+      scaleY.set(1 + (velocity / 63) * 2, {
         duration: attack,
         easing: cubicOut,
       });
@@ -51,7 +67,7 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
     } else {
-      bottomY.set(1, {
+      bottomY.set(position.y, {
         duration: release,
         easing: cubicOut,
       });
@@ -59,7 +75,7 @@
         duration: release,
         easing: cubicOut,
       });
-      scale.set(1, {
+      scaleY.set(1, {
         duration: release,
         easing: cubicOut,
       });
@@ -73,18 +89,18 @@
 
 <Instance
   receiveShadow
-  position.x={x}
+  position.x={position.x}
   position.y={topY.current}
-  position.z={0}
-  scale.y={scale.current}
+  position.z={position.z}
+  scale.y={scaleY.current}
   color={`rgb(${Math.floor(r.current)},${Math.floor(g.current)},${Math.floor(b.current)})`}
 />
 
 <Instance
   receiveShadow
-  position.x={x}
+  position.x={position.x}
   position.y={bottomY.current}
-  position.z={0}
-  scale.y={scale.current}
+  position.z={position.z}
+  scale.y={scaleY.current}
   color={`rgb(${Math.floor(r.current)},${Math.floor(g.current)},${Math.floor(b.current)})`}
 />

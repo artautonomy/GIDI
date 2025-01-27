@@ -15,11 +15,25 @@
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Cube from "./instances/Cube.svelte";
+  import Piano from "./instances/Piano.svelte";
   import Mirror from "./instances/Mirror.svelte";
 
   const { scene } = $state(useThrelte());
 
-  type MIDIMessage = { note: number; velocity: number };
+  type MIDIMessage = {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
@@ -32,6 +46,7 @@
 
   interactivity();
 
+  let zoom = 50;
   let menuOpened = $state(false);
 
   let selected = $state($Settings.colours.key);
@@ -59,7 +74,7 @@
     easing: cubicInOut,
   });
 
-  introZoom.target = 50;
+  introZoom.target = zoom;
 
   function openMenu() {
     $Settings.edit = true;
@@ -77,6 +92,7 @@
       menuOpened = true;
     }, 2000);
   }
+
   $effect(() => {
     if (!$Settings.edit) {
       introZoom.set(50, {
@@ -117,12 +133,18 @@
 >
   <OrbitControls
     enableDamping
+    enableZoom={!$Settings.edit}
     autoRotateSpeed={$Settings.autoRotateSpeed}
     autoRotate={$Settings.autoRotate}
     enabled={$Settings.orbitControls}
     onstart={(e) => {
       hintArrow.target = 0.75;
       tips = "To edit the scene click here";
+    }}
+    onend={(e) => {
+      zoom = e.target.object.zoom;
+
+      console.log(zoom);
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -147,15 +169,11 @@
   intensity={$Settings.lighting.side}
   position={[-5, 0, 0]}
 />
-<T.AmbientLight
-  castShadow
-  intensity={$Settings.lighting.above}
-  position={[0, 15, 0]}
-/>
+<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Align y={false} auto precise>
   <!-- Show sample of styles -->
-  {#each midiMessages as note, index}
+  {#each midiMessages as noteNumber, index}
     <T.Group
       position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnter}
@@ -167,17 +185,29 @@
         <T.MeshStandardMaterial shadow />
         {#if $Settings.scene == "Cube"}
           <Cube
-            x={index}
-            velocity={note.velocity}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
             attack={$hovering ? 250 : $Settings.attack}
             release={$hovering ? 250 : $Settings.release}
             keyColour={selected}
             expressionColour={$Settings.colours.expression}
           />
-        {:else}
+        {:else if $Settings.scene == "Piano"}
+          <Piano
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
+            attack={$hovering ? 250 : $Settings.attack}
+            release={$hovering ? 250 : $Settings.release}
+            keyColour={selected}
+            expressionColour={$Settings.colours.expression}
+          />
+        {:else if $Settings.scene == "Mirror"}
           <Mirror
-            x={index}
-            velocity={note.velocity}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
             attack={$hovering ? 250 : $Settings.attack}
             release={$hovering ? 250 : $Settings.release}
             keyColour={selected}

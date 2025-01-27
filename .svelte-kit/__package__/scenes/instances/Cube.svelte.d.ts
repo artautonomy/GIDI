@@ -1,5 +1,14 @@
 interface Props {
-    x: number;
+    position: {
+        x: number;
+        y: number;
+        z: number;
+    };
+    scale: {
+        x: number;
+        y: number;
+        z: number;
+    };
     velocity: number;
     attack: number;
     release: number;

@@ -18,6 +18,7 @@
 
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
+  import Piano from "./instances/Piano.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -25,11 +26,24 @@
     `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
   );
 
-  type MIDIMessage = { note: number; velocity: number };
+  type MIDIMessage = {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
-  const styles = ["Cube", "Mirror"];
+  const styles = ["Piano", "Cube", "Mirror"];
 
   let styleIndex = $state(0);
 
@@ -42,6 +56,20 @@
   });
 
   onDestroy(unsubscribe);
+
+  function styleBack() {
+    styleIndex > 0 ? styleIndex-- : (styleIndex = styles.length - 1);
+    $Settings.styleReset = true;
+    $Settings.scene = styles[styleIndex];
+  }
+
+  function styleNext() {
+    styleIndex >= 0 && styleIndex < styles.length - 1
+      ? styleIndex++
+      : (styleIndex = 0);
+    $Settings.styleReset = true;
+    $Settings.scene = styles[styleIndex];
+  }
 
   function setupScene(choice: string) {
     $Settings.scene = choice;
@@ -123,11 +151,7 @@
   intensity={$Settings.lighting.side}
   position={[-5, 0, 0]}
 />
-<T.AmbientLight
-  castShadow
-  intensity={$Settings.lighting.above}
-  position={[0, 15, 0]}
-/>
+<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Billboard position.y={7}>
   <Text
@@ -151,31 +175,42 @@
   />
 </Billboard>
 <Align y={false} auto precise>
-  <!-- Show sample of styles -->
-  {#each midiMessages as note, index}
-    <T.Group
-      position.y={-window.innerHeight / 200}
-      onpointerenter={onPointerEnterStyle}
-      onpointerleave={onPointerLeaveStyle}
-      onclick={() => setupScene(styles[styleIndex])}
-    >
+  <T.Group
+    position.y={-window.innerHeight / 200}
+    onpointerenter={onPointerEnterStyle}
+    onpointerleave={onPointerLeaveStyle}
+    onclick={() => setupScene(styles[styleIndex])}
+  >
+    <!-- Show sample of styles -->
+    {#each midiMessages as noteNumber}
       <InstancedMesh>
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow />
-
-        {#if styles[styleIndex] == "Cube"}
-          <Cube
-            x={index - 2}
-            velocity={note.velocity}
+        {#if styles[styleIndex] === "Piano"}
+          <Piano
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
             attack={$Settings.attack}
             release={$Settings.release}
             keyColour={highlighted}
             expressionColour={$Settings.colours.expression}
           />
+        {:else if styles[styleIndex] === "Cube"}
+          <Cube
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
+            attack={$hovering ? 250 : $Settings.attack}
+            release={$hovering ? 250 : $Settings.release}
+            keyColour={highlighted}
+            expressionColour={$Settings.colours.expression}
+          />
         {:else}
           <Mirror
-            x={index - 2}
-            velocity={note.velocity}
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
             attack={$Settings.attack}
             release={$Settings.release}
             keyColour={highlighted}
@@ -183,43 +218,62 @@
           />
         {/if}
       </InstancedMesh>
-      <Text
-        font={$Settings.font}
-        fontSize={0.4}
-        outlineBlur={0.06}
-        text={styles[styleIndex]}
-        textAlign={"center"}
-        anchorX={"center"}
-        position.x={-0.5}
-        position.y={2.95}
-        position.z={3.9}
-        color={"white"}
-        onpointerenter={onPointerEnterStyle}
-        onpointerleave={onPointerLeaveStyle}
-        onclick={() => setupScene(styles[styleIndex])}
-      />
-    </T.Group>
-  {/each}
+    {/each}
+  </T.Group>
 </Align>
 <Billboard position.y={-window.innerHeight / 140}>
   <T.Mesh
     scale={0.75}
-    position.x={3}
+    position.x={7}
+    position.z={10}
     rotation.z={-Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
-    onclick={() => (styleIndex === 0 ? styleIndex++ : (styleIndex = 0))}
+    onclick={() => styleNext()}
   >
     <T.ConeGeometry />
     <T.MeshBasicMaterial color={"orange"} shadow />
   </T.Mesh>
+  <Text
+    font={$Settings.font}
+    fontSize={0.45}
+    outlineBlur={0.06}
+    text={styles[styleIndex]}
+    textAlign={"center"}
+    anchorX={"center"}
+    position.x={0}
+    position.y={0.5}
+    position.z={10}
+    color={"white"}
+    onpointerenter={onPointerEnterStyle}
+    onpointerleave={onPointerLeaveStyle}
+    onclick={() => setupScene(styles[styleIndex])}
+  />
+  <Text
+    font={$Settings.font}
+    fontSize={0.3}
+    outlineBlur={0.06}
+    text={styles[styleIndex] === "Piano"
+      ? "Recommended for keyboards and synthesizers. Automapping enabled."
+      : "Recommended for pads and samplers."}
+    textAlign={"center"}
+    anchorX={"center"}
+    position.x={0}
+    position.y={-0.25}
+    position.z={10}
+    color={"white"}
+    onpointerenter={onPointerEnterStyle}
+    onpointerleave={onPointerLeaveStyle}
+    onclick={() => setupScene(styles[styleIndex])}
+  />
   <T.Mesh
     scale={0.75}
-    position.x={-3}
+    position.x={-7}
+    position.z={10}
     rotation.z={Math.PI / 2}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
-    onclick={() => (styleIndex === 1 ? styleIndex-- : (styleIndex = 1))}
+    onclick={() => styleBack()}
   >
     <T.ConeGeometry />
     <T.MeshBasicMaterial color={"orange"} shadow />

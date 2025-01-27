@@ -27,21 +27,6 @@
 
   interactivity();
 
-  let mobileNotes: {
-    note: number;
-    velocity: number;
-    position: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    scale: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  }[] = $state([]);
-
   let padNotes: {
     note: number;
     velocity: number;
@@ -55,9 +40,24 @@
       y: number;
       z: number;
     };
-  }[] = $state([]);
+  }[] = [];
 
   let pianoNotes: {
+    note: number;
+    velocity: number;
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    scale: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  }[] = [];
+
+  let mobileNotes: {
     note: number;
     velocity: number;
     position: {
@@ -100,6 +100,10 @@
   let styleIndex = $state(0);
 
   let notesIndex = $state(0);
+
+  let noteCount = $state(12);
+
+  let randomMIDINotes: ReturnType<typeof setTimeout>;
 
   const notesColours = [
     { key: { r: 141, g: 154, b: 203 }, expression: { r: 254, g: 228, b: 129 } },
@@ -177,8 +181,6 @@
 
     mobile = true;
 
-    let oldIndex: number;
-
     $Settings.attack = 75;
     $Settings.release = 1000;
     for (let i = 0; i < 7; i++) {
@@ -251,13 +253,13 @@
 
     mobileNotes = pianoNotes;
 
-    setTimeout(() => {
+    randomMIDINotes = setTimeout((oldIndex: number) => {
       setInterval(
         () => {
-          let index = Math.floor(Math.random() * 5);
+          let index = Math.floor(Math.random() * noteCount);
 
           while (index == oldIndex) {
-            index = Math.floor(Math.random() * 5);
+            index = Math.floor(Math.random() * noteCount);
           }
 
           mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
@@ -293,11 +295,37 @@
 
     if (styles[styleIndex] === "Piano") {
       mobileNotes = pianoNotes;
+      noteCount = 12;
     } else {
       mobileNotes = padNotes;
+      noteCount = 7;
     }
 
-    $Settings.styleReset = true;
+    clearTimeout(randomMIDINotes);
+
+    randomMIDINotes = setTimeout((oldIndex: number) => {
+      setInterval(
+        () => {
+          let index = Math.floor(Math.random() * noteCount);
+
+          while (index == oldIndex) {
+            index = Math.floor(Math.random() * noteCount);
+          }
+
+          mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
+
+          setTimeout(
+            () => {
+              mobileNotes[index].velocity = 0;
+            },
+            Math.floor(Math.random() * 1000)
+          );
+
+          oldIndex = index;
+        },
+        Math.floor((Math.random() + 0.5) * 500)
+      );
+    }, 500);
   }
 
   function styleNext() {
@@ -307,10 +335,37 @@
 
     if (styles[styleIndex] === "Piano") {
       mobileNotes = pianoNotes;
+      noteCount = 12;
     } else {
       mobileNotes = padNotes;
+      noteCount = 7;
     }
-    $Settings.styleReset = true;
+
+    clearTimeout(randomMIDINotes);
+
+    randomMIDINotes = setTimeout((oldIndex: number) => {
+      setInterval(
+        () => {
+          let index = Math.floor(Math.random() * noteCount);
+
+          while (index == oldIndex) {
+            index = Math.floor(Math.random() * noteCount);
+          }
+
+          mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
+
+          setTimeout(
+            () => {
+              mobileNotes[index].velocity = 0;
+            },
+            Math.floor(Math.random() * 1000)
+          );
+
+          oldIndex = index;
+        },
+        Math.floor((Math.random() + 0.5) * 500)
+      );
+    }, 500);
   }
 </script>
 

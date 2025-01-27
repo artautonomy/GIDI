@@ -709,94 +709,72 @@ function _page($$payload, $$props) {
     a: 1
   };
   let hsv = colord(`rgb(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.expression.r}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.expression.g}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.expression.b})`).toHsv();
-  let hex = colord(`rgb(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b})`).toHex();
+  colord(`rgb(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b})`).toHex();
   let menuColour = colord(`rgb(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g}, ${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b})`).invert().desaturate(0.3).darken(0.1);
   let $$settled = true;
   let $$inner_payload;
   function $$render_inner($$payload2) {
     Canvas($$payload2);
-    $$payload2.out += `<!----> <menu${attr("style", `opacity:${stringify(menuOpacity.current)}; --keyColour:${stringify(menuColour.toHex())}; --menuTextColour: ${stringify(menuColour.isLight() ? "black" : "white")}`)} class="svelte-10r149r"><setting class="svelte-10r149r"><setting class="svelte-10r149r"><h1 class="svelte-10r149r">Notes</h1> <label for="Key Colour" class="svelte-10r149r">Key Colour</label> `;
-    css_props(
-      $$payload2,
-      true,
-      {
-        "--cp-bg-color": `rgba(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b},1)`,
-        "--picker-height": "150px",
-        "--picker-width": "150px",
-        "--slider-width": "15px",
-        "--picker-indicator-size": "10px"
-      },
-      () => {
-        ColorPicker($$payload2, {
-          label: "",
-          isAlpha: false,
-          textInputModes: ["rgb"],
-          sliderDirection: "vertical",
-          get rgb() {
-            return rgb;
-          },
-          set rgb($$value) {
-            rgb = $$value;
-            $$settled = false;
-          }
-        });
-      }
-    );
-    $$payload2.out += ` <label for="Expression Colour" class="svelte-10r149r">Expression Colour</label> `;
-    css_props(
-      $$payload2,
-      true,
-      {
-        "--cp-bg-color": `rgba(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b},1)`,
-        "--picker-height": "150px",
-        "--picker-width": "150px",
-        "--slider-width": "15px",
-        "--picker-indicator-size": "10px"
-      },
-      () => {
-        ColorPicker($$payload2, {
-          label: "",
-          isAlpha: false,
-          textInputModes: ["hsv"],
-          sliderDirection: "vertical",
-          get hsv() {
-            return hsv;
-          },
-          set hsv($$value) {
-            hsv = $$value;
-            $$settled = false;
-          }
-        });
-      }
-    );
-    $$payload2.out += `</setting> <setting class="svelte-10r149r"><label for="attack" class="svelte-10r149r">Attack</label> <input type="range" min="0" max="2500" id="attack"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).attack)} class="svelte-10r149r"> <label for="release" class="svelte-10r149r">Release</label> <input type="range" min="0" max="2500" id="release"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).release)} class="svelte-10r149r"> <button id="remap" class="svelte-10r149r">Remap</button></setting> <h1 class="svelte-10r149r">Scene</h1> <label for="Background Colour" class="svelte-10r149r">Background Colour</label> `;
-    css_props(
-      $$payload2,
-      true,
-      {
-        "--cp-bg-color": `rgba(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b},1)`,
-        "--picker-height": "150px",
-        "--picker-width": "150px",
-        "--slider-width": "15px",
-        "--picker-indicator-size": "10px"
-      },
-      () => {
-        ColorPicker($$payload2, {
-          label: "",
-          isAlpha: false,
-          textInputModes: ["rgb"],
-          sliderDirection: "vertical",
-          get hex() {
-            return hex;
-          },
-          set hex($$value) {
-            hex = $$value;
-            $$settled = false;
-          }
-        });
-      }
-    );
-    $$payload2.out += ` <h2 class="svelte-10r149r">Style</h2> <select name="styles" id="styles" class="svelte-10r149r"><option value="Cube" class="svelte-10r149r">Cube</option><option value="Mirror" class="svelte-10r149r">Mirror</option></select> <h2 class="svelte-10r149r">Lighting</h2> <label for="frontLighting" class="svelte-10r149r">Front</label> <input type="range" min="0.1" max="3.1" step="0.1" id="frontLighting"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).lighting.front)} class="svelte-10r149r"> <label for="backLighting" class="svelte-10r149r">Side</label> <input type="range" min="0.1" max="3.1" step="0.1" id="backLighting"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).lighting.side)} class="svelte-10r149r"> <label for="aboveLighting" class="svelte-10r149r">Above</label> <input type="range" min="0.1" max="3.1" step="0.1" id="aboveLighting"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).lighting.above)} class="svelte-10r149r"> <h2 class="svelte-10r149r">Autorotate</h2> <input id="autoRotate" type="checkbox" class="svelte-10r149r"> <label for="rotateSpeed" class="svelte-10r149r">Speed</label> <input type="range" min="1" max="3" step="0.1" id="rotateSpeed"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).autoRotateSpeed)} class="svelte-10r149r"></setting> <button id="close" class="svelte-10r149r">Close</button></menu>`;
+    $$payload2.out += `<!----> <menu${attr("style", `opacity:${stringify(menuOpacity.current)}; --keyColour:${stringify(menuColour.toHex())}; --menuTextColour: ${stringify(menuColour.isLight() ? "black" : "white")}`)} class="svelte-15n0il7"><settings class="svelte-15n0il7"><button class="setting svelte-15n0il7"${attr("style", `background-color:${stringify("rgb(33, 122, 67)")}`)}>Notes</button> <button class="setting svelte-15n0il7"${attr("style", `background-color:${stringify("--menuTextColor")}`)}>Scene</button></settings> `;
+    {
+      $$payload2.out += "<!--[-->";
+      $$payload2.out += `<h1 class="svelte-15n0il7">Colours</h1> <label for="note" class="svelte-15n0il7">Note</label> `;
+      css_props(
+        $$payload2,
+        true,
+        {
+          "--cp-bg-color": `rgba(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b},1)`,
+          "--picker-height": "150px",
+          "--picker-width": "150px",
+          "--slider-width": "15px",
+          "--picker-indicator-size": "10px"
+        },
+        () => {
+          ColorPicker($$payload2, {
+            label: "",
+            isAlpha: false,
+            textInputModes: ["rgb"],
+            sliderDirection: "vertical",
+            get rgb() {
+              return rgb;
+            },
+            set rgb($$value) {
+              rgb = $$value;
+              $$settled = false;
+            }
+          });
+        }
+      );
+      $$payload2.out += ` <label for="expression" class="svelte-15n0il7">Expression</label> `;
+      css_props(
+        $$payload2,
+        true,
+        {
+          "--cp-bg-color": `rgba(${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.r},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.g},${store_get($$store_subs ??= {}, "$Settings", Settings).colours.background.b},1)`,
+          "--picker-height": "150px",
+          "--picker-width": "150px",
+          "--slider-width": "15px",
+          "--picker-indicator-size": "10px"
+        },
+        () => {
+          ColorPicker($$payload2, {
+            label: "",
+            isAlpha: false,
+            textInputModes: ["hsv"],
+            sliderDirection: "vertical",
+            get hsv() {
+              return hsv;
+            },
+            set hsv($$value) {
+              hsv = $$value;
+              $$settled = false;
+            }
+          });
+        }
+      );
+      $$payload2.out += ` <h1 class="svelte-15n0il7">ADSR</h1> <label for="attack" class="svelte-15n0il7">Attack</label> <input type="range" min="0" max="4000" step="0.1" id="attack"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).attack)} class="svelte-15n0il7"> <label for="release" class="svelte-15n0il7">Release</label> <input type="range" min="0" max="4000" step="0.1" id="release"${attr("value", store_get($$store_subs ??= {}, "$Settings", Settings).release)} class="svelte-15n0il7"> <button id="remap" class="svelte-15n0il7">Remap</button>`;
+    }
+    $$payload2.out += `<!--]--> <button id="close" class="svelte-15n0il7">Close</button></menu>`;
   }
   do {
     $$settled = true;

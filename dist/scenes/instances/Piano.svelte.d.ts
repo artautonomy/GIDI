@@ -23,6 +23,6 @@ interface Props {
         b: number;
     };
 }
-declare const Mirror: import("svelte").Component<Props, {}, "">;
-type Mirror = ReturnType<typeof Mirror>;
-export default Mirror;
+declare const Piano: import("svelte").Component<Props, {}, "">;
+type Piano = ReturnType<typeof Piano>;
+export default Piano;
