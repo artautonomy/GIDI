@@ -16,4 +16,4 @@ GIDI is a new web app and can be improved, you can either:
 
 - Leave feedback on socials (bottom right on GIDI)
 - Perform a pull request and collaborate
-- Donate to help fund hosting costs
+- Donate to help fund hosting costs (PayPal, bottom right on GIDI)

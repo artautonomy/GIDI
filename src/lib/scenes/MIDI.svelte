@@ -158,7 +158,7 @@
                   position: {
                     x: pianoNotes.length,
                     y: positionY,
-                    z: 0,
+                    z: -1,
                   },
                   scale: { x: scaleX, y: scaleY, z: scaleZ },
                 },
