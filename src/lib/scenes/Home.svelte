@@ -103,7 +103,11 @@
 
   let noteCount = $state(12);
 
-  let randomMIDINotes: ReturnType<typeof setTimeout>;
+  let randomMIDINotesTimeout: ReturnType<typeof setTimeout>;
+
+  let randomMIDINotesStopTimeout: ReturnType<typeof setTimeout>;
+
+  let randomMIDINotesInterval: ReturnType<typeof setInterval>;
 
   const notesColours = [
     { key: { r: 141, g: 154, b: 203 }, expression: { r: 254, g: 228, b: 129 } },
@@ -187,7 +191,7 @@
       padNotes.push({
         note: i,
         velocity: 0,
-        position: { x: i, y: 0, z: 0 },
+        position: { x: i, y: 0, z: -1 },
         scale: { x: 1, y: 1, z: 1 },
       });
     }
@@ -253,8 +257,8 @@
 
     mobileNotes = pianoNotes;
 
-    randomMIDINotes = setTimeout((oldIndex: number) => {
-      setInterval(
+    randomMIDINotesTimeout = setTimeout((oldIndex: number) => {
+      randomMIDINotesInterval = setInterval(
         () => {
           let index = Math.floor(Math.random() * noteCount);
 
@@ -264,7 +268,7 @@
 
           mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
 
-          setTimeout(
+          randomMIDINotesStopTimeout = setTimeout(
             () => {
               mobileNotes[index].velocity = 0;
             },
@@ -301,10 +305,14 @@
       noteCount = 7;
     }
 
-    clearTimeout(randomMIDINotes);
+    clearTimeout(randomMIDINotesTimeout);
 
-    randomMIDINotes = setTimeout((oldIndex: number) => {
-      setInterval(
+    clearTimeout(randomMIDINotesStopTimeout);
+
+    clearTimeout(randomMIDINotesInterval);
+
+    randomMIDINotesTimeout = setTimeout((oldIndex: number) => {
+      randomMIDINotesInterval = setInterval(
         () => {
           let index = Math.floor(Math.random() * noteCount);
 
@@ -314,7 +322,7 @@
 
           mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
 
-          setTimeout(
+          randomMIDINotesStopTimeout = setTimeout(
             () => {
               mobileNotes[index].velocity = 0;
             },
@@ -341,10 +349,14 @@
       noteCount = 7;
     }
 
-    clearTimeout(randomMIDINotes);
+    clearTimeout(randomMIDINotesTimeout);
 
-    randomMIDINotes = setTimeout((oldIndex: number) => {
-      setInterval(
+    clearTimeout(randomMIDINotesStopTimeout);
+
+    clearTimeout(randomMIDINotesInterval);
+
+    randomMIDINotesTimeout = setTimeout((oldIndex: number) => {
+      randomMIDINotesInterval = setInterval(
         () => {
           let index = Math.floor(Math.random() * noteCount);
 
@@ -354,7 +366,7 @@
 
           mobileNotes[index].velocity = (Math.random() + 1) * 63.5;
 
-          setTimeout(
+          randomMIDINotesStopTimeout = setTimeout(
             () => {
               mobileNotes[index].velocity = 0;
             },
@@ -383,8 +395,8 @@
     enablePan={false}
     enableZoom={false}
     rotateSpeed={2}
-    maxPolarAngle={Math.PI / 2.15}
-    minPolarAngle={Math.PI / 4}
+    maxPolarAngle={Math.PI / 2.5}
+    minPolarAngle={Math.PI / 3.5}
     onstart={(e) => {
       hintArrow.target = 0.75;
       tips = "To shuffle colours tap here";
