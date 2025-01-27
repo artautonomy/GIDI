@@ -1,0 +1,1 @@
+let n=!1;function o(){n||(n=!0,document.addEventListener("reset",t=>{Promise.resolve().then(()=>{var r;if(!t.defaultPrevented)for(const e of t.target.elements)(r=e.__on_r)==null||r.call(e)})},{capture:!0}))}export{o as a};
