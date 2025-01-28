@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { MIDI, Settings } from "$lib/store";
+  import { MIDI, Device, Settings } from "$lib/store";
   let notes: {
     note: number;
     velocity: number;
@@ -46,8 +46,8 @@
     };
   }[] = $state([]);
 
-  let midiAccess;
-  let inputs = [];
+  let midiAccess: WebMidi.MIDIAccess | null = null;
+  let inputs: WebMidi.MIDIInput[] = [];
 
   $effect(() => {
     if ($Settings.remap) {
@@ -190,7 +190,7 @@
                 y: number;
                 z: number;
               };
-            };
+            } | undefined;
 
             let offsetWhiteKeys = 0;
 
@@ -334,12 +334,46 @@
     }
   };
 
+  function setupMIDIInputs() {
+
+    inputs = Array.from(midiAccess.inputs.values());
+
+    inputs.forEach((input: WebMidi.MIDIInput) => {
+     
+      input.onmidimessage = handleMIDIMessage;
+
+      const isDeviceAdded = $Device.inputs.some(item => item.id === input.id);
+
+      if (!isDeviceAdded) {
+        $Device.inputs.push(input);
+      }
+
+    });
+
+    if(inputs.length > 0) {
+
+      $Device.connected = true
+      
+    } else {
+
+      $Device.connected = false
+
+    }
+
+    console.log($Device.inputs);
+
+  }
+
   onMount(async () => {
     if (navigator.requestMIDIAccess) {
       try {
         midiAccess = await navigator.requestMIDIAccess();
-        inputs = Array.from(midiAccess.inputs.values());
-        inputs.forEach((input) => (input.onmidimessage = handleMIDIMessage));
+        setupMIDIInputs();
+
+        // Listen for MIDI device connection changes
+        midiAccess.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
+          setupMIDIInputs();
+        };
       } catch (err) {
         console.error("Failed to get MIDI access", err);
       }

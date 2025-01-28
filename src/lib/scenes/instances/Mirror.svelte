@@ -40,7 +40,7 @@
   }: Props = $props();
 
   const bottomY = new Tween(1);
-  const topY = new Tween(6);
+  const topY = new Tween(7.5);
   const scaleY = new Tween(1);
   const r = new Tween(keyColour.r);
   const g = new Tween(keyColour.g);
@@ -53,7 +53,7 @@
         easing: cubicOut,
       });
 
-      topY.set(10 - velocity / 63, {
+      topY.set(7.5 - velocity / 63, {
         duration: attack,
         easing: cubicOut,
       });
@@ -71,7 +71,7 @@
         duration: release,
         easing: cubicOut,
       });
-      topY.set(10, {
+      topY.set(7.5, {
         duration: release,
         easing: cubicOut,
       });

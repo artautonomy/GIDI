@@ -108,7 +108,7 @@
   });
   const introZoom = new Tween(0);
 
-  introZoom.set(50, {
+  introZoom.set(35, {
     duration: 1000,
     easing: cubicInOut,
   });
@@ -153,27 +153,34 @@
 />
 <T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
-<Billboard position.y={7}>
-  <Text
-    text={"Style"}
-    color={"orange"}
-    font={$Settings.font}
-    fontSize={window.innerWidth / 4000}
-    textAlign={"center"}
-    anchorX={"center"}
-    position.y={window.innerWidth / 1250}
-    outlineBlur={0.1}
-  />
-  <Text
-    text={"Play notes to sample, click to confirm style"}
-    color={"white"}
-    font={$Settings.font}
-    fontSize={window.innerWidth / 7000}
-    textAlign={"center"}
-    anchorX={"center"}
-    outlineBlur={0.1}
-  />
+<Billboard>
+  <T.Mesh position={[0, window.innerHeight > 1200 ? 10 : 3.5, 0]}>
+    <Text
+      text={"Style"}
+      color={"orange"}
+      font={$Settings.font}
+      fontSize={window.innerHeight > 1200 ? 1 : 0.7}
+      textAlign={"center"}
+      anchorX={"center"}
+      position.y={window.innerHeight > 1200 ? 5.25 : 6}
+      outlineBlur={0.1}
+    />
+    <Text
+      text={"Play your MIDI device to sample styles, when you are happy with your style click it"}
+      color={"white"}
+      font={$Settings.font}
+      fontSize={window.innerHeight > 1200 ? 0.6 : 0.4}
+      maxWidth={window.innerHeight > 1200 ? 100 : 9}
+      textAlign={"center"}
+      anchorX={"center"}
+      outlineBlur={0.1}
+      position.y={window.innerHeight > 1200 ? 3 : 4}
+
+    />
+    </T.Mesh>
 </Billboard>
+
+
 <Align y={false} auto precise>
   <T.Group
     position.y={-window.innerHeight / 200}
@@ -221,10 +228,10 @@
     {/each}
   </T.Group>
 </Align>
-<Billboard position.y={-window.innerHeight / 140}>
+<Billboard position.y={window.innerHeight > 1200 ? -17.5 : -8.25}>
   <T.Mesh
     scale={0.75}
-    position.x={7}
+    position.x={window.innerWidth > 900 ? 10 : 4.5}
     position.z={10}
     rotation.z={-Math.PI / 2}
     onpointerenter={onPointerEnter}
@@ -236,7 +243,7 @@
   </T.Mesh>
   <Text
     font={$Settings.font}
-    fontSize={0.45}
+    fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
     outlineBlur={0.06}
     text={styles[styleIndex]}
     textAlign={"center"}
@@ -251,7 +258,8 @@
   />
   <Text
     font={$Settings.font}
-    fontSize={0.3}
+    fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
+    maxWidth={window.innerHeight > 1200 ? 100 : 9}
     outlineBlur={0.06}
     text={styles[styleIndex] === "Piano"
       ? "Recommended for keyboards and synthesizers. Automapping enabled."
@@ -259,7 +267,7 @@
     textAlign={"center"}
     anchorX={"center"}
     position.x={0}
-    position.y={-0.25}
+    position.y={-0.33}
     position.z={10}
     color={"white"}
     onpointerenter={onPointerEnterStyle}
@@ -268,7 +276,7 @@
   />
   <T.Mesh
     scale={0.75}
-    position.x={-7}
+    position.x={window.innerWidth > 900 ? -10 : -4.5}
     position.z={10}
     rotation.z={Math.PI / 2}
     onpointerenter={onPointerEnter}

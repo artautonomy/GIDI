@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 
-type MIDIMessage = { 
+interface MIDIMessage { 
     note: number; 
     velocity: number, 
     position: {
@@ -15,10 +15,21 @@ type MIDIMessage = {
     }
 }
 
+interface Device {
+    connected: boolean;
+    inputs: WebMidi.MIDIInput[];
+}
+
 export let MIDI = writable<MIDIMessage[]>([]);
+
+export let Device = writable<Device>({
+    connected: false,
+    inputs: [], // Now TypeScript knows this is an array of WebMidi.MIDIInput
+  });
 
 export let Settings = writable({
 
+   
     page: 'home',
     scene : 'Piano',
     edit: false,
