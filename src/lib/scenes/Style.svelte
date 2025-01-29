@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T, useThrelte } from "@threlte/core";
+  import { T, useTask, useThrelte } from "@threlte/core";
   import { Color } from "three";
   import {
     Align,
@@ -10,9 +10,9 @@
     Text,
     useCursor,
   } from "@threlte/extras";
-  import { Tween } from "svelte/motion";
+  import { Tween, Spring } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { Device, MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
 
@@ -40,6 +40,14 @@
       z: number;
     };
   };
+
+  const MIDIConnectedButtonScale = new Spring(7);
+
+  let rotation = $state(0);
+
+  useTask((delta) => {
+    rotation += delta;
+  });
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
@@ -166,7 +174,7 @@
       outlineBlur={0.1}
     />
     <Text
-      text={"Play your MIDI device to sample styles, when you are happy with your style click it"}
+      text={"Play your MIDI device to sample styles, to confirm your style click it"}
       color={"white"}
       font={$Settings.font}
       fontSize={window.innerHeight > 1200 ? 0.6 : 0.4}
@@ -175,115 +183,186 @@
       anchorX={"center"}
       outlineBlur={0.1}
       position.y={window.innerHeight > 1200 ? 3 : 4}
-
     />
+  </T.Mesh>
+</Billboard>
+
+{#if midiMessages.length > 0}
+  <Align y={false} auto precise>
+    <T.Group
+      position.y={-window.innerHeight / 200}
+      onpointerenter={onPointerEnterStyle}
+      onpointerleave={onPointerLeaveStyle}
+      onclick={() => setupScene(styles[styleIndex])}
+    >
+      <!-- Show sample of styles -->
+      {#each midiMessages as noteNumber}
+        <InstancedMesh>
+          <T.BoxGeometry />
+          <T.MeshStandardMaterial shadow />
+          {#if styles[styleIndex] === "Piano"}
+            <Piano
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.attack}
+              release={$Settings.release}
+              keyColour={highlighted}
+              expressionColour={$Settings.colours.expression}
+            />
+          {:else if styles[styleIndex] === "Cube"}
+            <Cube
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$hovering ? 250 : $Settings.attack}
+              release={$hovering ? 250 : $Settings.release}
+              keyColour={highlighted}
+              expressionColour={$Settings.colours.expression}
+            />
+          {:else}
+            <Mirror
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.attack}
+              release={$Settings.release}
+              keyColour={highlighted}
+              expressionColour={$Settings.colours.expression}
+            />
+          {/if}
+        </InstancedMesh>
+      {/each}
+    </T.Group>
+  </Align>
+
+  <Billboard position.y={window.innerHeight > 1200 ? -17.5 : -8.25}>
+    <T.Mesh
+      scale={0.75}
+      position.x={window.innerWidth > 900 ? 10 : 4.5}
+      position.z={10}
+      rotation.z={-Math.PI / 2}
+      onpointerenter={onPointerEnter}
+      onpointerleave={onPointerLeave}
+      onclick={() => styleNext()}
+    >
+      <T.ConeGeometry />
+      <T.MeshBasicMaterial color={"orange"} shadow />
     </T.Mesh>
-</Billboard>
+    <Text
+      font={$Settings.font}
+      fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
+      outlineBlur={0.06}
+      text={styles[styleIndex]}
+      textAlign={"center"}
+      anchorX={"center"}
+      position.x={0}
+      position.y={0.5}
+      position.z={10}
+      color={"white"}
+      onpointerenter={onPointerEnterStyle}
+      onpointerleave={onPointerLeaveStyle}
+      onclick={() => setupScene(styles[styleIndex])}
+    />
+    <Text
+      font={$Settings.font}
+      fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
+      maxWidth={window.innerHeight > 1200 ? 100 : 9}
+      outlineBlur={0.06}
+      text={styles[styleIndex] === "Piano"
+        ? "Recommended for keyboards and synthesizers. Automapping enabled."
+        : "Recommended for pads and samplers."}
+      textAlign={"center"}
+      anchorX={"center"}
+      position.x={0}
+      position.y={-0.33}
+      position.z={10}
+      color={"white"}
+      onpointerenter={onPointerEnterStyle}
+      onpointerleave={onPointerLeaveStyle}
+      onclick={() => setupScene(styles[styleIndex])}
+    />
+    <T.Mesh
+      scale={0.75}
+      position.x={window.innerWidth > 900 ? -10 : -4.5}
+      position.z={10}
+      rotation.z={Math.PI / 2}
+      onpointerenter={onPointerEnter}
+      onpointerleave={onPointerLeave}
+      onclick={() => styleBack()}
+    >
+      <T.ConeGeometry />
+      <T.MeshBasicMaterial color={"orange"} shadow />
+    </T.Mesh>
+  </Billboard>
+{:else}
+  <Billboard follow={true}>
+    <T.Mesh
+      position={[0, 0, 0]}
+      rotation.x={rotation}
+      interactive
+      onpointerenter={() => MIDIConnectedButtonScale.set(5.5)}
+      onpointerleave={() => MIDIConnectedButtonScale.set(7.5)}
+    >
+      <Text
+        text={"No note recognised"}
+        font={$Settings.font}
+        fontSize={0.5}
+        textAlign={"center"}
+        smooth={1}
+        anchorX={"center"}
+        anchorY={"middle"}
+        position={[0, 0.505, 0]}
+        rotation={[-1.553343, 0, 0]}
+        outlineBlur={0.06}
+      />
+      <Text
+        text={"Play a note"}
+        font={$Settings.font}
+        fontSize={0.5}
+        textAlign={"center"}
+        smooth={1}
+        anchorX={"center"}
+        anchorY={"middle"}
+        position={[0, 0, 0.505]}
+        outlineBlur={0.06}
+      />
 
+      <Text
+        text={"Play a note"}
+        font={$Settings.font}
+        fontSize={0.5}
+        textAlign={"center"}
+        smooth={1}
+        anchorX={"center"}
+        anchorY={"middle"}
+        position={[0, 0, -0.505]}
+        rotation={[0, 3.14, -3.14]}
+        outlineBlur={0.06}
+      />
 
-<Align y={false} auto precise>
-  <T.Group
-    position.y={-window.innerHeight / 200}
-    onpointerenter={onPointerEnterStyle}
-    onpointerleave={onPointerLeaveStyle}
-    onclick={() => setupScene(styles[styleIndex])}
-  >
-    <!-- Show sample of styles -->
-    {#each midiMessages as noteNumber}
-      <InstancedMesh>
-        <T.BoxGeometry />
-        <T.MeshStandardMaterial shadow />
-        {#if styles[styleIndex] === "Piano"}
-          <Piano
-            position={noteNumber.position}
-            scale={noteNumber.scale}
-            velocity={noteNumber.velocity}
-            attack={$Settings.attack}
-            release={$Settings.release}
-            keyColour={highlighted}
-            expressionColour={$Settings.colours.expression}
-          />
-        {:else if styles[styleIndex] === "Cube"}
-          <Cube
-            position={noteNumber.position}
-            scale={noteNumber.scale}
-            velocity={noteNumber.velocity}
-            attack={$hovering ? 250 : $Settings.attack}
-            release={$hovering ? 250 : $Settings.release}
-            keyColour={highlighted}
-            expressionColour={$Settings.colours.expression}
-          />
-        {:else}
-          <Mirror
-            position={noteNumber.position}
-            scale={noteNumber.scale}
-            velocity={noteNumber.velocity}
-            attack={$Settings.attack}
-            release={$Settings.release}
-            keyColour={highlighted}
-            expressionColour={$Settings.colours.expression}
-          />
-        {/if}
-      </InstancedMesh>
-    {/each}
-  </T.Group>
-</Align>
-<Billboard position.y={window.innerHeight > 1200 ? -17.5 : -8.25}>
-  <T.Mesh
-    scale={0.75}
-    position.x={window.innerWidth > 900 ? 10 : 4.5}
-    position.z={10}
-    rotation.z={-Math.PI / 2}
-    onpointerenter={onPointerEnter}
-    onpointerleave={onPointerLeave}
-    onclick={() => styleNext()}
-  >
-    <T.ConeGeometry />
-    <T.MeshBasicMaterial color={"orange"} shadow />
-  </T.Mesh>
-  <Text
-    font={$Settings.font}
-    fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
-    outlineBlur={0.06}
-    text={styles[styleIndex]}
-    textAlign={"center"}
-    anchorX={"center"}
-    position.x={0}
-    position.y={0.5}
-    position.z={10}
-    color={"white"}
-    onpointerenter={onPointerEnterStyle}
-    onpointerleave={onPointerLeaveStyle}
-    onclick={() => setupScene(styles[styleIndex])}
-  />
-  <Text
-    font={$Settings.font}
-    fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
-    maxWidth={window.innerHeight > 1200 ? 100 : 9}
-    outlineBlur={0.06}
-    text={styles[styleIndex] === "Piano"
-      ? "Recommended for keyboards and synthesizers. Automapping enabled."
-      : "Recommended for pads and samplers."}
-    textAlign={"center"}
-    anchorX={"center"}
-    position.x={0}
-    position.y={-0.33}
-    position.z={10}
-    color={"white"}
-    onpointerenter={onPointerEnterStyle}
-    onpointerleave={onPointerLeaveStyle}
-    onclick={() => setupScene(styles[styleIndex])}
-  />
-  <T.Mesh
-    scale={0.75}
-    position.x={window.innerWidth > 900 ? -10 : -4.5}
-    position.z={10}
-    rotation.z={Math.PI / 2}
-    onpointerenter={onPointerEnter}
-    onpointerleave={onPointerLeave}
-    onclick={() => styleBack()}
-  >
-    <T.ConeGeometry />
-    <T.MeshBasicMaterial color={"orange"} shadow />
-  </T.Mesh>
-</Billboard>
+      <Text
+        text={"No note recognised"}
+        font={$Settings.font}
+        fontSize={0.5}
+        textAlign={"center"}
+        smooth={1}
+        anchorX={"center"}
+        anchorY={"middle"}
+        position={[0, -0.505, 0]}
+        rotation.x={1.553343}
+        outlineBlur={0.06}
+      />
+
+      <T.MeshStandardMaterial
+        shadow
+        color="#FD3F00"
+        toneMapped={false}
+        metalness={1.0}
+        roughness={0.1}
+      />
+      <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
+      <T.MeshStandardMaterial color={"darkred"} />
+    </T.Mesh>
+  </Billboard>
+{/if}

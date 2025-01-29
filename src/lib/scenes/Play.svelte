@@ -221,7 +221,10 @@
 
 {#if !menuOpened}
   <Billboard position.y={-window.innerHeight / 120}>
-    <T.Mesh scale={hintArrow.current} position.y={window.innerHeight / 750}>
+    <T.Mesh
+      scale={hintArrow.current}
+      position.y={window.innerHeight > 950 ? 0 : 0}
+    >
       <T.ConeGeometry />
       <T.MeshBasicMaterial
         color={"orange"}
@@ -234,10 +237,10 @@
       text={tips}
       color={"orange"}
       font={$Settings.font}
-      fontSize={window.innerWidth / 6250}
       textAlign={"center"}
       anchorX={"center"}
-      position.y={window.innerHeight / 1250}
+      fontSize={window.innerHeight > 950 ? 0.45 : 0.3}
+      position.y={window.innerHeight > 950 ? -0.75 : -0.5625}
     />
   </Billboard>
 {/if}

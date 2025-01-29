@@ -60,7 +60,7 @@
       position: absolute;
       right: 0;
       bottom: 0;
-      height: 4.25vh;
+      height: 3.75vh;
       width: 100vw;
       float: right;
       align-items: center;
