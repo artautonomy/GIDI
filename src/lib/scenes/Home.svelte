@@ -286,10 +286,13 @@
         easing: cubicOut,
       });
       setTimeout(() => {
+        //if multiple inputs redirect to inputs page
         if ($Device.inputs.length > 1) {
           goto("./inputs");
-        } else {
-          $Device.input = $Device.inputs[0].id;
+        }
+        //if 1 input go to style page
+        else {
+          $Device.input.id = $Device.inputs[0].id;
           goto("./style");
         }
       }, 1000);

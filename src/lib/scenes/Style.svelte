@@ -19,6 +19,7 @@
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
   import Piano from "./instances/Piano.svelte";
+  import Midi from "./MIDI.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -43,10 +44,16 @@
 
   const MIDIConnectedButtonScale = new Spring(7);
 
-  let rotation = $state(0);
+  const MIDIConnectedButtonRotation = new Tween(0, {
+    delay: 500,
+    duration: 1250,
+    easing: cubicInOut,
+  });
 
-  useTask((delta) => {
-    rotation += delta;
+  const MIDIConnectedButtonPosition = new Tween(-1, {
+    delay: 750,
+    duration: 750,
+    easing: cubicInOut,
   });
 
   let midiMessages = $state<MIDIMessage[]>([]);
@@ -58,6 +65,8 @@
   let highlighted = $state($Settings.colours.key);
 
   let selected = $state(false);
+
+  let notePlayed = $state(false);
 
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
@@ -122,6 +131,17 @@
   });
 
   $Settings.autoRotate = false;
+
+  $effect(() => {
+    if (midiMessages.length > 0) {
+      MIDIConnectedButtonPosition.target = -20;
+      MIDIConnectedButtonRotation.target = 4.712389;
+
+      setTimeout(() => {
+        notePlayed = true;
+      }, 1750);
+    }
+  });
 </script>
 
 <T.OrthographicCamera
@@ -174,7 +194,7 @@
       outlineBlur={0.1}
     />
     <Text
-      text={"Play your MIDI device to sample styles, to confirm your style click it"}
+      text={"Play your MIDI device to sample styles\n\nTo confirm your style select it"}
       color={"white"}
       font={$Settings.font}
       fontSize={window.innerHeight > 1200 ? 0.6 : 0.4}
@@ -187,7 +207,7 @@
   </T.Mesh>
 </Billboard>
 
-{#if midiMessages.length > 0}
+{#if notePlayed}
   <Align y={false} auto precise>
     <T.Group
       position.y={-window.innerHeight / 200}
@@ -298,14 +318,14 @@
 {:else}
   <Billboard follow={true}>
     <T.Mesh
-      position={[0, 0, 0]}
-      rotation.x={rotation}
+      position={[0, MIDIConnectedButtonPosition.current, 0]}
+      rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
       interactive
       onpointerenter={() => MIDIConnectedButtonScale.set(5.5)}
-      onpointerleave={() => MIDIConnectedButtonScale.set(7.5)}
+      onpointerleave={() => MIDIConnectedButtonScale.set(7)}
     >
       <Text
-        text={"No note recognised"}
+        text={"Creating styles"}
         font={$Settings.font}
         fontSize={0.5}
         textAlign={"center"}
@@ -317,7 +337,7 @@
         outlineBlur={0.06}
       />
       <Text
-        text={"Play a note"}
+        text={midiMessages.length != 0 ? "Initializing styles" : "Play a note"}
         font={$Settings.font}
         fontSize={0.5}
         textAlign={"center"}
@@ -329,7 +349,7 @@
       />
 
       <Text
-        text={"Play a note"}
+        text={"Note read"}
         font={$Settings.font}
         fontSize={0.5}
         textAlign={"center"}
@@ -342,7 +362,7 @@
       />
 
       <Text
-        text={"No note recognised"}
+        text={"Note read"}
         font={$Settings.font}
         fontSize={0.5}
         textAlign={"center"}
@@ -362,7 +382,9 @@
         roughness={0.1}
       />
       <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
-      <T.MeshStandardMaterial color={"darkred"} />
+      <T.MeshStandardMaterial
+        color={midiMessages.length != 0 ? "green" : "darkred"}
+      />
     </T.Mesh>
   </Billboard>
 {/if}

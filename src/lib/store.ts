@@ -1,7 +1,6 @@
 import { writable } from "svelte/store";
 
 interface MIDIMessage { 
-    device: string;
     note: number; 
     velocity: number, 
     position: {

@@ -146,7 +146,7 @@
       outlineBlur={0.1}
     />
     <Text
-      text={"Multiple MIDI inputs found. If you are unsure on the MIDI input you require play a note to see"}
+      text={"Multiple MIDI inputs found\n\nIf you are unsure on the MIDI input you require play a note to see"}
       color={"white"}
       font={$Settings.font}
       fontSize={window.innerHeight > 1200 ? 0.6 : 0.4}

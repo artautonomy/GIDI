@@ -3,7 +3,6 @@
   import { MIDI, Device, Settings } from "$lib/store";
 
   let notes: {
-    device: string;
     note: number;
     velocity: number;
     position: {
@@ -19,7 +18,6 @@
   }[] = $state([]);
 
   let pianoNotes: {
-    device: string;
     note: number;
     velocity: number;
     position: {
@@ -35,7 +33,6 @@
   }[] = $state([]);
 
   let padNotes: {
-    device: string;
     note: number;
     velocity: number;
     position: {
@@ -68,7 +65,6 @@
           padNotes = [
             ...padNotes,
             {
-              device: notes[0].device,
               note: notes[0].note,
               velocity: notes[0].velocity,
               position: { x: padNotes.length, y: 0, z: 0 },
@@ -92,9 +88,9 @@
     if (message.data) {
       //Selecting devices
       if ($Device.input.id.length < 1) {
-        const note = message.data[1];
         const velocity = message.data[2];
 
+        //update velocity for Inputs page
         $Device.inputs = $Device.inputs.map((key) => {
           if (key.id === device) {
             return {
@@ -126,7 +122,6 @@
               padNotes = [
                 ...padNotes,
                 {
-                  device,
                   note,
                   velocity,
                   position: { x: padNotes.length, y: 0, z: 0 },
@@ -180,7 +175,6 @@
                   pianoNotes = [
                     ...pianoNotes,
                     {
-                      device,
                       note: note,
                       velocity: 0,
                       position: {
@@ -248,7 +242,6 @@
                   pianoNotes = [
                     ...pianoNotes,
                     {
-                      device,
                       note: index + offset,
                       velocity: 0,
                       position: {
@@ -373,7 +366,6 @@
 
   function setupMIDIInputs() {
     inputs = Array.from(midiAccess.inputs.values());
-    console.log($Device.inputs);
 
     //temp fix, typescript initialising needs to be improved
     $Device.inputs.pop();
