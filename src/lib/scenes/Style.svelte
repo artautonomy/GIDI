@@ -12,14 +12,13 @@
   } from "@threlte/extras";
   import { Tween, Spring } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
-  import { Device, MIDI, Settings } from "../store";
+  import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
 
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
   import Piano from "./instances/Piano.svelte";
-  import Midi from "./MIDI.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -67,6 +66,8 @@
   let selected = $state(false);
 
   let notePlayed = $state(false);
+
+  let noteTriggered = false;
 
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
@@ -133,13 +134,15 @@
   $Settings.autoRotate = false;
 
   $effect(() => {
-    if (midiMessages.length > 0) {
+    if (midiMessages.length > 0 && !noteTriggered) {
       MIDIConnectedButtonPosition.target = -20;
       MIDIConnectedButtonRotation.target = 4.712389;
 
+      noteTriggered = true;
+
       setTimeout(() => {
         notePlayed = true;
-      }, 1750);
+      }, 1600);
     }
   });
 </script>
@@ -266,8 +269,12 @@
       onpointerleave={onPointerLeave}
       onclick={() => styleNext()}
     >
-      <T.ConeGeometry />
-      <T.MeshBasicMaterial color={"orange"} shadow />
+      <T.BoxGeometry args={[2.75, 2.75, 1]} />
+      <T.MeshBasicMaterial transparent opacity={0} />
+      <T.Mesh>
+        <T.ConeGeometry />
+        <T.MeshBasicMaterial color={"orange"} shadow />
+      </T.Mesh>
     </T.Mesh>
     <Text
       font={$Settings.font}
@@ -311,8 +318,12 @@
       onpointerleave={onPointerLeave}
       onclick={() => styleBack()}
     >
-      <T.ConeGeometry />
-      <T.MeshBasicMaterial color={"orange"} shadow />
+      <T.BoxGeometry args={[2.75, 2.75, 1]} />
+      <T.MeshBasicMaterial transparent opacity={0} />
+      <T.Mesh>
+        <T.ConeGeometry />
+        <T.MeshBasicMaterial color={"orange"} shadow />
+      </T.Mesh>
     </T.Mesh>
   </Billboard>
 {:else}
@@ -374,13 +385,6 @@
         outlineBlur={0.06}
       />
 
-      <T.MeshStandardMaterial
-        shadow
-        color="#FD3F00"
-        toneMapped={false}
-        metalness={1.0}
-        roughness={0.1}
-      />
       <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
       <T.MeshStandardMaterial
         color={midiMessages.length != 0 ? "green" : "darkred"}

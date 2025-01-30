@@ -394,7 +394,7 @@
     }
 
     try {
-      midiAccess = await navigator.requestMIDIAccess();
+      midiAccess = await navigator.requestMIDIAccess({ sysex: true });
 
       setupMIDIInputs();
 

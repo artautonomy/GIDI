@@ -72,7 +72,10 @@
   }[] = $state([]);
 
   let tips = $state("Swipe to rotate this demo scene");
+
   let cubeClicked = $state(false);
+
+  let connectedTriggered = false;
 
   const introZoom = new Tween(0);
 
@@ -132,7 +135,7 @@
   const title = "Welcome to GIDI";
 
   const summary =
-    "GIDI is a free, open source web application for musicians using MIDI devices\n\nBy reading MIDI messages it can visualise a performance on a web browser";
+    "GIDI is a free, open source web application for musicians using MIDI devices\n\nBy reading MIDI messages it can visualise a performance on a web browser.\n\nYou will be prompted by your browser to allow MIDI, please click 'Allow'.";
 
   const { onPointerEnter, onPointerLeave } = useCursor();
 
@@ -386,8 +389,10 @@
   }
 
   $effect(() => {
-    if ($Device.connected) {
+    if ($Device.connected && !connectedTriggered) {
       Setup();
+
+      connectedTriggered = true;
     }
   });
 </script>
@@ -518,13 +523,6 @@
       outlineBlur={0.06}
     />
 
-    <T.MeshStandardMaterial
-      shadow
-      color="#FD3F00"
-      toneMapped={false}
-      metalness={1.0}
-      roughness={0.1}
-    />
     <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
     <T.MeshStandardMaterial color={$Device.connected ? "green" : "darkred"} />
   </T.Mesh>
@@ -602,8 +600,12 @@
         onpointerleave={onPointerLeave}
         onclick={() => styleNext()}
       >
-        <T.ConeGeometry />
-        <T.MeshBasicMaterial color={"orange"} shadow />
+        <T.BoxGeometry args={[2.75, 2.75, 1]} />
+        <T.MeshBasicMaterial transparent opacity={0} />
+        <T.Mesh>
+          <T.ConeGeometry />
+          <T.MeshBasicMaterial color={"orange"} shadow />
+        </T.Mesh>
       </T.Mesh>
       <T.Mesh scale={navigationArrows.current}>
         <Text
@@ -650,8 +652,12 @@
         onpointerleave={onPointerLeave}
         onclick={() => styleBack()}
       >
-        <T.ConeGeometry />
-        <T.MeshBasicMaterial color={"orange"} shadow />
+        <T.BoxGeometry args={[2.75, 2.75, 1]} />
+        <T.MeshBasicMaterial transparent opacity={0} />
+        <T.Mesh>
+          <T.ConeGeometry />
+          <T.MeshBasicMaterial color={"orange"} shadow />
+        </T.Mesh>
       </T.Mesh>
     {:else}
       <T.Mesh

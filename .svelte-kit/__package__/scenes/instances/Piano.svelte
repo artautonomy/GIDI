@@ -41,9 +41,9 @@
 
   const positionY = new Tween(1);
   const scaleY = new Tween(1);
-  let r = $state();
-  let g = $state();
-  let b = $state();
+  let r = $state(new Tween(0));
+  let g = $state(new Tween(0));
+  let b = $state(new Tween(0));
 
   if (scale.x === 0.5) {
     if (keyColour.r + keyColour.g + keyColour.b > 200) {
@@ -114,7 +114,9 @@
   });
 </script>
 
-{#if scale.x === 1}<Instance
+<!-- Add backboard-->
+{#if scale.x === 1}
+  <Instance
     receiveShadow
     position.x={position.x}
     position.y={0.25}
