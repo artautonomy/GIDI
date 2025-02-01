@@ -88,7 +88,7 @@
   });
 
   const MIDIConnectedButtonPosition = new Tween(
-    window.innerHeight > 950 ? 8.5 : 3.5,
+    window.innerHeight > 950 ? 6.5 : 3,
     {
       delay: 1500,
       duration: 1500,
@@ -135,7 +135,7 @@
   const title = "Welcome to GIDI";
 
   const summary =
-    "GIDI is a free, open source web application for musicians using MIDI devices\n\nBy reading MIDI messages it can visualise a performance on a web browser.\n\nYou will be prompted by your browser to allow MIDI, please click 'Allow'.";
+    "GIDI is a free, open source web application for musicians using MIDI devices\n\nBy reading MIDI messages it can visualise a performance on a web browser\n\nYou will be prompted by your browser to allow MIDI, click 'Allow' to begin or try the demo below";
 
   const { onPointerEnter, onPointerLeave } = useCursor();
 
@@ -439,7 +439,7 @@
 <T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Billboard>
-  <T.Mesh position={[0, window.innerHeight > 950 ? 10 : 3.5, 0]}>
+  <T.Mesh position={[0, window.innerHeight > 950 ? 10 : 4.5, 0]}>
     <Text
       text={title}
       color={"orange"}
@@ -524,7 +524,9 @@
     />
 
     <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
-    <T.MeshStandardMaterial color={$Device.connected ? "green" : "darkred"} />
+    <T.MeshBasicMaterial
+      color={$Device.connected ? new Color("rgb(22, 90, 11)") : "darkred"}
+    />
   </T.Mesh>
 </Billboard>
 
@@ -589,7 +591,7 @@
     </Align>
   </T.Group>
 
-  <Billboard position.y={window.innerHeight > 950 ? -17.5 : -10.25}>
+  <Billboard position.y={window.innerHeight > 950 ? -17.5 : -11}>
     {#if cubeClicked}
       <T.Mesh
         receiveShadow

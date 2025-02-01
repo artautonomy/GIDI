@@ -11,7 +11,7 @@
     useCursor,
   } from "@threlte/extras";
   import { Tween, Spring } from "svelte/motion";
-  import { cubicInOut } from "svelte/easing";
+  import { cubicIn, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
@@ -52,7 +52,7 @@
   const MIDIConnectedButtonPosition = new Tween(-1, {
     delay: 750,
     duration: 750,
-    easing: cubicInOut,
+    easing: cubicIn,
   });
 
   let midiMessages = $state<MIDIMessage[]>([]);
@@ -135,7 +135,7 @@
 
   $effect(() => {
     if (midiMessages.length > 0 && !noteTriggered) {
-      MIDIConnectedButtonPosition.target = -20;
+      MIDIConnectedButtonPosition.target = window.innerWidth * -0.0249;
       MIDIConnectedButtonRotation.target = 4.712389;
 
       noteTriggered = true;
@@ -386,8 +386,10 @@
       />
 
       <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
-      <T.MeshStandardMaterial
-        color={midiMessages.length != 0 ? "green" : "darkred"}
+      <T.MeshBasicMaterial
+        color={midiMessages.length != 0
+          ? new Color("rgb(22, 90, 11)")
+          : "darkred"}
       />
     </T.Mesh>
   </Billboard>
