@@ -171,9 +171,14 @@
 />
 <T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
-<Align y={false} auto precise>
+<Align
+  scale={1 - Math.log(midiMessages.length) / Math.log(window.innerWidth)}
+  y={false}
+  auto
+  precise
+>
   <!-- Show sample of styles -->
-  {#each midiMessages as noteNumber, index}
+  {#each midiMessages as noteNumber}
     <T.Group
       position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnter}

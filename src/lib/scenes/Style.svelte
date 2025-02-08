@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Tween, Spring } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { Device, MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
 
@@ -135,7 +135,7 @@
 
   $effect(() => {
     if (midiMessages.length > 0 && !noteTriggered) {
-      MIDIConnectedButtonPosition.target = window.innerWidth * -0.0249;
+      MIDIConnectedButtonPosition.target = window.innerHeight * -0.015;
       MIDIConnectedButtonRotation.target = 4.712389;
 
       noteTriggered = true;
@@ -211,7 +211,12 @@
 </Billboard>
 
 {#if notePlayed}
-  <Align y={false} auto precise>
+  <Align
+    scale={1 - Math.log(midiMessages.length) / Math.log(window.innerWidth)}
+    y={false}
+    auto
+    precise
+  >
     <T.Group
       position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnterStyle}
