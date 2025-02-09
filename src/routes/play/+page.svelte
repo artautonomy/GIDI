@@ -63,7 +63,9 @@
 </Canvas>
 
 <menu
-  style="opacity:{menuOpacity.current}; --keyColour:{menuColour.toHex()}; --menuTextColour: {menuColour.isLight()
+  style="display:{menuOpacity.current > 0
+    ? 'block'
+    : 'none'};opacity:{menuOpacity.current}; --keyColour:{menuColour.toHex()}; --menuTextColour: {menuColour.isLight()
     ? 'black'
     : 'white'}"
 >
@@ -279,21 +281,6 @@
     color: black;
   }
 
-  h1 {
-    color: var(--menuTextColour);
-    font-size: 1.3em;
-    margin-top: 30px;
-    text-decoration: underline;
-  }
-
-  label {
-    display: block;
-    font-size: 0.9em;
-    color: var(--menuTextColour);
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
-
   select {
     font-family: "Oxanium";
     border-style: solid;
@@ -347,26 +334,74 @@
     border-width: 2px;
   }
 
-  menu {
-    font-family: "Oxanium";
-    display: block;
-    position: absolute;
-    text-align: center;
-    background-color: var(--keyColour);
-    top: 0;
-    height: 66vh;
-    width: 20vw;
-    margin: 0;
-    padding: 0;
+  @media (max-width: 600px) {
+    menu {
+      font-family: "Oxanium";
+      display: block;
+      position: absolute;
+      text-align: center;
+      background-color: var(--keyColour);
+      bottom: 3.75vh;
+      height: 60vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    .setting {
+      width: 50%;
+      margin: 1%;
+    }
+    h1 {
+      color: var(--menuTextColour);
+      font-size: 1.35em;
+      margin-top: 10px;
+      text-decoration: underline;
+    }
+    label {
+      display: block;
+      font-size: 0.9em;
+      color: var(--menuTextColour);
+      margin-top: 0.5px;
+      margin-bottom: 0.5px;
+    }
+  }
+
+  @media (min-width: 600px) {
+    menu {
+      font-family: "Oxanium";
+      display: block;
+      position: absolute;
+      text-align: center;
+      background-color: var(--keyColour);
+      top: 0;
+      height: 66vh;
+      width: 20vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    .setting {
+      width: 40%;
+      margin: 2.5%;
+    }
+    h1 {
+      color: var(--menuTextColour);
+      font-size: 1.3em;
+      margin-top: 30px;
+      text-decoration: underline;
+    }
+    label {
+      display: block;
+      font-size: 0.9em;
+      color: var(--menuTextColour);
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
   }
 
   settings {
     display: flex;
     justify-content: center;
-  }
-
-  .setting {
-    width: 40%;
-    margin: 2.5%;
   }
 </style>

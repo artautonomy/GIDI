@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { Device, MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Cube from "./instances/Cube.svelte";
   import Piano from "./instances/Piano.svelte";
@@ -64,6 +64,14 @@
     easing: cubicIn,
   });
 
+  const noteScale = new Tween(
+    1 - Math.log(midiMessages.length) / Math.log(window.innerWidth),
+    {
+      duration: 1000,
+      easing: cubicInOut,
+    }
+  );
+
   const hintText = new Tween(1, {
     duration: 1000,
     easing: cubicInOut,
@@ -81,10 +89,13 @@
 
     selected = $Settings.colours.key;
 
-    introZoom.set(25, {
-      duration: 1000,
-      easing: cubicOut,
-    });
+    noteScale.set(
+      1 - Math.log(midiMessages.length) / Math.log(window.innerWidth) - 0.2,
+      {
+        duration: 1000,
+        easing: cubicInOut,
+      }
+    );
 
     hintText.target = 0;
 
@@ -95,10 +106,13 @@
 
   $effect(() => {
     if (!$Settings.edit) {
-      introZoom.set(50, {
-        duration: 1000,
-        easing: cubicIn,
-      });
+      noteScale.set(
+        1 - Math.log(midiMessages.length) / Math.log(window.innerWidth),
+        {
+          duration: 1000,
+          easing: cubicInOut,
+        }
+      );
     }
   });
 
@@ -141,11 +155,6 @@
       hintArrow.target = 0.75;
       tips = "To edit the scene click here";
     }}
-    onend={(e) => {
-      zoom = e.target.object.zoom;
-
-      console.log(zoom);
-    }}
   ></OrbitControls>
 </T.OrthographicCamera>
 
@@ -171,12 +180,7 @@
 />
 <T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
-<Align
-  scale={1 - Math.log(midiMessages.length) / Math.log(window.innerWidth)}
-  y={false}
-  auto
-  precise
->
+<Align scale={noteScale.current} y={false} auto precise>
   <!-- Show sample of styles -->
   {#each midiMessages as noteNumber}
     <T.Group

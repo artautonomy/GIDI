@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T, useTask, useThrelte } from "@threlte/core";
+  import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
   import {
     Align,
@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Tween, Spring } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { Device, MIDI, Settings } from "../store";
+  import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
 
@@ -57,7 +57,7 @@
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
-  const styles = ["Piano", "Cube", "Mirror"];
+  const styles = ["Piano", "Mirror", "Cube"];
 
   let styleIndex = $state(0);
 
