@@ -26,6 +26,8 @@
 
   interactivity();
 
+  let deviceOrientation = $state(screen.orientation.type);
+
   let padNotes: {
     note: number;
     velocity: number;
@@ -551,10 +553,10 @@
     }}
   >
     <Align>
-      {#each mobileNotes as noteNumber}
-        <InstancedMesh>
-          <T.BoxGeometry />
-          <T.MeshStandardMaterial shadow />
+      <InstancedMesh>
+        <T.BoxGeometry />
+        <T.MeshStandardMaterial shadow />
+        {#each mobileNotes as noteNumber}
           {#if styles[styleIndex] == "Piano"}
             <Piano
               position={noteNumber.position}
@@ -586,8 +588,8 @@
               expressionColour={$Settings.colours.expression}
             />
           {/if}
-        </InstancedMesh>
-      {/each}
+        {/each}
+      </InstancedMesh>
     </Align>
   </T.Group>
 

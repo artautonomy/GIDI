@@ -75,18 +75,28 @@
 
   onDestroy(unsubscribe);
 
+  const noteScale = new Tween(
+    1 - Math.log(midiMessages.length) / Math.log(window.innerWidth),
+    {
+      duration: 1000,
+      easing: cubicInOut,
+    }
+  );
+
   function styleBack() {
     styleIndex > 0 ? styleIndex-- : (styleIndex = styles.length - 1);
-    $Settings.styleReset = true;
     $Settings.scene = styles[styleIndex];
+
+    $Settings.styleReset = true;
   }
 
   function styleNext() {
     styleIndex >= 0 && styleIndex < styles.length - 1
       ? styleIndex++
       : (styleIndex = 0);
-    $Settings.styleReset = true;
     $Settings.scene = styles[styleIndex];
+
+    $Settings.styleReset = true;
   }
 
   function setupScene(choice: string) {
@@ -143,6 +153,9 @@
       setTimeout(() => {
         notePlayed = true;
       }, 1600);
+    } else {
+      noteScale.target =
+        1 - Math.log(midiMessages.length) / Math.log(window.innerWidth);
     }
   });
 </script>
@@ -211,23 +224,19 @@
 </Billboard>
 
 {#if notePlayed}
-  <Align
-    scale={1 - Math.log(midiMessages.length) / Math.log(window.innerWidth)}
-    y={false}
-    auto
-    precise
-  >
+  <Align scale={noteScale.current} y={false} auto precise>
     <T.Group
       position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnterStyle}
       onpointerleave={onPointerLeaveStyle}
       onclick={() => setupScene(styles[styleIndex])}
     >
-      <!-- Show sample of styles -->
-      {#each midiMessages as noteNumber}
-        <InstancedMesh>
-          <T.BoxGeometry />
-          <T.MeshStandardMaterial shadow />
+      <InstancedMesh>
+        <T.BoxGeometry />
+        <T.MeshStandardMaterial shadow />
+
+        {#each midiMessages as noteNumber}
+          <!-- Show sample of styles -->
           {#if styles[styleIndex] === "Piano"}
             <Piano
               position={noteNumber.position}
@@ -259,8 +268,8 @@
               expressionColour={$Settings.colours.expression}
             />
           {/if}
-        </InstancedMesh>
-      {/each}
+        {/each}
+      </InstancedMesh>
     </T.Group>
   </Align>
 

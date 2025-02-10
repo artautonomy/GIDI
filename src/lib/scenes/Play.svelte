@@ -89,13 +89,8 @@
 
     selected = $Settings.colours.key;
 
-    noteScale.set(
-      1 - Math.log(midiMessages.length) / Math.log(window.innerWidth) - 0.2,
-      {
-        duration: 1000,
-        easing: cubicInOut,
-      }
-    );
+    noteScale.target =
+      1 - Math.log(midiMessages.length) / Math.log(window.innerWidth) - 0.2;
 
     hintText.target = 0;
 
@@ -106,13 +101,8 @@
 
   $effect(() => {
     if (!$Settings.edit) {
-      noteScale.set(
-        1 - Math.log(midiMessages.length) / Math.log(window.innerWidth),
-        {
-          duration: 1000,
-          easing: cubicInOut,
-        }
-      );
+      noteScale.target =
+        1 - Math.log(midiMessages.length) / Math.log(window.innerWidth);
     }
   });
 
@@ -181,17 +171,16 @@
 <T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Align scale={noteScale.current} y={false} auto precise>
-  <!-- Show sample of styles -->
-  {#each midiMessages as noteNumber}
+  <InstancedMesh>
+    <T.BoxGeometry />
+    <T.MeshStandardMaterial shadow />
     <T.Group
       position.y={-window.innerHeight / 200}
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
       onclick={() => openMenu()}
     >
-      <InstancedMesh>
-        <T.BoxGeometry />
-        <T.MeshStandardMaterial shadow />
+      {#each midiMessages as noteNumber}
         {#if $Settings.scene == "Cube"}
           <Cube
             position={noteNumber.position}
@@ -223,9 +212,9 @@
             expressionColour={$Settings.colours.expression}
           />
         {/if}
-      </InstancedMesh>
+      {/each}
     </T.Group>
-  {/each}
+  </InstancedMesh>
 </Align>
 
 {#if !menuOpened}

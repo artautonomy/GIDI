@@ -54,25 +54,6 @@
     transition: opacity 2.4s 1s ease;
   }
 
-  @media (max-width: 600px) {
-    socials {
-      display: flex;
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      height: 3.75vh;
-      width: 100vw;
-      float: right;
-      align-items: center;
-      flex-wrap: nowrap;
-      justify-content: space-evenly;
-      flex-direction: row;
-    }
-    a {
-      height: 55%;
-    }
-  }
-
   @media (min-width: 600px) {
     socials {
       position: absolute;
@@ -92,7 +73,24 @@
       height: 55%;
     }
   }
-
+  @media (max-width: 600px) {
+    socials {
+      display: flex;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: 3.75vh;
+      width: 100vw;
+      float: right;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: space-evenly;
+      flex-direction: row;
+    }
+    a {
+      height: 55%;
+    }
+  }
   .icons {
     height: 100%;
     width: auto;
