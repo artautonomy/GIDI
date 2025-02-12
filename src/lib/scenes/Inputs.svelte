@@ -10,6 +10,7 @@
     Text,
     useCursor,
   } from "@threlte/extras";
+  import { Box, Flex } from "@threlte/flex";
   import { Tween, Spring } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
   import { Device, MIDI, Settings } from "../store";
@@ -38,6 +39,11 @@
       z: number;
     };
   };
+
+  const title = "Inputs";
+
+  const summary =
+    "Multiple MIDI inputs found\n\nIf you are unsure on the MIDI input you require play a note to see";
 
   let rotation = $state(0);
 
@@ -133,63 +139,87 @@
 />
 <T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
-<Billboard>
-  <T.Mesh position={[0, window.innerHeight > 1200 ? 10 : 3.5, 0]}>
-    <Text
-      text={"Inputs"}
-      color={"orange"}
-      font={$Settings.font}
-      fontSize={window.innerHeight > 1200 ? 1 : 0.7}
-      textAlign={"center"}
-      anchorX={"center"}
-      position.y={window.innerHeight > 1200 ? 5.25 : 6}
-      outlineBlur={0.1}
-    />
-    <Text
-      text={"Multiple MIDI inputs found\n\nIf you are unsure on the MIDI input you require play a note to see"}
-      color={"white"}
-      font={$Settings.font}
-      fontSize={window.innerHeight > 1200 ? 0.6 : 0.4}
-      maxWidth={window.innerHeight > 1200 ? 100 : 9}
-      textAlign={"center"}
-      anchorX={"center"}
-      outlineBlur={0.1}
-      position.y={window.innerHeight > 1200 ? 3 : 4}
-    />
-  </T.Mesh>
-</Billboard>
-
-{#each $Device.inputs as device, index}
-  <T.Group
-    onpointerenter={onPointerEnterStyle}
-    onpointerleave={onPointerLeaveStyle}
-    onclick={() => setupStyle()}
-  >
-    <Billboard follow={true}>
-      <InstancedMesh>
-        <T.BoxGeometry args={[10, 0.75, 1]} />
-        <T.MeshStandardMaterial shadow />
-
-        <Input
-          position={{ x: 0, y: index, z: 0 }}
-          keyColour={{ r: 80, g: 50, b: 111 }}
-          expressionColour={{ r: 77, g: 144, b: 57 }}
-          device={device.id}
-          velocity={device.velocity}
-        />
+<Flex
+  width={window.innerWidth / 40}
+  height={window.innerHeight / 40}
+  gap={window.innerHeight / 300}
+  flexDirection="Column"
+>
+  <Billboard>
+    <Box flex={1} width="100%" height="100%">
+      {#snippet children({ width, height })}
+        {console.log(width)}
+        <T.Mesh>
+          <T.PlaneGeometry args={[width, height]} />
+          <T.MeshBasicMaterial color="red" transparent opacity={0.5} />
+        </T.Mesh>
 
         <Text
-          text={device.name}
+          text={title}
+          color={"orange"}
           font={$Settings.font}
-          fontSize={0.5}
+          fontSize={width > 20 ? 0.8 : 0.75}
+          textAlign={"center"}
+          anchorX={"center"}
+          position.y={2.5}
+          position.z="7"
+        />
+        <Text
+          text={summary}
+          maxWidth={width > 20 ? 21 : 10}
+          font={$Settings.font}
+          fontSize={width > 20 ? 0.5 : 0.45}
           textAlign={"center"}
           smooth={1}
           anchorX={"center"}
-          anchorY={"middle"}
-          position={[0, index, 0.505]}
+          position.y={1}
+          position.z="7"
           outlineBlur={0.06}
         />
-      </InstancedMesh>
-    </Billboard>
-  </T.Group>
-{/each}
+      {/snippet}
+    </Box>
+  </Billboard>
+  <Billboard follow>
+    <Box flex={1} width="100%" height="100%">
+      {#snippet children({ width, height })}
+        <T.Mesh>
+          <T.PlaneGeometry args={[width, height]} />
+          <T.MeshBasicMaterial color="red" transparent opacity={0.5} />
+        </T.Mesh>
+
+        {#each $Device.inputs as device, index}
+          <T.Group
+            onpointerenter={onPointerEnterStyle}
+            onpointerleave={onPointerLeaveStyle}
+            onclick={() => setupStyle()}
+          >
+            <InstancedMesh>
+              <T.BoxGeometry args={[10, 0.75, 1]} />
+              <T.MeshStandardMaterial shadow />
+
+              <Input
+                position={{ x: 0, y: index, z: 0 }}
+                keyColour={{ r: 80, g: 50, b: 111 }}
+                expressionColour={{ r: 77, g: 144, b: 57 }}
+                device={device.id}
+                velocity={device.velocity}
+              />
+
+              <Text
+                text={device.name}
+                font={$Settings.font}
+                fontSize={0.5}
+                textAlign={"center"}
+                smooth={1}
+                anchorX={"center"}
+                anchorY={"middle"}
+                position={[0, index, 0.505]}
+                outlineBlur={0.06}
+              />
+            </InstancedMesh>
+          </T.Group>
+        {/each}
+      {/snippet}
+    </Box>
+  </Billboard>
+</Flex>

@@ -53,7 +53,7 @@
         easing: cubicOut,
       });
 
-      topY.set(7.5 - velocity / 63, {
+      topY.set(5 - velocity / 63, {
         duration: attack,
         easing: cubicOut,
       });
@@ -71,7 +71,7 @@
         duration: release,
         easing: cubicOut,
       });
-      topY.set(7.5, {
+      topY.set(5, {
         duration: release,
         easing: cubicOut,
       });
