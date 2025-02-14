@@ -9,7 +9,9 @@
 
   let setting = $state("notes");
 
-  const menuOpacity = new Tween(0);
+  const menuHeight = new Tween(0);
+
+  const sceneHeight = new Tween(100);
 
   let rgb = $state({
     r: $Settings.colours.key.r,
@@ -44,13 +46,22 @@
   }
   $effect(() => {
     if ($Settings.edit) {
-      menuOpacity.set(1, {
+      menuHeight.set(62.5, {
+        delay: 250,
+        duration: 750,
+        easing: cubicInOut,
+      });
+      sceneHeight.set(37.5, {
         delay: 250,
         duration: 750,
         easing: cubicInOut,
       });
     } else {
-      menuOpacity.set(0, {
+      menuHeight.set(0, {
+        duration: 750,
+        easing: cubicInOut,
+      });
+      sceneHeight.set(100, {
         duration: 750,
         easing: cubicInOut,
       });
@@ -58,16 +69,16 @@
   });
 </script>
 
-<Canvas>
-  <Scene />
-</Canvas>
+<scene style="--sceneHeight:{sceneHeight.current + 'vh'}">
+  <Canvas>
+    <Scene />
+  </Canvas>
+</scene>
 
 <menu
-  style="display:{menuOpacity.current > 0
+  style="display:{menuHeight.current > 0
     ? 'block'
-    : 'none'};opacity:{menuOpacity.current}; --keyColour:{menuColour.toHex()}; --menuTextColour: {menuColour.isLight()
-    ? 'black'
-    : 'white'}"
+    : 'none'};height:{menuHeight.current + 'vh'};--menuTextColour: white;"
 >
   <settings>
     <button
@@ -256,7 +267,7 @@
   button {
     font-family: "Oxanium";
     background-color: var(--menuTextColour);
-    color: var(--keyColour);
+    color: black;
     display: block;
     width: 25%;
     height: 5%;
@@ -293,6 +304,7 @@
     border-color: var(--menuTextColour);
     height: 20px;
     margin-bottom: 1vh;
+    text-shadow: 1px 1px 1px BLACK;
   }
   select * {
     color: #000;
@@ -334,18 +346,33 @@
     border-width: 2px;
   }
 
+  settings {
+    display: flex;
+    justify-content: center;
+  }
+
   @media (max-width: 600px) {
     menu {
       font-family: "Oxanium";
       display: block;
       position: absolute;
       text-align: center;
-      background-color: var(--keyColour);
+      background-image: linear-gradient(
+        -45deg,
+        #000000,
+        #1b1a34,
+        #e99541,
+        #397a4b,
+        #ffffff
+      );
+      background-size: 600% 600%;
+      animation: gradientAnimation 85s infinite;
       bottom: 3.75vh;
       height: 60vh;
       width: 100vw;
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
 
     .setting {
@@ -357,6 +384,7 @@
       font-size: 1.35em;
       margin-top: 10px;
       text-decoration: underline;
+      text-shadow: 1px 1px 1px BLACK;
     }
     label {
       display: block;
@@ -364,6 +392,15 @@
       color: var(--menuTextColour);
       margin-top: 0.5px;
       margin-bottom: 0.5px;
+      text-shadow: 1px 1px 1px BLACK;
+    }
+
+    scene {
+      display: block;
+      position: absolute;
+      top: 0;
+      width: 100vw;
+      height: var(--sceneHeight);
     }
   }
 
@@ -373,12 +410,22 @@
       display: block;
       position: absolute;
       text-align: center;
-      background-color: var(--keyColour);
+      background-image: linear-gradient(
+        -45deg,
+        #000000,
+        #1b1a34,
+        #e99541,
+        #397a4b,
+        #ffffff
+      );
+      background-size: 600% 600%;
+      animation: gradientAnimation 85s infinite;
       top: 0;
       height: 66vh;
       width: 20vw;
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
 
     .setting {
@@ -390,6 +437,7 @@
       font-size: 1.3em;
       margin-top: 30px;
       text-decoration: underline;
+      text-shadow: 1px 1px 1px BLACK;
     }
     label {
       display: block;
@@ -397,11 +445,26 @@
       color: var(--menuTextColour);
       margin-top: 20px;
       margin-bottom: 10px;
+      text-shadow: 1px 1px 1px BLACK;
+    }
+
+    scene {
+      display: block;
+      position: absolute;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
     }
   }
-
-  settings {
-    display: flex;
-    justify-content: center;
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 100% 90%;
+    }
+    50% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 90%;
+    }
   }
 </style>

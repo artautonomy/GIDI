@@ -178,87 +178,76 @@
   alignItems="Stretch"
   justifyContent="Center"
 >
-  <Box flex={2} width="100%" height="100%">
-    {#snippet children({ width, height })}
-      <T.Mesh>
-        <T.PlaneGeometry args={[width, height]} />
-        <T.MeshBasicMaterial color="red" transparent opacity={0.5} />
-      </T.Mesh>
-      <Align scale={noteScale.current} y={false} auto precise>
-        <InstancedMesh>
-          <T.BoxGeometry />
-          <T.MeshStandardMaterial shadow />
-          <T.Group
-            onpointerenter={onPointerEnter}
-            onpointerleave={onPointerLeave}
-            onclick={() => openMenu()}
-          >
-            {#each midiMessages as noteNumber}
-              {#if $Settings.scene == "Cube"}
-                <Cube
-                  position={noteNumber.position}
-                  scale={noteNumber.scale}
-                  velocity={noteNumber.velocity}
-                  attack={$hovering ? 250 : $Settings.attack}
-                  release={$hovering ? 250 : $Settings.release}
-                  keyColour={selected}
-                  expressionColour={$Settings.colours.expression}
-                />
-              {:else if $Settings.scene == "Piano"}
-                <Piano
-                  position={noteNumber.position}
-                  scale={noteNumber.scale}
-                  velocity={noteNumber.velocity}
-                  attack={$hovering ? 250 : $Settings.attack}
-                  release={$hovering ? 250 : $Settings.release}
-                  keyColour={selected}
-                  expressionColour={$Settings.colours.expression}
-                />
-              {:else if $Settings.scene == "Mirror"}
-                <Mirror
-                  position={noteNumber.position}
-                  scale={noteNumber.scale}
-                  velocity={noteNumber.velocity}
-                  attack={$hovering ? 250 : $Settings.attack}
-                  release={$hovering ? 250 : $Settings.release}
-                  keyColour={selected}
-                  expressionColour={$Settings.colours.expression}
-                />
-              {/if}
-            {/each}
-          </T.Group>
-        </InstancedMesh>
-      </Align>
-    {/snippet}
+  <Box flex={3} width="100%" height="100%">
+    <Align scale={noteScale.current} y={false} auto precise>
+      <InstancedMesh>
+        <T.BoxGeometry />
+        <T.MeshStandardMaterial shadow />
+        <T.Group
+          position.y={-5}
+          onpointerenter={onPointerEnter}
+          onpointerleave={onPointerLeave}
+          onclick={() => openMenu()}
+        >
+          {#each midiMessages as noteNumber}
+            {#if $Settings.scene == "Cube"}
+              <Cube
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$hovering ? 250 : $Settings.attack}
+                release={$hovering ? 250 : $Settings.release}
+                keyColour={selected}
+                expressionColour={$Settings.colours.expression}
+              />
+            {:else if $Settings.scene == "Piano"}
+              <Piano
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$hovering ? 250 : $Settings.attack}
+                release={$hovering ? 250 : $Settings.release}
+                keyColour={selected}
+                expressionColour={$Settings.colours.expression}
+              />
+            {:else if $Settings.scene == "Mirror"}
+              <Mirror
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$hovering ? 250 : $Settings.attack}
+                release={$hovering ? 250 : $Settings.release}
+                keyColour={selected}
+                expressionColour={$Settings.colours.expression}
+              />
+            {/if}
+          {/each}
+        </T.Group>
+      </InstancedMesh>
+    </Align>
   </Box>
   <Billboard>
     <Box flex={1} width="100%" height="100%">
-      {#snippet children({ width, height })}
-        <T.Mesh>
-          <T.PlaneGeometry args={[width, height]} />
-          <T.MeshBasicMaterial color="red" transparent opacity={0.5} />
-        </T.Mesh>
-        {#if !menuOpened}
-          <T.Mesh scale={hintArrow.current} position.y={3}>
-            <T.ConeGeometry />
-            <T.MeshBasicMaterial
-              color={"orange"}
-              transparent={true}
-              opacity={hintText.current}
-            />
-          </T.Mesh>
-          <Text
-            fillOpacity={hintText.current}
-            text={tips}
+      {#if !menuOpened}
+        <T.Mesh scale={hintArrow.current} position.y={3}>
+          <T.ConeGeometry />
+          <T.MeshBasicMaterial
             color={"orange"}
-            font={$Settings.font}
-            textAlign={"center"}
-            anchorX={"center"}
-            fontSize={window.innerHeight > 950 ? 0.45 : 0.3}
-            position.y={2}
+            transparent={true}
+            opacity={hintText.current}
           />
-        {/if}
-      {/snippet}
+        </T.Mesh>
+        <Text
+          fillOpacity={hintText.current}
+          text={tips}
+          color={"orange"}
+          font={$Settings.font}
+          textAlign={"center"}
+          anchorX={"center"}
+          fontSize={window.innerHeight > 950 ? 0.45 : 0.3}
+          position.y={2}
+        />
+      {/if}
     </Box>
   </Billboard>
 </Flex>
