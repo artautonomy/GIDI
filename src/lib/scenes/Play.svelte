@@ -12,8 +12,8 @@
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { Tween } from "svelte/motion";
-  import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
-  import { Device, MIDI, Settings } from "../store";
+  import { cubicIn, cubicInOut } from "svelte/easing";
+  import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Cube from "./instances/Cube.svelte";
   import Piano from "./instances/Piano.svelte";
@@ -68,18 +68,18 @@
   const noteScale = new Tween(
     1 - Math.log(midiMessages.length) / Math.log(window.innerWidth),
     {
-      duration: 1000,
+      duration: 750,
       easing: cubicInOut,
     }
   );
 
   const hintText = new Tween(1, {
-    duration: 1000,
+    duration: 500,
     easing: cubicInOut,
   });
 
   const hintArrow = new Tween(0, {
-    duration: 1000,
+    duration: 500,
     easing: cubicInOut,
   });
 
@@ -178,13 +178,13 @@
   alignItems="Stretch"
   justifyContent="Center"
 >
-  <Box flex={3} width="100%" height="100%">
+  <Box flex={2} width="100%" height="100%">
     <Align scale={noteScale.current} y={false} auto precise>
       <InstancedMesh>
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow />
         <T.Group
-          position.y={-5}
+          position.y={-6}
           onpointerenter={onPointerEnter}
           onpointerleave={onPointerLeave}
           onclick={() => openMenu()}

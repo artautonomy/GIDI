@@ -6,9 +6,8 @@
 
 1. Plug in a MIDI instrument to your PC using a MIDI to USB cable (or for newer MIDI instruments simply a USB-C)
 2. Go to [gidi.uk](https://gidi.uk)
-3. Start playing, GIDI will initialize when MIDI is recognised
-4. Select a 'Style' (Piano, Cube, Mirror)
-5. Play
+3. Select a 'Style' (Piano, Cube, Mirror)
+4. Play
 
 ## Help Improve GIDI
 

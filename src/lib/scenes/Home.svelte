@@ -90,7 +90,7 @@
     easing: cubicInOut,
   });
 
-  const MIDIConnectedButtonPosition = new Tween(0, {
+  const MIDIConnectedButtonPosition = new Tween(1, {
     delay: 1500,
     duration: 1500,
     easing: cubicInOut,
@@ -280,8 +280,8 @@
   }, 500);
 
   function Setup() {
-    MIDIConnectedButtonPosition.target = window.innerHeight / 67.5;
-    MIDIConnectedButtonRotation.target = -9.424778;
+    MIDIConnectedButtonPosition.target = window.innerHeight / 80;
+    MIDIConnectedButtonRotation.target = -4.712389;
     1;
     setTimeout(() => {
       introZoom.set(0, {
@@ -642,7 +642,7 @@
     </Box>
   </Billboard>
 
-  <Billboard follow={!$Device.connected}>
+  <Billboard>
     <Box flex={1} width="100%" height="100%">
       <T.Mesh
         position={[0, MIDIConnectedButtonPosition.current, 0]}
@@ -661,7 +661,7 @@
           smooth={1}
           anchorX={"center"}
           anchorY={"middle"}
-          position={[0, 0.2505, 0]}
+          position={[0, 0.2605, 0]}
           rotation={[-1.553343, 0, 0]}
           outlineBlur={0.06}
         />
@@ -678,7 +678,7 @@
         />
 
         <Text
-          text={"GIDI"}
+          text={"Initialising"}
           font={$Settings.font}
           fontSize={0.4}
           textAlign={"center"}
@@ -691,7 +691,7 @@
         />
 
         <Text
-          text={"Initialising"}
+          text={"Please wait"}
           font={$Settings.font}
           fontSize={0.4}
           textAlign={"center"}

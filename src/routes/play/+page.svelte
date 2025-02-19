@@ -6,12 +6,20 @@
   import { cubicInOut } from "svelte/easing";
   import ColorPicker from "svelte-awesome-color-picker";
   import { colord } from "colord";
+  import { onMount } from "svelte";
+  import { slide, fade } from "svelte/transition";
 
   let setting = $state("notes");
 
-  const menuHeight = new Tween(0);
+  const sceneHeight = new Tween(window.innerHeight);
 
-  const sceneHeight = new Tween(100);
+  let getMenuHeight = $state();
+
+  onMount(() => {
+    if (getMenuHeight) {
+      console.log(getMenuHeight.clientHeight);
+    }
+  });
 
   let rgb = $state({
     r: $Settings.colours.key.r,
@@ -46,22 +54,12 @@
   }
   $effect(() => {
     if ($Settings.edit) {
-      menuHeight.set(62.5, {
-        delay: 250,
-        duration: 750,
-        easing: cubicInOut,
-      });
-      sceneHeight.set(37.5, {
-        delay: 250,
+      sceneHeight.set(window.innerHeight - getMenuHeight.clientHeight, {
         duration: 750,
         easing: cubicInOut,
       });
     } else {
-      menuHeight.set(0, {
-        duration: 750,
-        easing: cubicInOut,
-      });
-      sceneHeight.set(100, {
+      sceneHeight.set(window.innerHeight, {
         duration: 750,
         easing: cubicInOut,
       });
@@ -69,195 +67,202 @@
   });
 </script>
 
-<scene style="--sceneHeight:{sceneHeight.current + 'vh'}">
+<scene style="--sceneHeight:{sceneHeight.current + 'px'}">
   <Canvas>
     <Scene />
   </Canvas>
 </scene>
 
-<menu
-  style="display:{menuHeight.current > 0
-    ? 'block'
-    : 'none'};height:{menuHeight.current + 'vh'};--menuTextColour: white;"
->
-  <settings>
+{#if $Settings.edit}
+  <settings
+    bind:this={getMenuHeight}
+    style="--menuTextColour: white;"
+    in:slide={{ easing: cubicInOut, duration: 750 }}
+    out:slide={{ easing: cubicInOut, duration: 750 }}
+  >
+    <settingOptions>
+      <button
+        class="setting"
+        onclick={() => (setting = "notes")}
+        style="background-color:{setting === 'notes'
+          ? '#397a4b'
+          : '--menuTextColor'};color:{setting === 'notes'
+          ? 'white'
+          : '--menuTextColor'}">Notes</button
+      >
+      <button
+        class="setting"
+        onclick={() => (setting = "scene")}
+        style="background-color:{setting === 'scene'
+          ? '#397a4b'
+          : '--menuTextColor'};color:{setting === 'scene'
+          ? 'white'
+          : '--menuTextColor'}">Scene</button
+      >
+    </settingOptions>
+
+    {#if setting === "notes"}
+      <h1>Colours</h1>
+      <label for="note">Note</label>
+      <ColorPicker
+        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --picker-height="150px"
+        --picker-width="150px"
+        --slider-width="15px"
+        --picker-indicator-size="10px"
+        bind:rgb
+        label=""
+        isAlpha={false}
+        textInputModes={["rgb"]}
+        sliderDirection="vertical"
+        on:input={(event) => {
+          $Settings.colours.key =
+            event.detail.rgb === undefined
+              ? { r: 255, g: 255, b: 255 }
+              : event.detail.rgb;
+        }}
+      />
+      <label for="expression">Expression</label>
+      <ColorPicker
+        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --picker-height="150px"
+        --picker-width="150px"
+        --slider-width="15px"
+        --picker-indicator-size="10px"
+        bind:hsv
+        label=""
+        isAlpha={false}
+        textInputModes={["hsv"]}
+        sliderDirection="vertical"
+        on:input={(event) => {
+          $Settings.colours.expression =
+            event.detail.rgb === undefined
+              ? { r: 255, g: 255, b: 255 }
+              : event.detail.rgb;
+        }}
+      />
+      <h1>ADSR</h1>
+      <label for="attack">Attack</label>
+      <input
+        type="range"
+        min="0"
+        max="4000"
+        step="0.1"
+        id="attack"
+        bind:value={$Settings.attack}
+      />
+      <label for="release">Release</label>
+      <input
+        type="range"
+        min="0"
+        max="4000"
+        step="0.1"
+        id="release"
+        bind:value={$Settings.release}
+      />
+      <button
+        id="remap"
+        onclick={() => {
+          $Settings.remap = true;
+        }}>Remap</button
+      >
+    {:else if setting === "scene"}
+      <h1>Style</h1>
+      <select
+        name="styles"
+        id="styles"
+        bind:value={$Settings.scene}
+        onchange={styleChange}
+      >
+        <option value="Piano">Piano</option>
+        <option value="Cube">Cube</option>
+        <option value="Mirror">Mirror</option>
+      </select>
+      <label for="Background Colour">Background Colour</label>
+
+      <ColorPicker
+        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --picker-height="150px"
+        --picker-width="150px"
+        --slider-width="15px"
+        --picker-indicator-size="10px"
+        bind:hex
+        label=""
+        isAlpha={false}
+        textInputModes={["rgb"]}
+        sliderDirection="vertical"
+        on:input={(event) => {
+          $Settings.colours.background =
+            event.detail.rgb === undefined
+              ? { r: 255, g: 255, b: 255 }
+              : event.detail.rgb;
+        }}
+      />
+      <h1>Light Intensity</h1>
+      <label for="frontLighting">Front Light</label>
+      <input
+        type="range"
+        min="0"
+        max="5.1"
+        step="0.1"
+        id="frontLighting"
+        bind:value={$Settings.lighting.front}
+      />
+      <label for="backLighting">Side Light</label>
+      <input
+        type="range"
+        min="0"
+        max="5.1"
+        step="0.1"
+        id="backLighting"
+        bind:value={$Settings.lighting.side}
+      />
+      <label for="aboveLighting">Above Light</label>
+      <input
+        type="range"
+        min="0"
+        max="5.1"
+        step="0.1"
+        id="aboveLighting"
+        bind:value={$Settings.lighting.above}
+      />
+
+      <h1>Autorotate</h1>
+
+      <input
+        id="autoRotate"
+        type="checkbox"
+        onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
+        checked={$Settings.autoRotate}
+      />
+      <label for="rotateSpeed">Speed</label>
+      <input
+        type="range"
+        min="0.5"
+        max="10"
+        step="0.1"
+        id="rotateSpeed"
+        bind:value={$Settings.autoRotateSpeed}
+      />
+    {/if}
+
     <button
-      class="setting"
-      onclick={() => (setting = "notes")}
-      style="background-color:{setting === 'notes'
-        ? 'rgb(33, 122, 67)'
-        : '--menuTextColor'}">Notes</button
-    >
-    <button
-      class="setting"
-      onclick={() => (setting = "scene")}
-      style="background-color:{setting === 'scene'
-        ? 'rgb(33, 122, 67)'
-        : '--menuTextColor'}">Scene</button
+      id="close"
+      onclick={() => {
+        $Settings.edit = false;
+
+        setTimeout(() => {
+          menuColour = colord(
+            `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
+          )
+            .invert()
+            .desaturate(0.3)
+            .darken(0.1);
+        }, 2000);
+      }}>Close</button
     >
   </settings>
-
-  {#if setting === "notes"}
-    <h1>Colours</h1>
-    <label for="note">Note</label>
-    <ColorPicker
-      --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
-      --picker-height="150px"
-      --picker-width="150px"
-      --slider-width="15px"
-      --picker-indicator-size="10px"
-      bind:rgb
-      label=""
-      isAlpha={false}
-      textInputModes={["rgb"]}
-      sliderDirection="vertical"
-      on:input={(event) => {
-        $Settings.colours.key =
-          event.detail.rgb === undefined
-            ? { r: 255, g: 255, b: 255 }
-            : event.detail.rgb;
-      }}
-    />
-    <label for="expression">Expression</label>
-    <ColorPicker
-      --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
-      --picker-height="150px"
-      --picker-width="150px"
-      --slider-width="15px"
-      --picker-indicator-size="10px"
-      bind:hsv
-      label=""
-      isAlpha={false}
-      textInputModes={["hsv"]}
-      sliderDirection="vertical"
-      on:input={(event) => {
-        $Settings.colours.expression =
-          event.detail.rgb === undefined
-            ? { r: 255, g: 255, b: 255 }
-            : event.detail.rgb;
-      }}
-    />
-    <h1>ADSR</h1>
-    <label for="attack">Attack</label>
-    <input
-      type="range"
-      min="0"
-      max="4000"
-      step="0.1"
-      id="attack"
-      bind:value={$Settings.attack}
-    />
-    <label for="release">Release</label>
-    <input
-      type="range"
-      min="0"
-      max="4000"
-      step="0.1"
-      id="release"
-      bind:value={$Settings.release}
-    />
-    <button
-      id="remap"
-      onclick={() => {
-        $Settings.remap = true;
-      }}>Remap</button
-    >
-  {:else if setting === "scene"}
-    <h1>Style</h1>
-    <select
-      name="styles"
-      id="styles"
-      bind:value={$Settings.scene}
-      onchange={styleChange}
-    >
-      <option value="Piano">Piano</option>
-      <option value="Cube">Cube</option>
-      <option value="Mirror">Mirror</option>
-    </select>
-    <label for="Background Colour">Background Colour</label>
-
-    <ColorPicker
-      --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
-      --picker-height="150px"
-      --picker-width="150px"
-      --slider-width="15px"
-      --picker-indicator-size="10px"
-      bind:hex
-      label=""
-      isAlpha={false}
-      textInputModes={["rgb"]}
-      sliderDirection="vertical"
-      on:input={(event) => {
-        $Settings.colours.background =
-          event.detail.rgb === undefined
-            ? { r: 255, g: 255, b: 255 }
-            : event.detail.rgb;
-      }}
-    />
-    <h1>Light Intensity</h1>
-    <label for="frontLighting">Front Light</label>
-    <input
-      type="range"
-      min="0"
-      max="5.1"
-      step="0.1"
-      id="frontLighting"
-      bind:value={$Settings.lighting.front}
-    />
-    <label for="backLighting">Side Light</label>
-    <input
-      type="range"
-      min="0"
-      max="5.1"
-      step="0.1"
-      id="backLighting"
-      bind:value={$Settings.lighting.side}
-    />
-    <label for="aboveLighting">Above Light</label>
-    <input
-      type="range"
-      min="0"
-      max="5.1"
-      step="0.1"
-      id="aboveLighting"
-      bind:value={$Settings.lighting.above}
-    />
-
-    <h1>Autorotate</h1>
-
-    <input
-      id="autoRotate"
-      type="checkbox"
-      onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
-      checked={$Settings.autoRotate}
-    />
-    <label for="rotateSpeed">Speed</label>
-    <input
-      type="range"
-      min="0.5"
-      max="10"
-      step="0.1"
-      id="rotateSpeed"
-      bind:value={$Settings.autoRotateSpeed}
-    />
-  {/if}
-
-  <button
-    id="close"
-    onclick={() => {
-      $Settings.edit = false;
-
-      setTimeout(() => {
-        menuColour = colord(
-          `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
-        )
-          .invert()
-          .desaturate(0.3)
-          .darken(0.1);
-      }, 2000);
-    }}>Close</button
-  >
-</menu>
+{/if}
 
 <style>
   @font-face {
@@ -270,22 +275,21 @@
     color: black;
     display: block;
     width: 25%;
-    height: 5%;
     margin: 2.5% 37.5%;
     cursor: pointer;
     border-style: none;
   }
   button#close {
+    background-color: #397a4b;
+    color: white;
     width: 75%;
-    height: 3.5%;
-    position: absolute;
-    bottom: 0;
-    margin: 0 12.5% 2%;
+    margin: 5% 12.5% 2%;
   }
   button#remap {
     width: 60%;
     margin: 10% 20%;
   }
+
   button:hover {
     font-weight: bold;
     background-color: rgb(135, 238, 149);
@@ -342,17 +346,22 @@
   }
   input[type="checkbox"]:checked {
     background-color: var(--menuTextColour);
-    border-color: rgb(33, 122, 67);
+    border-color: #397a4b;
     border-width: 2px;
   }
 
-  settings {
+  settingOptions {
     display: flex;
     justify-content: center;
   }
+  .setting {
+    width: 50%;
+    height: 100%;
+    margin: 2.5%;
+  }
 
   @media (max-width: 600px) {
-    menu {
+    settings {
       font-family: "Oxanium";
       display: block;
       position: absolute;
@@ -367,22 +376,18 @@
       );
       background-size: 600% 600%;
       animation: gradientAnimation 85s infinite;
-      bottom: 3.75vh;
-      height: 60vh;
+      bottom: 0;
       width: 100vw;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      z-index: 1;
+      transform-origin: top;
     }
 
-    .setting {
-      width: 50%;
-      margin: 1%;
-    }
     h1 {
       color: var(--menuTextColour);
-      font-size: 1.35em;
-      margin-top: 10px;
+      font-size: 1.25em;
+      margin-top: 5%;
       text-decoration: underline;
       text-shadow: 1px 1px 1px BLACK;
     }
@@ -395,6 +400,10 @@
       text-shadow: 1px 1px 1px BLACK;
     }
 
+    button {
+      height: 7.5%;
+    }
+
     scene {
       display: block;
       position: absolute;
@@ -402,10 +411,14 @@
       width: 100vw;
       height: var(--sceneHeight);
     }
+
+    settingOptions {
+      height: 10%;
+    }
   }
 
   @media (min-width: 600px) {
-    menu {
+    settings {
       font-family: "Oxanium";
       display: block;
       position: absolute;
@@ -425,17 +438,13 @@
       width: 20vw;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      transform-origin: top;
     }
 
-    .setting {
-      width: 40%;
-      margin: 2.5%;
-    }
     h1 {
       color: var(--menuTextColour);
       font-size: 1.3em;
-      margin-top: 30px;
+      margin-top: 7.5%;
       text-decoration: underline;
       text-shadow: 1px 1px 1px BLACK;
     }
@@ -447,6 +456,9 @@
       margin-bottom: 10px;
       text-shadow: 1px 1px 1px BLACK;
     }
+    button {
+      height: 5%;
+    }
 
     scene {
       display: block;
@@ -454,6 +466,10 @@
       top: 0;
       width: 100vw;
       height: 100vh;
+    }
+
+    settingOptions {
+      height: 5%;
     }
   }
   @keyframes gradientAnimation {

@@ -82,7 +82,7 @@
   const noteScale = new Tween(
     1 - Math.log(midiMessages.length) / Math.log(window.innerWidth),
     {
-      duration: 1000,
+      duration: 750,
       easing: cubicInOut,
     }
   );

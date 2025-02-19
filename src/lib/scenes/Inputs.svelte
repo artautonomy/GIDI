@@ -142,18 +142,13 @@
 <Flex
   width={window.innerWidth / 40}
   height={window.innerHeight / 40}
-  gap={window.innerHeight / 300}
   flexDirection="Column"
+  alignItems="Stretch"
+  justifyContent="Center"
 >
   <Billboard>
     <Box flex={1} width="100%" height="100%">
-      {#snippet children({ width, height })}
-        {console.log(width)}
-        <T.Mesh>
-          <T.PlaneGeometry args={[width, height]} />
-          <T.MeshBasicMaterial color="red" transparent opacity={0.5} />
-        </T.Mesh>
-
+      {#snippet children({ width })}
         <Text
           text={title}
           color={"orange"}
@@ -181,45 +176,38 @@
   </Billboard>
   <Billboard follow>
     <Box flex={1} width="100%" height="100%">
-      {#snippet children({ width, height })}
-        <T.Mesh>
-          <T.PlaneGeometry args={[width, height]} />
-          <T.MeshBasicMaterial color="red" transparent opacity={0.5} />
-        </T.Mesh>
+      {#each $Device.inputs as device, index}
+        <T.Group
+          onpointerenter={onPointerEnterStyle}
+          onpointerleave={onPointerLeaveStyle}
+          onclick={() => setupStyle()}
+        >
+          <InstancedMesh>
+            <T.BoxGeometry args={[10, 0.75, 1]} />
+            <T.MeshStandardMaterial shadow />
 
-        {#each $Device.inputs as device, index}
-          <T.Group
-            onpointerenter={onPointerEnterStyle}
-            onpointerleave={onPointerLeaveStyle}
-            onclick={() => setupStyle()}
-          >
-            <InstancedMesh>
-              <T.BoxGeometry args={[10, 0.75, 1]} />
-              <T.MeshStandardMaterial shadow />
+            <Input
+              position={{ x: 0, y: index, z: 0 }}
+              keyColour={{ r: 80, g: 50, b: 111 }}
+              expressionColour={{ r: 77, g: 144, b: 57 }}
+              device={device.id}
+              velocity={device.velocity}
+            />
 
-              <Input
-                position={{ x: 0, y: index, z: 0 }}
-                keyColour={{ r: 80, g: 50, b: 111 }}
-                expressionColour={{ r: 77, g: 144, b: 57 }}
-                device={device.id}
-                velocity={device.velocity}
-              />
-
-              <Text
-                text={device.name}
-                font={$Settings.font}
-                fontSize={0.5}
-                textAlign={"center"}
-                smooth={1}
-                anchorX={"center"}
-                anchorY={"middle"}
-                position={[0, index, 0.505]}
-                outlineBlur={0.06}
-              />
-            </InstancedMesh>
-          </T.Group>
-        {/each}
-      {/snippet}
+            <Text
+              text={device.name}
+              font={$Settings.font}
+              fontSize={0.5}
+              textAlign={"center"}
+              smooth={1}
+              anchorX={"center"}
+              anchorY={"middle"}
+              position={[0, index, 0.505]}
+              outlineBlur={0.06}
+            />
+          </InstancedMesh>
+        </T.Group>
+      {/each}
     </Box>
   </Billboard>
 </Flex>
