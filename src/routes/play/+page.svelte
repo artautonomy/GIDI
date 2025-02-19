@@ -11,15 +11,17 @@
 
   let setting = $state("notes");
 
-  const sceneHeight = new Tween(window.innerHeight);
-
   let getMenuHeight = $state();
 
+  let screenHeight = 0;
+
   onMount(() => {
-    if (getMenuHeight) {
-      console.log(getMenuHeight.clientHeight);
+    if (typeof window !== "undefined") {
+      screenHeight = window.innerHeight;
     }
   });
+
+  const sceneHeight = new Tween(screenHeight);
 
   let rgb = $state({
     r: $Settings.colours.key.r,
@@ -54,12 +56,12 @@
   }
   $effect(() => {
     if ($Settings.edit) {
-      sceneHeight.set(window.innerHeight - getMenuHeight.clientHeight, {
+      sceneHeight.set(screenHeight - getMenuHeight.clientHeight, {
         duration: 750,
         easing: cubicInOut,
       });
     } else {
-      sceneHeight.set(window.innerHeight, {
+      sceneHeight.set(screenHeight, {
         duration: 750,
         easing: cubicInOut,
       });
