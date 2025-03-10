@@ -182,9 +182,6 @@
     easing: cubicInOut,
   });
 
-  $Settings.attack = 75;
-  $Settings.release = 1000;
-
   for (let i = 0; i < 7; i++) {
     padNotes.push({
       note: i,
@@ -439,13 +436,39 @@
 <T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Flex
-  width={window.innerWidth / 40}
+  width={window.innerWidth / 50}
   height={window.innerHeight / 40}
   gap={window.innerHeight / 300}
   flexDirection="Column"
-  alignItems="Stretch"
-  justifyContent="Center"
 >
+  <Billboard>
+    <Box
+      flex={1}
+      width="100%"
+      height="100%"
+      right={window.innerWidth > 500 ? "50%" : "0%"}
+    >
+      {#snippet children({ width })}
+        {#if !$Device.accessConfirmed}
+          <T.Mesh position.y={-1}>
+            <T.ConeGeometry />
+            <T.MeshBasicMaterial color={"green"} shadow />
+          </T.Mesh>
+          <Text
+            text={"Click 'Allow' to begin"}
+            color={"white"}
+            font={$Settings.font}
+            fontSize={width > 20 ? 0.8 : 0.5}
+            textAlign={"center"}
+            anchorX={"center"}
+            position.y={-2}
+            position.z={7}
+          />
+        {/if}
+      {/snippet}
+    </Box>
+  </Billboard>
+
   <Billboard>
     <Box flex={10} width="100%" height="100%">
       {#snippet children({ width })}
@@ -641,73 +664,74 @@
       {/snippet}
     </Box>
   </Billboard>
-
   <Billboard>
     <Box flex={1} width="100%" height="100%">
-      <T.Mesh
-        position={[0, MIDIConnectedButtonPosition.current, 0]}
-        rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
-        interactive
-        onpointerenter={() =>
-          MIDIConnectedButtonScale.set(window.innerWidth / 60)}
-        onpointerleave={() =>
-          MIDIConnectedButtonScale.set(window.innerWidth / 30)}
-      >
-        <Text
-          text={"Please wait"}
-          font={$Settings.font}
-          fontSize={0.4}
-          textAlign={"center"}
-          smooth={1}
-          anchorX={"center"}
-          anchorY={"middle"}
-          position={[0, 0.2605, 0]}
-          rotation={[-1.553343, 0, 0]}
-          outlineBlur={0.06}
-        />
-        <Text
-          text={$Device.connected ? "MIDI Connected" : "No MIDI Device Found"}
-          font={$Settings.font}
-          fontSize={0.4}
-          textAlign={"center"}
-          smooth={1}
-          anchorX={"center"}
-          anchorY={"middle"}
-          position={[0, 0, 0.505]}
-          outlineBlur={0.06}
-        />
+      {#if $Device.accessConfirmed}
+        <T.Mesh
+          position={[0, MIDIConnectedButtonPosition.current, 0]}
+          rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
+          interactive
+          onpointerenter={() =>
+            MIDIConnectedButtonScale.set(window.innerWidth / 60)}
+          onpointerleave={() =>
+            MIDIConnectedButtonScale.set(window.innerWidth / 30)}
+        >
+          <Text
+            text={"Please wait"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, 0.2605, 0]}
+            rotation={[-1.553343, 0, 0]}
+            outlineBlur={0.06}
+          />
+          <Text
+            text={$Device.connected ? "MIDI Connected" : "No MIDI Device Found"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, 0, 0.505]}
+            outlineBlur={0.06}
+          />
 
-        <Text
-          text={"Initialising"}
-          font={$Settings.font}
-          fontSize={0.4}
-          textAlign={"center"}
-          smooth={1}
-          anchorX={"center"}
-          anchorY={"middle"}
-          position={[0, 0, -0.505]}
-          rotation={[0, 3.14, -3.14]}
-          outlineBlur={0.06}
-        />
+          <Text
+            text={"Initialising"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, 0, -0.505]}
+            rotation={[0, 3.14, -3.14]}
+            outlineBlur={0.06}
+          />
 
-        <Text
-          text={"Please wait"}
-          font={$Settings.font}
-          fontSize={0.4}
-          textAlign={"center"}
-          smooth={1}
-          anchorX={"center"}
-          anchorY={"middle"}
-          position={[0, -0.2605, 0]}
-          rotation.x={1.553343}
-          outlineBlur={0.06}
-        />
+          <Text
+            text={"Please wait"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, -0.2605, 0]}
+            rotation.x={1.553343}
+            outlineBlur={0.06}
+          />
 
-        <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 0.5, 1]} />
-        <T.MeshPhongMaterial
-          color={$Device.connected ? new Color("rgb(22, 90, 11)") : "darkred"}
-        />
-      </T.Mesh>
+          <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 0.5, 1]} />
+          <T.MeshPhongMaterial
+            color={$Device.connected ? new Color("rgb(22, 90, 11)") : "darkred"}
+          />
+        </T.Mesh>
+      {/if}
     </Box>
   </Billboard>
 </Flex>

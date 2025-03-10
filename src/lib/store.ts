@@ -16,6 +16,7 @@ interface MIDIMessage {
 }
 
 interface Device {
+    accessConfirmed: boolean;
     connected: boolean;
     inputs: [{id:string,name:string,velocity:number}];
     input: {id:string};
@@ -24,6 +25,7 @@ interface Device {
 export let MIDI = writable<MIDIMessage[]>([]);
 
 export let Device = writable<Device>({
+    accessConfirmed: false,
     connected: false,
     inputs: [{
         id: "",
@@ -37,7 +39,6 @@ export let Device = writable<Device>({
 
 export let Settings = writable({
 
-   
     page: 'home',
     scene : 'Piano',
     edit: false,
@@ -48,8 +49,8 @@ export let Settings = writable({
     zoom: true,
     autoRotate: true,
     autoRotateSpeed: 1.1,
-    attack: 10,
-    release: 500,
+    attack: 15,
+    release: 250,
     colours: {
         background: {
 
