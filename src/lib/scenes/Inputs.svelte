@@ -143,8 +143,6 @@
   width={window.innerWidth / 40}
   height={window.innerHeight / 40}
   flexDirection="Column"
-  alignItems="Stretch"
-  justifyContent="Center"
 >
   <Billboard>
     <Box flex={1} width="100%" height="100%">

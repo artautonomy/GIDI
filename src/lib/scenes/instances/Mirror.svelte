@@ -40,7 +40,7 @@
   }: Props = $props();
 
   const bottomY = new Tween(1);
-  const topY = new Tween(7.5);
+  const topY = new Tween(5);
   const scaleY = new Tween(1);
   const r = new Tween(keyColour.r);
   const g = new Tween(keyColour.g);

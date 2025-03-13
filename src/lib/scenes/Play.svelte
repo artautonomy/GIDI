@@ -13,11 +13,12 @@
   import { Box, Flex } from "@threlte/flex";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { Device, MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Cube from "./instances/Cube.svelte";
   import Piano from "./instances/Piano.svelte";
   import Mirror from "./instances/Mirror.svelte";
+  import Smoke from "./instances/Smoke.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -100,6 +101,14 @@
     }, 2000);
   }
 
+  function onKeyDown(e) {
+    switch (e.key) {
+      case "e":
+        openMenu();
+        break;
+    }
+  }
+
   $effect(() => {
     if (!$Settings.edit) {
       noteScale.target =
@@ -127,6 +136,10 @@
 
   $Settings.orbitControls = true;
   $Settings.autoRotate = false;
+
+  //testing new styles
+  //$Device.input.id = "input-0";
+  //$Settings.scene = "Line";
 </script>
 
 <T.OrthographicCamera
@@ -144,7 +157,7 @@
     enabled={$Settings.orbitControls}
     onstart={(e) => {
       hintArrow.target = 0.75;
-      tips = "To edit the scene click here";
+      tips = "To edit the scene click here or press 'e'";
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -175,8 +188,6 @@
   width={window.innerWidth / 40}
   height={window.innerHeight / 40}
   flexDirection="Column"
-  alignItems="Stretch"
-  justifyContent="Center"
 >
   <Box flex={2} width="100%" height="100%">
     <Align scale={noteScale.current} y={false} auto precise>
@@ -220,6 +231,16 @@
                 keyColour={selected}
                 expressionColour={$Settings.colours.expression}
               />
+            {:else}
+              <Smoke
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$hovering ? 250 : $Settings.attack}
+                release={$hovering ? 250 : $Settings.release}
+                keyColour={selected}
+                expressionColour={$Settings.colours.expression}
+              />
             {/if}
           {/each}
         </T.Group>
@@ -251,3 +272,5 @@
     </Box>
   </Billboard>
 </Flex>
+
+<svelte:window on:keydown|preventDefault={onKeyDown} />

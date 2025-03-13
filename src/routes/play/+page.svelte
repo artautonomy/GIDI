@@ -176,9 +176,10 @@
         bind:value={$Settings.scene}
         onchange={styleChange}
       >
-        <option value="Piano">Piano</option>
-        <option value="Cube">Cube</option>
-        <option value="Mirror">Mirror</option>
+        <option value={$Settings.styles[0]}>{$Settings.styles[0]}</option>
+        <option value={$Settings.styles[1]}>{$Settings.styles[1]}</option>
+        <option value={$Settings.styles[2]}>{$Settings.styles[2]}</option>
+        <option value={$Settings.styles[3]}>{$Settings.styles[3]}</option>
       </select>
       <label for="Background Colour">Background Colour</label>
 

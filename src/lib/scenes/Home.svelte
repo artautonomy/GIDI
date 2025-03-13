@@ -16,6 +16,7 @@
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Piano from "./instances/Piano.svelte";
+  import Smoke from "./instances/Smoke.svelte";
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
 
@@ -27,7 +28,7 @@
 
   interactivity();
 
-  let deviceOrientation = $state(screen.orientation.type);
+  //let deviceOrientation = $state(screen.orientation.type);
 
   let padNotes: {
     note: number;
@@ -82,7 +83,9 @@
 
   const introZoom = new Tween(0);
 
-  const MIDIConnectedButtonScale = new Spring(window.innerWidth / 30);
+  const MIDIConnectedButtonScale = new Spring(
+    window.innerWidth < 475 ? window.innerWidth / 37.5 : window.innerWidth / 150
+  );
 
   const MIDIConnectedButtonRotation = new Tween(0, {
     delay: 1000,
@@ -112,7 +115,7 @@
     easing: cubicInOut,
   });
 
-  const styles = ["Piano", "Cube", "Mirror"];
+  const styles = $Settings.styles;
 
   let styleIndex = $state(0);
 
@@ -139,7 +142,6 @@
 
   const { onPointerEnter, onPointerLeave } = useCursor();
 
-  let positionX = 0;
   let positionY = 0;
   let positionZ = 0;
   let scaleX = 1;
@@ -305,7 +307,11 @@
     if (styles[styleIndex] === "Piano") {
       mobileNotes = pianoNotes;
       noteCount = 12;
+      $Settings.attack = 15;
+    } else if (styles[styleIndex] === "Smoke") {
+      $Settings.attack = 2000;
     } else {
+      $Settings.attack = 15;
       mobileNotes = padNotes;
       noteCount = 7;
     }
@@ -349,7 +355,11 @@
     if (styles[styleIndex] === "Piano") {
       mobileNotes = pianoNotes;
       noteCount = 12;
+      $Settings.attack = 15;
+    } else if (styles[styleIndex] === "Smoke") {
+      $Settings.attack = 2000;
     } else {
+      $Settings.attack = 15;
       mobileNotes = padNotes;
       noteCount = 7;
     }
@@ -534,8 +544,18 @@
                   keyColour={$Settings.colours.key}
                   expressionColour={$Settings.colours.expression}
                 />
-              {:else if styles[styleIndex] === "Cube"}
-                <Cube
+              {:else if styles[styleIndex] === "Smoke"}
+                <Smoke
+                  position={noteNumber.position}
+                  scale={noteNumber.scale}
+                  velocity={noteNumber.velocity}
+                  attack={$Settings.attack}
+                  release={$Settings.release}
+                  keyColour={$Settings.colours.key}
+                  expressionColour={$Settings.colours.expression}
+                />
+              {:else if styles[styleIndex] === "Mirror"}
+                <Mirror
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
@@ -545,7 +565,7 @@
                   expressionColour={$Settings.colours.expression}
                 />
               {:else}
-                <Mirror
+                <Cube
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
@@ -670,11 +690,6 @@
         <T.Mesh
           position={[0, MIDIConnectedButtonPosition.current, 0]}
           rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
-          interactive
-          onpointerenter={() =>
-            MIDIConnectedButtonScale.set(window.innerWidth / 60)}
-          onpointerleave={() =>
-            MIDIConnectedButtonScale.set(window.innerWidth / 30)}
         >
           <Text
             text={"Please wait"}

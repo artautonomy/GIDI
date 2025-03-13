@@ -19,6 +19,7 @@
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
   import Piano from "./instances/Piano.svelte";
+  import Smoke from "./instances/Smoke.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -45,7 +46,9 @@
   const summary =
     "Play your MIDI device to sample styles\n\nTo confirm your style select it";
 
-  const MIDIConnectedButtonScale = new Spring(window.innerWidth / 30);
+  const MIDIConnectedButtonScale = new Spring(
+    window.innerWidth < 475 ? window.innerWidth / 37.5 : window.innerWidth / 150
+  );
 
   const MIDIConnectedButtonRotation = new Tween(0, {
     delay: 500,
@@ -61,7 +64,7 @@
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
-  const styles = ["Piano", "Cube", "Mirror"];
+  const styles = $Settings.styles;
 
   let styleIndex = $state(0);
 
@@ -206,8 +209,6 @@
   height={window.innerHeight / 40}
   gap={window.innerHeight / 300}
   flexDirection="Column"
-  alignItems="Stretch"
-  justifyContent="Center"
 >
   <Billboard>
     <Box flex={1} width="100%" height="100%">
@@ -262,23 +263,33 @@
                   keyColour={highlighted}
                   expressionColour={$Settings.colours.expression}
                 />
-              {:else if styles[styleIndex] === "Cube"}
-                <Cube
+              {:else if styles[styleIndex] === "Smoke"}
+                <Smoke
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
-                  attack={$hovering ? 250 : $Settings.attack}
-                  release={$hovering ? 250 : $Settings.release}
-                  keyColour={highlighted}
+                  attack={$Settings.attack}
+                  release={$Settings.release}
+                  keyColour={$Settings.colours.key}
                   expressionColour={$Settings.colours.expression}
                 />
-              {:else}
+              {:else if styles[styleIndex] === "Mirror"}
                 <Mirror
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
                   attack={$Settings.attack}
                   release={$Settings.release}
+                  keyColour={highlighted}
+                  expressionColour={$Settings.colours.expression}
+                />
+              {:else}
+                <Cube
+                  position={noteNumber.position}
+                  scale={noteNumber.scale}
+                  velocity={noteNumber.velocity}
+                  attack={$hovering ? 250 : $Settings.attack}
+                  release={$hovering ? 250 : $Settings.release}
                   keyColour={highlighted}
                   expressionColour={$Settings.colours.expression}
                 />
@@ -292,11 +303,6 @@
         <T.Mesh
           position={[0, MIDIConnectedButtonPosition.current, 0]}
           rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
-          interactive
-          onpointerenter={() =>
-            MIDIConnectedButtonScale.set(window.innerWidth / 60)}
-          onpointerleave={() =>
-            MIDIConnectedButtonScale.set(window.innerWidth / 30)}
         >
           <Text
             text={"Creating styles"}
@@ -382,39 +388,47 @@
             <T.MeshBasicMaterial color={"orange"} shadow />
           </T.Mesh>
         </T.Mesh>
-        <Text
-          font={$Settings.font}
-          fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
-          outlineBlur={0.06}
-          text={styles[styleIndex]}
-          textAlign={"center"}
-          anchorX={"center"}
-          position.x={0}
-          position.y={0.5}
-          position.z={10}
-          color={"white"}
+        <T.Mesh
           onpointerenter={onPointerEnterStyle}
           onpointerleave={onPointerLeaveStyle}
           onclick={() => setupScene(styles[styleIndex])}
-        />
-        <Text
-          font={$Settings.font}
-          fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
-          maxWidth={window.innerHeight > 1200 ? 100 : 9}
-          outlineBlur={0.06}
-          text={styles[styleIndex] === "Piano"
-            ? "Recommended for keyboards and synthesizers. Automapping enabled."
-            : "Recommended for pads and samplers."}
-          textAlign={"center"}
-          anchorX={"center"}
-          position.x={0}
-          position.y={-0.33}
-          position.z={10}
-          color={"white"}
-          onpointerenter={onPointerEnterStyle}
-          onpointerleave={onPointerLeaveStyle}
-          onclick={() => setupScene(styles[styleIndex])}
-        />
+        >
+          <T.BoxGeometry
+            args={[
+              window.innerHeight > 1200 ? 17 : 7,
+              window.innerHeight > 1200 ? 2.75 : 1.25,
+              1,
+            ]}
+          />
+          <T.MeshBasicMaterial opacity={0} transparent />
+          <Text
+            font={$Settings.font}
+            fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
+            outlineBlur={0.06}
+            text={styles[styleIndex]}
+            textAlign={"center"}
+            anchorX={"center"}
+            position.x={0}
+            position.y={0.5}
+            position.z={10}
+            color={"white"}
+          />
+          <Text
+            font={$Settings.font}
+            fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
+            maxWidth={window.innerHeight > 1200 ? 100 : 9}
+            outlineBlur={0.06}
+            text={styles[styleIndex] === "Piano"
+              ? "Recommended for keyboards and synthesizers. Automapping enabled."
+              : "Recommended for pads and samplers."}
+            textAlign={"center"}
+            anchorX={"center"}
+            position.x={0}
+            position.y={-0.33}
+            position.z={10}
+            color={"white"}
+          />
+        </T.Mesh>
         <T.Mesh
           scale={0.75}
           position.x={window.innerWidth > 900 ? -10 : -4.5}
