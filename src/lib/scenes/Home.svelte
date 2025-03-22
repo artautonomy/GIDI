@@ -308,10 +308,14 @@
       mobileNotes = pianoNotes;
       noteCount = 12;
       $Settings.attack = 15;
+      $Settings.release = 1000;
     } else if (styles[styleIndex] === "Smoke") {
-      $Settings.attack = 2000;
+      $Settings.attack = 500;
+      $Settings.release = 3500;
+      mobileNotes = padNotes;
     } else {
       $Settings.attack = 15;
+      $Settings.release = 1000;
       mobileNotes = padNotes;
       noteCount = 7;
     }
@@ -356,10 +360,14 @@
       mobileNotes = pianoNotes;
       noteCount = 12;
       $Settings.attack = 15;
+      $Settings.release = 1000;
     } else if (styles[styleIndex] === "Smoke") {
-      $Settings.attack = 2000;
+      $Settings.attack = 500;
+      $Settings.release = 3500;
+      mobileNotes = padNotes;
     } else {
       $Settings.attack = 15;
+      $Settings.release = 1000;
       mobileNotes = padNotes;
       noteCount = 7;
     }

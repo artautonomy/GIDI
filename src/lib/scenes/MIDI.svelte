@@ -396,13 +396,13 @@
     try {
       midiAccess = await navigator.requestMIDIAccess({ sysex: true });
 
-      $Device.accessConfirmed = true;
-
       setupMIDIInputs();
 
       midiAccess.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
         setupMIDIInputs();
       };
+
+      $Device.accessConfirmed = true;
     } catch (err) {
       console.error("Failed to get MIDI access", err);
       $Device.accessConfirmed = true;
