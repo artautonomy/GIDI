@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { Spring, Tween } from "svelte/motion";
-  import { cubicOut, cubicInOut } from "svelte/easing";
+  import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Piano from "./instances/Piano.svelte";
@@ -88,7 +88,7 @@
   );
 
   const MIDIConnectedButtonRotation = new Tween(0, {
-    delay: 1000,
+    delay: 800,
     duration: 2500,
     easing: cubicInOut,
   });
@@ -138,7 +138,10 @@
   const title = "Welcome to GIDI";
 
   const summary =
-    "GIDI is a free, open source web application for musicians using MIDI devices. By reading MIDI messages it can visualise a performance on a web browser\n\nTo get started allow MIDI when prompted or try the demo below";
+    "GIDI is a free, open source web application for musicians using MIDI devices. By reading MIDI messages it can visualise a performance on a web browser";
+
+  const instruction =
+    "To get started click 'Allow' on the MIDI permission window or try the demo below";
 
   const { onPointerEnter, onPointerLeave } = useCursor();
 
@@ -460,34 +463,6 @@
   flexDirection="Column"
 >
   <Billboard>
-    <Box
-      flex={1}
-      width="100%"
-      height="100%"
-      right={window.innerWidth > 500 ? "50%" : "0%"}
-    >
-      {#snippet children({ width })}
-        {#if !$Device.accessConfirmed}
-          <T.Mesh position.y={-1}>
-            <T.ConeGeometry />
-            <T.MeshBasicMaterial color={"green"} shadow />
-          </T.Mesh>
-          <Text
-            text={"Click 'Allow' to begin"}
-            color={"white"}
-            font={$Settings.font}
-            fontSize={width > 20 ? 0.8 : 0.5}
-            textAlign={"center"}
-            anchorX={"center"}
-            position.y={-2}
-            position.z={7}
-          />
-        {/if}
-      {/snippet}
-    </Box>
-  </Billboard>
-
-  <Billboard>
     <Box flex={10} width="100%" height="100%">
       {#snippet children({ width })}
         <Text
@@ -512,6 +487,35 @@
           position.z="7"
           outlineBlur={0.06}
         />
+        {#if $Device.accessRights === ""}
+          <Text
+            text={instruction}
+            color={"green"}
+            maxWidth={width > 20 ? 21 : 10}
+            font={$Settings.font}
+            fontSize={width > 20 ? 0.5 : 0.45}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            position.y={-1.7}
+            position.z="7"
+            outlineBlur={0.06}
+          />
+        {:else if $Device.accessRights === "Allow" && !$Device.connected}
+          <Text
+            text={"Plug in a MIDI device or try the demo below"}
+            color={"green"}
+            maxWidth={width > 20 ? 21 : 10}
+            font={$Settings.font}
+            fontSize={width > 20 ? 0.5 : 0.45}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            position.y={-1.7}
+            position.z="7"
+            outlineBlur={0.06}
+          />
+        {/if}
       {/snippet}
     </Box>
   </Billboard>
@@ -693,8 +697,8 @@
     </Box>
   </Billboard>
   <Billboard>
-    <Box flex={1} width="100%" height="100%">
-      {#if $Device.accessConfirmed}
+    {#if $Device.accessRights === "Allow"}
+      <Box flex={1} width="100%" height="100%">
         <T.Mesh
           position={[0, MIDIConnectedButtonPosition.current, 0]}
           rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
@@ -754,7 +758,7 @@
             color={$Device.connected ? new Color("rgb(22, 90, 11)") : "darkred"}
           />
         </T.Mesh>
-      {/if}
-    </Box>
+      </Box>
+    {/if}
   </Billboard>
 </Flex>

@@ -50,15 +50,19 @@
 
   const randCurve2 = Math.random() - 0.5;
 
+  const randCurve3 = Math.random() - 0.5;
+
   const curve = new CatmullRomCurve3([
     new Vector3(position.x, 0, position.z),
     new Vector3(position.x, 1, position.z),
     new Vector3(position.x + -randCurve2, 3, position.z - randCurve),
-    new Vector3(position.x + randCurve2 * 2, 4, position.z + randCurve * 2),
-    new Vector3(position.x + randCurve2 * 2, 5, position.z - randCurve * 2),
+    new Vector3(position.x + randCurve2 * 1.5, 4, position.z + randCurve * 2),
+    new Vector3(position.x + randCurve2 * 1.5, 5, position.z - randCurve * 2),
+    new Vector3(position.x + randCurve3 * 2, 7, position.z + randCurve * 3),
+    new Vector3(position.x + randCurve3 * 2, 9, position.z - randCurve * 4),
   ]);
 
-  const points = curve.getPoints(50);
+  const points = curve.getPoints(75);
 
   let color = $state(new Color());
 
@@ -114,8 +118,8 @@
   <MeshLineMaterial
     width={widthFadeOut.current}
     {color}
-    dashArray={1}
-    dashRatio={0.2}
+    dashArray={1.5}
+    dashRatio={0.1}
     {dashOffset}
     transparent
     scaleDown={1}

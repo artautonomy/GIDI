@@ -402,10 +402,10 @@
         setupMIDIInputs();
       };
 
-      $Device.accessConfirmed = true;
+      $Device.accessRights = "Allow";
     } catch (err) {
       console.error("Failed to get MIDI access", err);
-      $Device.accessConfirmed = true;
+      $Device.accessRights = "Deny";
     }
   });
 </script>

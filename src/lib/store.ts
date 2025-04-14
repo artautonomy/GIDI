@@ -16,7 +16,7 @@ interface MIDIMessage {
 }
 
 interface Device {
-    accessConfirmed: boolean;
+    accessRights: string;
     connected: boolean;
     inputs: [{id:string,name:string,velocity:number}];
     input: {id:string};
@@ -25,7 +25,7 @@ interface Device {
 export let MIDI = writable<MIDIMessage[]>([]);
 
 export let Device = writable<Device>({
-    accessConfirmed: false,
+    accessRights: "",
     connected: false,
     inputs: [{
         id: "",
