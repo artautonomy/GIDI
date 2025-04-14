@@ -49,7 +49,7 @@ export let Settings = writable({
     zoom: true,
     autoRotate: true,
     autoRotateSpeed: 1.1,
-    attack: 15,
+    attack: 5,
     release: 1000,
     styles: ["Piano", "Smoke", "Mirror", "Cube"],
     colours: {

@@ -364,14 +364,14 @@
     if (styles[styleIndex] === "Piano") {
       mobileNotes = pianoNotes;
       noteCount = 12;
-      $Settings.attack = 15;
+      $Settings.attack = 5;
       $Settings.release = 1000;
     } else if (styles[styleIndex] === "Smoke") {
       $Settings.attack = 500;
       $Settings.release = 3500;
       mobileNotes = padNotes;
     } else {
-      $Settings.attack = 15;
+      $Settings.attack = 5;
       $Settings.release = 1000;
       mobileNotes = padNotes;
       noteCount = 7;
@@ -515,7 +515,7 @@
               ? "Press 'Allow' when prompted to allow MIDI access"
               : $Device.connected
                 ? "MIDI Connected"
-                : "No MIDI Device Found"}
+                : "Connect a MIDI device"}
             font={$Settings.font}
             fontSize={0.4}
             textAlign={"center"}

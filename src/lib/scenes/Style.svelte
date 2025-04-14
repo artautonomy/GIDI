@@ -95,6 +95,14 @@
     $Settings.scene = styles[styleIndex];
 
     $Settings.styleReset = true;
+
+    if (styles[styleIndex] === "Smoke") {
+      $Settings.attack = 500;
+      $Settings.release = 3500;
+    } else {
+      $Settings.attack = 5;
+      $Settings.release = 1000;
+    }
   }
 
   function styleNext() {
@@ -104,6 +112,14 @@
     $Settings.scene = styles[styleIndex];
 
     $Settings.styleReset = true;
+
+    if (styles[styleIndex] === "Smoke") {
+      $Settings.attack = 500;
+      $Settings.release = 3500;
+    } else {
+      $Settings.attack = 5;
+      $Settings.release = 1000;
+    }
   }
 
   function setupScene(choice: string) {
