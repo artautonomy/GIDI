@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { Spring, Tween } from "svelte/motion";
-  import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
+  import { cubicOut, cubicInOut } from "svelte/easing";
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Piano from "./instances/Piano.svelte";
@@ -84,7 +84,9 @@
   const introZoom = new Tween(0);
 
   const MIDIConnectedButtonScale = new Spring(
-    window.innerWidth < 475 ? window.innerWidth / 37.5 : window.innerWidth / 150
+    window.innerWidth < 475
+      ? window.innerWidth / 37.5
+      : window.innerWidth / 127.5
   );
 
   const MIDIConnectedButtonRotation = new Tween(0, {
@@ -282,8 +284,8 @@
   }, 500);
 
   function Setup() {
-    MIDIConnectedButtonPosition.target = window.innerHeight / 80;
-    MIDIConnectedButtonRotation.target = -4.712389;
+    MIDIConnectedButtonPosition.target = -window.innerHeight / 150;
+    MIDIConnectedButtonRotation.target = 4.712389;
     1;
     setTimeout(() => {
       introZoom.set(0, {
@@ -459,11 +461,10 @@
 <Flex
   width={window.innerWidth / 50}
   height={window.innerHeight / 40}
-  gap={window.innerHeight / 300}
   flexDirection="Column"
 >
   <Billboard>
-    <Box flex={10} width="100%" height="100%">
+    <Box flex={4} width="100%" height="100%">
       {#snippet children({ width })}
         <Text
           text={title}
@@ -487,39 +488,78 @@
           position.z="7"
           outlineBlur={0.06}
         />
-        {#if $Device.accessRights === ""}
-          <Text
-            text={instruction}
-            color={"green"}
-            maxWidth={width > 20 ? 21 : 10}
-            font={$Settings.font}
-            fontSize={width > 20 ? 0.5 : 0.45}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            position.y={-1.7}
-            position.z="7"
-            outlineBlur={0.06}
-          />
-        {:else if $Device.accessRights === "Allow" && !$Device.connected}
-          <Text
-            text={"Plug in a MIDI device or try the demo below"}
-            color={"green"}
-            maxWidth={width > 20 ? 21 : 10}
-            font={$Settings.font}
-            fontSize={width > 20 ? 0.5 : 0.45}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            position.y={-1.7}
-            position.z="7"
-            outlineBlur={0.06}
-          />
-        {/if}
       {/snippet}
     </Box>
   </Billboard>
+  <Billboard>
+    {#if $Device.accessRights !== "Deny"}
+      <Box flex={1} width="100%" height="100%">
+        <T.Mesh
+          position={[0, MIDIConnectedButtonPosition.current, 0]}
+          rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
+        >
+          <Text
+            text={"Please wait"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, 0.2605, 0]}
+            rotation={[-1.553343, 0, 0]}
+            outlineBlur={0.06}
+          />
+          <Text
+            text={$Device.accessRights === ""
+              ? "Press 'Allow' when prompted to allow MIDI access"
+              : $Device.connected
+                ? "MIDI Connected"
+                : "No MIDI Device Found"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, 0, 0.505]}
+            outlineBlur={0.06}
+          />
 
+          <Text
+            text={"Initialising"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, 0, -0.505]}
+            rotation={[0, 3.14, -3.14]}
+            outlineBlur={0.06}
+          />
+
+          <Text
+            text={"Please wait"}
+            font={$Settings.font}
+            fontSize={0.4}
+            textAlign={"center"}
+            smooth={1}
+            anchorX={"center"}
+            anchorY={"middle"}
+            position={[0, -0.2605, 0]}
+            rotation.x={1.553343}
+            outlineBlur={0.06}
+          />
+
+          <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 0.5, 1]} />
+          <T.MeshPhongMaterial
+            color={$Device.connected ? new Color("rgb(22, 90, 11)") : "darkred"}
+          />
+        </T.Mesh>
+      </Box>
+    {/if}
+  </Billboard>
   <Box flex={10} width="100%" height="100%">
     {#if !$Device.connected}
       <T.Group
@@ -695,70 +735,5 @@
         {/if}
       {/snippet}
     </Box>
-  </Billboard>
-  <Billboard>
-    {#if $Device.accessRights === "Allow"}
-      <Box flex={1} width="100%" height="100%">
-        <T.Mesh
-          position={[0, MIDIConnectedButtonPosition.current, 0]}
-          rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
-        >
-          <Text
-            text={"Please wait"}
-            font={$Settings.font}
-            fontSize={0.4}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, 0.2605, 0]}
-            rotation={[-1.553343, 0, 0]}
-            outlineBlur={0.06}
-          />
-          <Text
-            text={$Device.connected ? "MIDI Connected" : "No MIDI Device Found"}
-            font={$Settings.font}
-            fontSize={0.4}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, 0, 0.505]}
-            outlineBlur={0.06}
-          />
-
-          <Text
-            text={"Initialising"}
-            font={$Settings.font}
-            fontSize={0.4}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, 0, -0.505]}
-            rotation={[0, 3.14, -3.14]}
-            outlineBlur={0.06}
-          />
-
-          <Text
-            text={"Please wait"}
-            font={$Settings.font}
-            fontSize={0.4}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, -0.2605, 0]}
-            rotation.x={1.553343}
-            outlineBlur={0.06}
-          />
-
-          <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 0.5, 1]} />
-          <T.MeshPhongMaterial
-            color={$Device.connected ? new Color("rgb(22, 90, 11)") : "darkred"}
-          />
-        </T.Mesh>
-      </Box>
-    {/if}
   </Billboard>
 </Flex>
