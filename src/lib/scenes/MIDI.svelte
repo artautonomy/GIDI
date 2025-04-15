@@ -84,12 +84,18 @@
   });
 
   const handleMIDIMessage = (message: MIDIMessageEvent, device: string) => {
+    const status = message.data[0];
+    const note = message.data[1];
+    let velocity = message.data[2];
+
+    if (status === 128) {
+      velocity = 0;
+    }
+
     //if MIDI data
-    if (message.data) {
+    if (note !== undefined && velocity !== undefined) {
       //Selecting devices
       if ($Device.input.id.length < 1) {
-        const velocity = message.data[2];
-
         //update velocity for Inputs page
         $Device.inputs = $Device.inputs.map((key) => {
           if (key.id === device) {
@@ -105,8 +111,6 @@
       //Device selected
       else {
         if (device === $Device.input.id) {
-          const note = message.data[1];
-          const velocity = message.data[2];
           let noteExists;
 
           if ($Settings.scene !== "Piano") {
