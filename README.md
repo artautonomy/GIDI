@@ -12,10 +12,7 @@ If you know any electronic musicians who could benefit from using GIDI do spread
 4. Select a 'Style' (Piano, Smoke, Mirror, Cube)
 5. Play
 
-<video controls width="600">
-  <source src="https://github.com/user-attachments/assets/a318a45c-5639-423b-ba4d-f7467cbb7590" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/a318a45c-5639-423b-ba4d-f7467cbb7590
 
 ## Help Improve GIDI
 
