@@ -12,13 +12,13 @@ If you know any electronic musicians who could benefit from using GIDI do spread
 4. Select a 'Style' (Piano, Smoke, Mirror, Cube)
 5. Play
 
-### <ins>Video demo</ins>
+#### <ins>Video demo</ins>
 
 https://github.com/user-attachments/assets/a318a45c-5639-423b-ba4d-f7467cbb7590
 
 ## How you can help
 
-GIDI is a new web app and can be improved, you can either:
+GIDI is new and can be improved, you can either:
 
 - Leave feedback on socials (bottom right on GIDI)
 - Perform a pull request and collaborate
