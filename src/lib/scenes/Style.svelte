@@ -322,7 +322,7 @@
                 velocity={noteNumber.velocity}
                 attack={$Settings.attack}
                 release={$Settings.release}
-                keyColour={$Settings.colours.key}
+                keyColour={highlighted}
                 expressionColour={$Settings.colours.expression}
               />
             {/if}

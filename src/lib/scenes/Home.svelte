@@ -19,6 +19,7 @@
   import Smoke from "./instances/Smoke.svelte";
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
+  import Swirl from "./instances/Swirl.svelte";
 
   const { scene } = $state(useThrelte());
 
@@ -581,23 +582,13 @@
           }
         }}
       >
-        <Align>
+        <Align auto precise>
           <InstancedMesh>
             <T.BoxGeometry />
             <T.MeshStandardMaterial shadow />
             {#each mobileNotes as noteNumber}
               {#if styles[styleIndex] == "Piano"}
                 <Piano
-                  position={noteNumber.position}
-                  scale={noteNumber.scale}
-                  velocity={noteNumber.velocity}
-                  attack={$Settings.attack}
-                  release={$Settings.release}
-                  keyColour={$Settings.colours.key}
-                  expressionColour={$Settings.colours.expression}
-                />
-              {:else if styles[styleIndex] === "Smoke"}
-                <Smoke
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
@@ -616,7 +607,7 @@
                   keyColour={$Settings.colours.key}
                   expressionColour={$Settings.colours.expression}
                 />
-              {:else}
+              {:else if styles[styleIndex] === "Cube"}
                 <Cube
                   position={noteNumber.position}
                   scale={noteNumber.scale}
@@ -629,6 +620,30 @@
               {/if}
             {/each}
           </InstancedMesh>
+
+          {#each mobileNotes as noteNumber}
+            {#if styles[styleIndex] === "Swirl"}
+              <Swirl
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$Settings.attack}
+                release={$Settings.release}
+                keyColour={$Settings.colours.key}
+                expressionColour={$Settings.colours.expression}
+              />
+            {:else if styles[styleIndex] === "Smoke"}
+              <Smoke
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$Settings.attack}
+                release={$Settings.release}
+                keyColour={$Settings.colours.key}
+                expressionColour={$Settings.colours.expression}
+              />
+            {/if}
+          {/each}
         </Align>
       </T.Group>
     {/if}

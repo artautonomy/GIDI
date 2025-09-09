@@ -13,7 +13,7 @@
   import { Box, Flex } from "@threlte/flex";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { Device, MIDI, Settings } from "../store";
+  import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Cube from "./instances/Cube.svelte";
   import Piano from "./instances/Piano.svelte";
@@ -233,33 +233,33 @@
                 keyColour={selected}
                 expressionColour={$Settings.colours.expression}
               />
-            {:else if $Settings.scene == "Smoke"}
-              <Smoke
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.attack}
-                release={$hovering ? 250 : $Settings.release}
-                keyColour={selected}
-                expressionColour={$Settings.colours.expression}
-              />
-            {/if}
-          {/each}
-
-          {#each midiMessages as noteNumber}
-            {#if $Settings.scene === "Swirl"}
-              <Swirl
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$Settings.attack}
-                release={$Settings.release}
-                keyColour={selected}
-                expressionColour={$Settings.colours.expression}
-              />
             {/if}
           {/each}
         </InstancedMesh>
+
+        {#each midiMessages as noteNumber}
+          {#if $Settings.scene === "Swirl"}
+            <Swirl
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.attack}
+              release={$Settings.release}
+              keyColour={selected}
+              expressionColour={$Settings.colours.expression}
+            />
+          {:else if $Settings.scene == "Smoke"}
+            <Smoke
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$hovering ? 250 : $Settings.attack}
+              release={$hovering ? 250 : $Settings.release}
+              keyColour={selected}
+              expressionColour={$Settings.colours.expression}
+            />
+          {/if}
+        {/each}
       </T.Group>
     </Align>
   </Box>
