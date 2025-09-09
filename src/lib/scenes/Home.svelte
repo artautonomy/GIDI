@@ -137,10 +137,10 @@
     { key: { r: 77, g: 12, b: 55 }, expression: { r: 255, g: 122, b: 255 } },
   ];
 
-  const title = "Welcome to GIDI";
+  const title = "GIDI - a visualiser for MIDI";
 
   const summary =
-    "GIDI is a free, open source web application for musicians using MIDI devices. By reading MIDI messages it can visualise a performance on a web browser";
+    "GIDI is a web application which is free, open source and intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser.";
 
   const instruction =
     "To get started click 'Allow' on the MIDI permission window or try the demo below";

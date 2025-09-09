@@ -139,8 +139,8 @@
   $Settings.autoRotate = false;
 
   //testing new styles
-  //$Device.input.id = "input-0";
-  //$Settings.scene = "Line";
+  $Device.input.id = "input-0";
+  $Settings.scene = "Smoke";
 </script>
 
 <T.OrthographicCamera
@@ -233,33 +233,32 @@
                 keyColour={selected}
                 expressionColour={$Settings.colours.expression}
               />
-            {:else if $Settings.scene == "Smoke"}
-              <Smoke
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.attack}
-                release={$hovering ? 250 : $Settings.release}
-                keyColour={selected}
-                expressionColour={$Settings.colours.expression}
-              />
-            {/if}
-          {/each}
-
-          {#each midiMessages as noteNumber}
-            {#if $Settings.scene === "Swirl"}
-              <Swirl
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$Settings.attack}
-                release={$Settings.release}
-                keyColour={selected}
-                expressionColour={$Settings.colours.expression}
-              />
             {/if}
           {/each}
         </InstancedMesh>
+        {#each midiMessages as noteNumber}
+          {#if $Settings.scene == "Swirl"}
+            <Swirl
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$hovering ? 250 : $Settings.attack}
+              release={$hovering ? 250 : $Settings.release}
+              keyColour={selected}
+              expressionColour={$Settings.colours.expression}
+            />
+          {:else if $Settings.scene == "Smoke"}
+            <Smoke
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$hovering ? 250 : $Settings.attack}
+              release={$hovering ? 250 : $Settings.release}
+              keyColour={selected}
+              expressionColour={$Settings.colours.expression}
+            />
+          {/if}
+        {/each}
       </T.Group>
     </Align>
   </Box>

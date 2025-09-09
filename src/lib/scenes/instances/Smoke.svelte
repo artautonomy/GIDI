@@ -4,7 +4,6 @@
   import { CatmullRomCurve3, Color, Vector3 } from "three";
   import { Tween } from "svelte/motion";
   import { cubicOut } from "svelte/easing";
-  import { Instance } from "@threlte/extras";
 
   interface Props {
     position: {
@@ -41,8 +40,8 @@
     expressionColour,
   }: Props = $props();
 
-  let widthFadeOut = new Tween(0.025, {
-    duration: release,
+  let dashOffset = new Tween(-0.1, {
+    duration: attack,
     easing: cubicOut,
   });
 
@@ -53,13 +52,13 @@
   const randCurve3 = Math.random() - 0.5;
 
   const curve = new CatmullRomCurve3([
-    new Vector3(position.x, 0, position.z),
-    new Vector3(position.x, 1, position.z),
-    new Vector3(position.x + -randCurve2, 3, position.z - randCurve),
-    new Vector3(position.x + randCurve2 * 1.5, 4, position.z + randCurve * 2),
+    new Vector3(position.x, 0, 0),
+    new Vector3(position.x, 1, 0),
+    new Vector3(position.x + -randCurve2, 3, randCurve),
+    new Vector3(position.x + randCurve2 * 1.5, 4, randCurve * 2),
     new Vector3(position.x + randCurve2 * 1.5, 5, position.z - randCurve * 2),
-    new Vector3(position.x + randCurve3 * 2, 7, position.z + randCurve * 3),
-    new Vector3(position.x + randCurve3 * 2, 9, position.z - randCurve * 4),
+    new Vector3(position.x + randCurve3 * 2, 7, position.z + randCurve2 * 3),
+    new Vector3(position.x + randCurve3 * 2, 9, position.z - randCurve2 * 4),
   ]);
 
   const points = curve.getPoints(75);
@@ -74,8 +73,6 @@
     `rgb(${Math.floor(expressionColour.r)},${Math.floor(expressionColour.g)},${Math.floor(expressionColour.b)})`
   );
 
-  let dashOffset = $state(0);
-
   $effect(() => {
     key = new Color(
       `rgb(${Math.floor(keyColour.r)},${Math.floor(keyColour.g)},${Math.floor(keyColour.b)})`
@@ -86,16 +83,20 @@
     );
 
     if (velocity > 0) {
-      widthFadeOut.target = 0.075;
       useTask((delta) => {
-        dashOffset -= delta * (750 / (attack + 350));
+        dashOffset.set(-Math.log(delta * (4 - attack / 4000) * 500), {
+          duration: attack + 250,
+        });
 
-        color.lerpColors(key, expression, Math.sin(dashOffset * 3) / 2 + 0.5);
+        color.lerpColors(
+          key,
+          expression,
+          Math.sin(dashOffset.current * 3) / 2 + 0.5
+        );
       });
     } else {
-      widthFadeOut.set(0, {
-        duration: release / 2,
-        easing: cubicOut,
+      dashOffset.set(-0.1, {
+        duration: release,
       });
 
       color = new Color(key);
@@ -103,25 +104,15 @@
   });
 </script>
 
-<T.Mesh>
-  <Instance
-    receiveShadow
-    position.x={position.x}
-    position.y={0}
-    position.z={position.z}
-    scale.x={0.25}
-    scale.y={0.5}
-    scale.z={0.25}
-    {color}
-  />
-  <MeshLineGeometry {points} shape={"taper"} />
+<T.Mesh position.x={position.x} position.y={0}>
+  <MeshLineGeometry {points} shape={"none"} />
   <MeshLineMaterial
-    width={widthFadeOut.current}
+    width={0.05}
     {color}
-    dashArray={1.5}
-    dashRatio={0.1}
-    {dashOffset}
+    dashArray={1}
+    dashRatio={0.9}
+    dashOffset={dashOffset.current}
     transparent
-    scaleDown={1}
+    scaleDown={0.8}
   />
 </T.Mesh>

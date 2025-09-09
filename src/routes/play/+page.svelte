@@ -1,4 +1,5 @@
 <script>
+  //import Scene from "$lib/scenes/Sandbox.svelte";
   import { Canvas } from "@threlte/core";
   import Scene from "$lib/scenes/Play.svelte";
   import { Settings } from "$lib/store";
@@ -176,10 +177,9 @@
         bind:value={$Settings.scene}
         onchange={styleChange}
       >
-        <option value={$Settings.styles[0]}>{$Settings.styles[0]}</option>
-        <option value={$Settings.styles[1]}>{$Settings.styles[1]}</option>
-        <option value={$Settings.styles[2]}>{$Settings.styles[2]}</option>
-        <option value={$Settings.styles[3]}>{$Settings.styles[3]}</option>
+        {#each $Settings.styles as style}
+          <option value={style}>{style}</option>
+        {/each}
       </select>
       <label for="Background Colour">Background Colour</label>
 
