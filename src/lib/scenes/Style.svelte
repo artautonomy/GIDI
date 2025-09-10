@@ -19,7 +19,7 @@
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
   import Piano from "./instances/Piano.svelte";
-  import Smoke from "./instances/Smoke.svelte";
+  import Firework from "./instances/Firework.svelte";
   import Swirl from "./instances/Swirl.svelte";
 
   const { scene } = $state(useThrelte());
@@ -97,7 +97,7 @@
 
     $Settings.styleReset = true;
 
-    if (styles[styleIndex] === "Smoke") {
+    if (styles[styleIndex] === "Firework") {
       $Settings.attack = 500;
       $Settings.release = 3500;
     } else {
@@ -114,7 +114,7 @@
 
     $Settings.styleReset = true;
 
-    if (styles[styleIndex] === "Smoke") {
+    if (styles[styleIndex] === "Firework") {
       $Settings.attack = 500;
       $Settings.release = 3500;
     } else {
@@ -315,8 +315,8 @@
                 keyColour={highlighted}
                 expressionColour={$Settings.colours.expression}
               />
-            {:else if styles[styleIndex] === "Smoke"}
-              <Smoke
+            {:else if styles[styleIndex] === "Firework"}
+              <Firework
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}

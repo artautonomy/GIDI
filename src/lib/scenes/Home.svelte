@@ -16,7 +16,7 @@
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Piano from "./instances/Piano.svelte";
-  import Smoke from "./instances/Smoke.svelte";
+  import Firework from "./instances/Firework.svelte";
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
   import Swirl from "./instances/Swirl.svelte";
@@ -141,7 +141,7 @@
   const title = "GIDI - a visualiser for MIDI";
 
   const summary =
-    "GIDI is a web application which is free, open source and intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser.";
+    "A free, web application intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser.";
 
   const instruction =
     "To get started click 'Allow' on the MIDI permission window or try the demo below";
@@ -315,7 +315,7 @@
       noteCount = 12;
       $Settings.attack = 15;
       $Settings.release = 1000;
-    } else if (styles[styleIndex] === "Smoke") {
+    } else if (styles[styleIndex] === "Firework") {
       $Settings.attack = 500;
       $Settings.release = 3500;
       mobileNotes = padNotes;
@@ -367,7 +367,7 @@
       noteCount = 12;
       $Settings.attack = 5;
       $Settings.release = 1000;
-    } else if (styles[styleIndex] === "Smoke") {
+    } else if (styles[styleIndex] === "Firework") {
       $Settings.attack = 500;
       $Settings.release = 3500;
       mobileNotes = padNotes;
@@ -632,8 +632,8 @@
                 keyColour={$Settings.colours.key}
                 expressionColour={$Settings.colours.expression}
               />
-            {:else if styles[styleIndex] === "Smoke"}
-              <Smoke
+            {:else if styles[styleIndex] === "Firework"}
+              <Firework
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}

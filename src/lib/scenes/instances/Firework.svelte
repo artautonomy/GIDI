@@ -104,7 +104,7 @@
   });
 </script>
 
-<T.Mesh position.x={position.x} position.y={0}>
+<T.Mesh position.x={position.x}>
   <MeshLineGeometry {points} shape={"none"} />
   <MeshLineMaterial
     width={0.05}
@@ -115,4 +115,9 @@
     transparent
     scaleDown={0.8}
   />
+</T.Mesh>
+<T.Mesh position.x={position.x * 2}>
+  <T.SphereGeometry args={[0.25]} />
+  <!-- adjust size -->
+  <T.MeshBasicMaterial opacity={0} transparent />
 </T.Mesh>

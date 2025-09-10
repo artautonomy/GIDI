@@ -18,7 +18,7 @@
   import Cube from "./instances/Cube.svelte";
   import Piano from "./instances/Piano.svelte";
   import Mirror from "./instances/Mirror.svelte";
-  import Smoke from "./instances/Smoke.svelte";
+  import Firework from "./instances/Firework.svelte";
   import Swirl from "./instances/Swirl.svelte";
 
   const { scene } = $state(useThrelte());
@@ -248,8 +248,8 @@
               keyColour={selected}
               expressionColour={$Settings.colours.expression}
             />
-          {:else if $Settings.scene == "Smoke"}
-            <Smoke
+          {:else if $Settings.scene == "Firework"}
+            <Firework
               position={noteNumber.position}
               scale={noteNumber.scale}
               velocity={noteNumber.velocity}

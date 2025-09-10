@@ -1,8 +1,7 @@
 <script lang="ts">
   import { T } from "@threlte/core";
   import { Tween } from "svelte/motion";
-  import { cubicInOut } from "svelte/easing";
-  import { seededRandom } from "three/src/math/MathUtils.js";
+  import { cubicIn, cubicOut } from "svelte/easing";
 
   interface Props {
     position: {
@@ -45,13 +44,13 @@
 
   const randEnhance = 50 + Math.random() * 50;
 
-  const randP = Math.random() * 5 + 2;
+  const randP = Math.random() * 20 + 2;
 
-  const randQ = randP / 10;
+  const randQ = randP / 20;
 
-  const enhance = new Tween(randEnhance);
+  let distort = new Tween(randEnhance);
 
-  const radius = new Tween(0.3, { easing: cubicInOut });
+  const radius = new Tween(0.3, { easing: cubicOut });
 
   $effect(() => {
     if (velocity > 0) {
@@ -59,17 +58,20 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
 
-      enhance.set(1, { duration: attack });
-
-      radius.set(0.8, { duration: attack });
+      radius.set(0.75, { duration: attack, easing: cubicIn });
     } else {
       r.set(keyColour.r, { duration: release });
       g.set(keyColour.g, { duration: release });
       b.set(keyColour.b, { duration: release });
 
-      enhance.set(randEnhance, { duration: release });
+      distort = new Tween(1);
 
-      radius.set(0.5, { duration: 1 });
+      distort.set(randEnhance, {
+        delay: 1,
+        duration: release + 500,
+      });
+
+      radius.set(0.5, { duration: release, easing: cubicOut });
     }
   });
 </script>
@@ -79,8 +81,8 @@
     args={[
       radius.current,
       0.025,
-      enhance.current,
-      enhance.current,
+      distort.current,
+      distort.current,
       randP,
       randQ,
     ]}

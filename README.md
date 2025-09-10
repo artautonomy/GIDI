@@ -1,6 +1,6 @@
 # GIDI - a visualiser for MIDI
 
-GIDI is a web application which is free, open source and intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser.
+A free web application intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser.
 
 ## How to use
 

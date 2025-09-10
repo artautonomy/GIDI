@@ -51,7 +51,7 @@ export let Settings = writable({
     autoRotateSpeed: 1.1,
     attack: 5,
     release: 1000,
-    styles: ["Piano", "Smoke", "Mirror","Swirl", "Cube"],
+    styles: ["Piano", "Firework", "Mirror","Swirl", "Cube"],
     colours: {
         background: {
 
