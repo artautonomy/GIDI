@@ -39,7 +39,7 @@
     expressionColour,
   }: Props = $props();
 
-  const y = new Tween(1);
+  const y = new Tween(position.y);
   const yScale = new Tween(1);
   const r = new Tween(keyColour.r);
   const g = new Tween(keyColour.g);

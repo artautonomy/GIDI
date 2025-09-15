@@ -45,20 +45,20 @@
     easing: cubicOut,
   });
 
+  let offset = $state(0);
+
   const randCurve = Math.random() - 0.5;
 
   const randCurve2 = Math.random() - 0.5;
 
-  const randCurve3 = Math.random() - 0.5;
-
   const curve = new CatmullRomCurve3([
     new Vector3(position.x, 0, 0),
     new Vector3(position.x, 1, 0),
-    new Vector3(position.x + -randCurve2, 3, randCurve),
-    new Vector3(position.x + randCurve2 * 1.5, 4, randCurve * 2),
-    new Vector3(position.x + randCurve2 * 1.5, 5, position.z - randCurve * 2),
-    new Vector3(position.x + randCurve3 * 2, 7, position.z + randCurve2 * 3),
-    new Vector3(position.x + randCurve3 * 2, 9, position.z - randCurve2 * 4),
+    new Vector3(position.x, 2, 0),
+    new Vector3(position.x + randCurve * 1, 2, randCurve * 2),
+    new Vector3(position.x + randCurve * 1.2, 3, randCurve * 2),
+    new Vector3(position.x + -randCurve2, 4, randCurve2),
+    new Vector3(position.x + -randCurve2, 5, randCurve2),
   ]);
 
   const points = curve.getPoints(75);
@@ -84,27 +84,25 @@
 
     if (velocity > 0) {
       useTask((delta) => {
-        dashOffset.set(-Math.log(delta * (4 - attack / 4000) * 500), {
-          duration: attack + 250,
-        });
+        offset -= delta * ((4000 - attack) / 2000 + 0.25);
 
-        color.lerpColors(
-          key,
-          expression,
-          Math.sin(dashOffset.current * 3) / 2 + 0.5
-        );
+        dashOffset.set(offset);
+
+        color.lerpColors(expression, key, Math.sin(offset * 2) / 2 + 0.5);
       });
     } else {
       dashOffset.set(-0.1, {
-        duration: release,
+        duration: release + 200,
       });
+
+      offset = -0.1;
 
       color = new Color(key);
     }
   });
 </script>
 
-<T.Mesh position.x={position.x}>
+<T.Mesh position.x={position.x / 4} position.y={position.y}>
   <MeshLineGeometry {points} shape={"none"} />
   <MeshLineMaterial
     width={0.05}
@@ -112,12 +110,11 @@
     dashArray={1}
     dashRatio={0.9}
     dashOffset={dashOffset.current}
-    transparent
     scaleDown={0.8}
+    transparent
   />
 </T.Mesh>
-<T.Mesh position.x={position.x * 2}>
+<T.Mesh position.x={position.x * 1.25} position.y={position.y - 0.25}>
   <T.SphereGeometry args={[0.25]} />
-  <!-- adjust size -->
   <T.MeshBasicMaterial opacity={0} transparent />
 </T.Mesh>

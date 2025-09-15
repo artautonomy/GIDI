@@ -238,7 +238,7 @@
     };
   });
 
-  blackKeys = blackKeys.map((key, index) => {
+  blackKeys = blackKeys.map((key) => {
     //if first note white
     whiteNote = whiteKeys.find((element) => element.note === key.note - 1);
 
@@ -316,7 +316,7 @@
       $Settings.attack = 15;
       $Settings.release = 1000;
     } else if (styles[styleIndex] === "Firework") {
-      $Settings.attack = 500;
+      $Settings.attack = 20;
       $Settings.release = 3500;
       mobileNotes = padNotes;
     } else {
@@ -368,7 +368,7 @@
       $Settings.attack = 5;
       $Settings.release = 1000;
     } else if (styles[styleIndex] === "Firework") {
-      $Settings.attack = 500;
+      $Settings.attack = 20;
       $Settings.release = 3500;
       mobileNotes = padNotes;
     } else {
@@ -429,8 +429,8 @@
     enableDamping
     enablePan={false}
     enableZoom={false}
-    maxPolarAngle={Math.PI / 4}
-    minPolarAngle={Math.PI / 4}
+    maxPolarAngle={Math.PI / 2.5}
+    minPolarAngle={Math.PI / 2.5}
     onstart={(e) => {
       hintArrow.target = 0.75;
       tips = "To shuffle colours tap here";
@@ -561,7 +561,7 @@
       </Box>
     {/if}
   </Billboard>
-  <Box flex={10} width="100%" height="100%">
+  <Box flex={9} width="100%" height="100%">
     {#if !$Device.connected}
       <T.Group
         position.y={-1.5}
@@ -650,7 +650,7 @@
   </Box>
 
   <Billboard>
-    <Box flex={2} width="100%" height="100%">
+    <Box flex={3} width="100%" height="100%">
       {#snippet children({ width })}
         {#if !$Device.connected}
           {#if cubeClicked}

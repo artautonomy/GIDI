@@ -140,7 +140,7 @@
 
   //testing new styles
   $Device.input.id = "input-0";
-  $Settings.scene = "Firework";
+  $Settings.scene = "Swirl";
 </script>
 
 <T.OrthographicCamera

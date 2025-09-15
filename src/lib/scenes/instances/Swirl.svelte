@@ -44,13 +44,13 @@
 
   const randEnhance = 50 + Math.random() * 50;
 
-  const randP = Math.random() * 20 + 2;
+  const randP = Math.random() * 5 + 2;
 
-  const randQ = randP / 20;
+  const randQ = randP / 10;
 
   let distort = new Tween(randEnhance);
 
-  const radius = new Tween(0.3, { easing: cubicOut });
+  const radius = new Tween(0.25, { easing: cubicOut });
 
   $effect(() => {
     if (velocity > 0) {
@@ -58,7 +58,7 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
 
-      radius.set(0.75, { duration: attack, easing: cubicIn });
+      radius.set(0.3, { duration: attack, easing: cubicIn });
     } else {
       r.set(keyColour.r, { duration: release });
       g.set(keyColour.g, { duration: release });
@@ -68,15 +68,15 @@
 
       distort.set(randEnhance, {
         delay: 1,
-        duration: release + 500,
+        duration: release,
       });
 
-      radius.set(0.5, { duration: release, easing: cubicOut });
+      radius.set(0.25, { duration: release, easing: cubicOut });
     }
   });
 </script>
 
-<T.Mesh position.x={position.x * 2}>
+<T.Mesh position.x={position.x} position.y={position.y}>
   <T.TorusKnotGeometry
     args={[
       radius.current,

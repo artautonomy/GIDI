@@ -39,8 +39,8 @@
     expressionColour,
   }: Props = $props();
 
-  const bottomY = new Tween(1);
-  const topY = new Tween(5);
+  const bottomY = new Tween(position.y);
+  const topY = new Tween(position.y + 5);
   const scaleY = new Tween(1);
   const r = new Tween(keyColour.r);
   const g = new Tween(keyColour.g);
@@ -53,7 +53,7 @@
         easing: cubicOut,
       });
 
-      topY.set(5 - velocity / 63, {
+      topY.set(position.y + 5 - velocity / 63, {
         duration: attack,
         easing: cubicOut,
       });
@@ -71,7 +71,7 @@
         duration: release,
         easing: cubicOut,
       });
-      topY.set(5, {
+      topY.set(position.y + 5, {
         duration: release,
         easing: cubicOut,
       });
