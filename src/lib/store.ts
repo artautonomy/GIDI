@@ -50,7 +50,7 @@ export let Settings = writable({
     autoRotate: true,
     autoRotateSpeed: 1.1,
     attack: 5,
-    release: 1000,
+    release: 500,
     styles: ["Piano", "Firework", "Mirror","Swirl", "Cube"],
     colours: {
         background: {
@@ -61,22 +61,22 @@ export let Settings = writable({
         },
         key: {
 
-            r: 192,
-            g: 147,
-            b: 0
+            r: 225,
+            g: 226,
+            b: 245
         },
         expression: {
 
-            r: 202,
-            g: 44,
-            b: 0
+            r: 145,
+            g: 197,
+            b: 77
         },
         
 
     },
     lighting: {
 
-        above: 1,
+        above: 2.5,
         front: 1,
         side: 3
     }

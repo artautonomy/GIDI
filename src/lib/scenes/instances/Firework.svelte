@@ -81,15 +81,17 @@
     expression = new Color(
       `rgb(${Math.floor(expressionColour.r)},${Math.floor(expressionColour.g)},${Math.floor(expressionColour.b)})`
     );
+  });
 
+  $effect(() => {
     if (velocity > 0) {
       useTask((delta) => {
         offset -= delta * ((4000 - attack) / 2000 + 0.25);
 
         dashOffset.set(offset);
-
-        color.lerpColors(expression, key, Math.sin(offset * 2) / 2 + 0.5);
       });
+
+      color.lerpColors(expression, key, Math.sin(offset * 2) / 2 + 0.5);
     } else {
       dashOffset.set(-0.1, {
         duration: release + 200,

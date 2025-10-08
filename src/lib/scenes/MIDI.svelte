@@ -108,9 +108,9 @@
           return key;
         });
       }
-      //Device selected
+      //Device selected and note on or off, no program change, pitch bend recognised
       else {
-        if (device === $Device.input.id) {
+        if ((device === $Device.input.id && status === 128) || status === 144) {
           let noteExists;
 
           if ($Settings.scene !== "Piano") {

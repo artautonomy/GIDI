@@ -15,17 +15,12 @@
   import { cubicOut, cubicInOut } from "svelte/easing";
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
+  import Lighting from "./Lighting.svelte";
   import Piano from "./instances/Piano.svelte";
   import Firework from "./instances/Firework.svelte";
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
   import Swirl from "./instances/Swirl.svelte";
-
-  const { scene } = $state(useThrelte());
-
-  scene.background = new Color(
-    `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
-  );
 
   interactivity();
 
@@ -133,9 +128,21 @@
   let randomMIDINotesInterval: ReturnType<typeof setInterval>;
 
   const notesColours = [
-    { key: { r: 141, g: 154, b: 203 }, expression: { r: 254, g: 228, b: 129 } },
-    { key: { r: 0, g: 83, b: 56 }, expression: { r: 255, g: 5, b: 86 } },
-    { key: { r: 77, g: 12, b: 55 }, expression: { r: 255, g: 122, b: 255 } },
+    { key: { r: 0, g: 70, b: 65 }, expression: { r: 211, g: 77, b: 66 } },
+    { key: { r: 222, g: 178, b: 226 }, expression: { r: 254, g: 228, b: 129 } },
+
+    {
+      key: {
+        r: 225,
+        g: 226,
+        b: 245,
+      },
+      expression: {
+        r: 145,
+        g: 197,
+        b: 77,
+      },
+    },
   ];
 
   const title = "GIDI - a visualiser for MIDI";
@@ -314,14 +321,14 @@
       mobileNotes = pianoNotes;
       noteCount = 12;
       $Settings.attack = 15;
-      $Settings.release = 1000;
+      $Settings.release = 500;
     } else if (styles[styleIndex] === "Firework") {
       $Settings.attack = 20;
       $Settings.release = 3500;
       mobileNotes = padNotes;
     } else {
       $Settings.attack = 15;
-      $Settings.release = 1000;
+      $Settings.release = 500;
       mobileNotes = padNotes;
       noteCount = 7;
     }
@@ -366,14 +373,14 @@
       mobileNotes = pianoNotes;
       noteCount = 12;
       $Settings.attack = 5;
-      $Settings.release = 1000;
+      $Settings.release = 500;
     } else if (styles[styleIndex] === "Firework") {
       $Settings.attack = 20;
       $Settings.release = 3500;
       mobileNotes = padNotes;
     } else {
       $Settings.attack = 5;
-      $Settings.release = 1000;
+      $Settings.release = 500;
       mobileNotes = padNotes;
       noteCount = 7;
     }
@@ -418,6 +425,8 @@
   });
 </script>
 
+<Lighting />
+
 <T.OrthographicCamera
   makeDefault
   position={[0, 10, 0]}
@@ -437,27 +446,6 @@
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, 5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, -5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[5, 0, 0]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[-5, 0, 0]}
-/>
-<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Flex
   width={window.innerWidth / 50}
@@ -585,7 +573,7 @@
         <Align auto precise>
           <InstancedMesh>
             <T.BoxGeometry />
-            <T.MeshStandardMaterial shadow />
+            <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
             {#each mobileNotes as noteNumber}
               {#if styles[styleIndex] == "Piano"}
                 <Piano

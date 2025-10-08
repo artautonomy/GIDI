@@ -15,6 +15,7 @@
   import { cubicIn, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
+  import Lighting from "./Lighting.svelte";
   import Cube from "./instances/Cube.svelte";
   import Piano from "./instances/Piano.svelte";
   import Mirror from "./instances/Mirror.svelte";
@@ -50,6 +51,7 @@
   interactivity();
 
   let zoom = 50;
+  let cameraCoordinates = $state({ x: 7.5, y: 10, z: 20 });
   let menuOpened = $state(false);
 
   let selected = $state($Settings.colours.key);
@@ -107,6 +109,22 @@
       case "e":
         openMenu();
         break;
+
+      case "ArrowUp":
+        cameraCoordinates.y++;
+        break;
+
+      case "ArrowDown":
+        cameraCoordinates.y--;
+        break;
+
+      case "ArrowRight":
+        cameraCoordinates.x++;
+        break;
+
+      case "ArrowLeft":
+        cameraCoordinates.x--;
+        break;
     }
   }
 
@@ -143,9 +161,11 @@
   //$Settings.scene = "Line";
 </script>
 
+<Lighting />
+
 <T.OrthographicCamera
   makeDefault
-  position={[7.5, 10, 20]}
+  position={[cameraCoordinates.x, cameraCoordinates.y, cameraCoordinates.z]}
   near={0.001}
   far={5000}
   zoom={introZoom.current}
@@ -159,31 +179,10 @@
     onstart={(e) => {
       hintArrow.target = 0.75;
       tips = "To edit the scene click here or press 'e'";
+      console.log(e);
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
-
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, 5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, -5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[5, 0, 0]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[-5, 0, 0]}
-/>
-<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Flex
   width={window.innerWidth / 40}
@@ -200,7 +199,7 @@
       >
         <InstancedMesh>
           <T.BoxGeometry />
-          <T.MeshStandardMaterial shadow />
+          <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
 
           {#each midiMessages as noteNumber}
             {#if $Settings.scene == "Cube"}

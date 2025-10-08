@@ -91,5 +91,7 @@
   <T.MeshStandardMaterial
     color={`rgb(${Math.floor(r.current)},${Math.floor(g.current)},${Math.floor(b.current)})`}
     shadow
+    roughness={0.4}
+    metalness={0.7}
   />
 </T.Mesh>

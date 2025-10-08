@@ -16,17 +16,12 @@
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import { Box, Flex } from "@threlte/flex";
+  import Lighting from "./Lighting.svelte";
   import Cube from "./instances/Cube.svelte";
   import Mirror from "./instances/Mirror.svelte";
   import Piano from "./instances/Piano.svelte";
   import Firework from "./instances/Firework.svelte";
   import Swirl from "./instances/Swirl.svelte";
-
-  const { scene } = $state(useThrelte());
-
-  scene.background = new Color(
-    `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
-  );
 
   type MIDIMessage = {
     note: number;
@@ -168,6 +163,8 @@
   });
 </script>
 
+<Lighting />
+
 <T.OrthographicCamera
   makeDefault
   position={[5, 15, 15]}
@@ -182,28 +179,6 @@
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>
-
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, 5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, -5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[5, 0, 0]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[-5, 0, 0]}
-/>
-<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
 
 <Flex
   width={window.innerWidth / 40}
@@ -251,7 +226,7 @@
         >
           <InstancedMesh>
             <T.BoxGeometry />
-            <T.MeshStandardMaterial shadow />
+            <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
             {#each midiMessages as noteNumber}
               <!-- Show sample of styles -->
               {#if styles[styleIndex] === "Piano"}
