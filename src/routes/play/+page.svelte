@@ -8,13 +8,20 @@
   import ColorPicker from "svelte-awesome-color-picker";
   import { colord } from "colord";
   import { onMount } from "svelte";
-  import { slide, fade } from "svelte/transition";
+  import { slide } from "svelte/transition";
 
   let setting = $state("notes");
 
   let getMenuHeight = $state();
 
   let screenHeight = 0;
+
+  let recordControlHover = $state({
+    record: false,
+    stop: false,
+    play: false,
+    reset: false,
+  });
 
   onMount(() => {
     if (typeof window !== "undefined") {
@@ -25,27 +32,27 @@
   const sceneHeight = new Tween(screenHeight);
 
   let rgb = $state({
-    r: $Settings.colours.key.r,
-    g: $Settings.colours.key.g,
-    b: $Settings.colours.key.b,
+    r: $Settings.notes.colours.key.r,
+    g: $Settings.notes.colours.key.g,
+    b: $Settings.notes.colours.key.b,
     a: 1,
   });
 
   let hsv = $state(
     colord(
-      `rgb(${$Settings.colours.expression.r}, ${$Settings.colours.expression.g}, ${$Settings.colours.expression.b})`
+      `rgb(${$Settings.notes.colours.expression.r}, ${$Settings.notes.colours.expression.g}, ${$Settings.notes.colours.expression.b})`
     ).toHsv()
   );
 
   let hex = $state(
     colord(
-      `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
+      `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`
     ).toHex()
   );
 
   let menuColour = $state(
     colord(
-      `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
+      `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`
     )
       .invert()
       .desaturate(0.3)
@@ -102,13 +109,33 @@
           ? 'white'
           : '--menuTextColor'}">Scene</button
       >
+      <button
+        class="setting"
+        onclick={() => (setting = "record")}
+        style="background-color:{setting === 'record'
+          ? '#397a4b'
+          : '--menuTextColor'};color:{setting === 'record'
+          ? 'white'
+          : '--menuTextColor'}">Record</button
+      >
     </settingOptions>
 
     {#if setting === "notes"}
+      <h1>Style</h1>
+      <select
+        name="styles"
+        id="styles"
+        bind:value={$Settings.sceneSelected}
+        onchange={styleChange}
+      >
+        {#each $Settings.notes.styles as style}
+          <option value={style}>{style}</option>
+        {/each}
+      </select>
       <h1>Colours</h1>
       <label for="note">Note</label>
       <ColorPicker
-        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --cp-bg-color={`rgba(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b},1)`}
         --picker-height="150px"
         --picker-width="150px"
         --slider-width="15px"
@@ -119,7 +146,7 @@
         textInputModes={["rgb"]}
         sliderDirection="vertical"
         on:input={(event) => {
-          $Settings.colours.key =
+          $Settings.notes.colours.key =
             event.detail.rgb === undefined
               ? { r: 255, g: 255, b: 255 }
               : event.detail.rgb;
@@ -127,7 +154,7 @@
       />
       <label for="expression">Expression</label>
       <ColorPicker
-        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --cp-bg-color={`rgba(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b},1)`}
         --picker-height="150px"
         --picker-width="150px"
         --slider-width="15px"
@@ -138,7 +165,7 @@
         textInputModes={["hsv"]}
         sliderDirection="vertical"
         on:input={(event) => {
-          $Settings.colours.expression =
+          $Settings.notes.colours.expression =
             event.detail.rgb === undefined
               ? { r: 255, g: 255, b: 255 }
               : event.detail.rgb;
@@ -152,7 +179,7 @@
         max="4000"
         step="0.1"
         id="attack"
-        bind:value={$Settings.attack}
+        bind:value={$Settings.notes.attack}
       />
       <label for="release">Release</label>
       <input
@@ -161,30 +188,19 @@
         max="4000"
         step="0.1"
         id="release"
-        bind:value={$Settings.release}
+        bind:value={$Settings.notes.release}
       />
       <button
-        id="remap"
+        class="small"
         onclick={() => {
-          $Settings.remap = true;
+          $Settings.notes.remap = true;
         }}>Remap</button
       >
     {:else if setting === "scene"}
-      <h1>Style</h1>
-      <select
-        name="styles"
-        id="styles"
-        bind:value={$Settings.scene}
-        onchange={styleChange}
-      >
-        {#each $Settings.styles as style}
-          <option value={style}>{style}</option>
-        {/each}
-      </select>
       <label for="Background Colour">Background Colour</label>
 
       <ColorPicker
-        --cp-bg-color={`rgba(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b},1)`}
+        --cp-bg-color={`rgba(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b},1)`}
         --picker-height="150px"
         --picker-width="150px"
         --slider-width="15px"
@@ -195,7 +211,7 @@
         textInputModes={["rgb"]}
         sliderDirection="vertical"
         on:input={(event) => {
-          $Settings.colours.background =
+          $Settings.scene.colours.background =
             event.detail.rgb === undefined
               ? { r: 255, g: 255, b: 255 }
               : event.detail.rgb;
@@ -209,7 +225,7 @@
         max="5.1"
         step="0.1"
         id="frontLighting"
-        bind:value={$Settings.lighting.front}
+        bind:value={$Settings.scene.lighting.front}
       />
       <label for="backLighting">Side Light</label>
       <input
@@ -218,7 +234,7 @@
         max="5.1"
         step="0.1"
         id="backLighting"
-        bind:value={$Settings.lighting.side}
+        bind:value={$Settings.scene.lighting.side}
       />
       <label for="aboveLighting">Above Light</label>
       <input
@@ -227,7 +243,7 @@
         max="5.1"
         step="0.1"
         id="aboveLighting"
-        bind:value={$Settings.lighting.above}
+        bind:value={$Settings.scene.lighting.above}
       />
 
       <h1>Autorotate</h1>
@@ -235,8 +251,9 @@
       <input
         id="autoRotate"
         type="checkbox"
-        onchange={() => ($Settings.autoRotate = !$Settings.autoRotate)}
-        checked={$Settings.autoRotate}
+        onchange={() =>
+          ($Settings.scene.autoRotate = !$Settings.scene.autoRotate)}
+        checked={$Settings.scene.autoRotate}
       />
       <label for="rotateSpeed">Speed</label>
       <input
@@ -245,7 +262,181 @@
         max="10"
         step="0.1"
         id="rotateSpeed"
-        bind:value={$Settings.autoRotateSpeed}
+        bind:value={$Settings.scene.autoRotateSpeed}
+      />
+    {:else if setting === "record"}
+      <h1>Controls</h1>
+      <controls>
+        {#if !$Settings.record.enabled}
+          <button
+            class="recordHiddenButton"
+            aria-label="record"
+            onclick={() => {
+              $Settings.record.enabled = true;
+            }}
+            onmouseenter={() => {
+              recordControlHover.record = true;
+            }}
+            onmouseleave={() => {
+              recordControlHover.record = false;
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 64 64"
+              class="recordControls"
+              aria-hidden="true"
+            >
+              <circle
+                id="record"
+                cx="32"
+                cy="32"
+                r="20"
+                fill={recordControlHover.record ? "#ff6262" : "white"}
+              />
+            </svg>
+          </button>
+        {:else}
+          <button
+            class="recordHiddenButton"
+            aria-label="stop"
+            onclick={() => {
+              $Settings.record.enabled = false;
+              if ($Settings.record.selectedTrigger == "Note down")
+                $Settings.record.playback = true;
+            }}
+            onmouseenter={() => {
+              recordControlHover.stop = true;
+            }}
+            onmouseleave={() => {
+              recordControlHover.stop = false;
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="recordControls"
+              viewBox="0 0 64 64"
+              aria-hidden="true"
+            >
+              <rect
+                id="stopRecord"
+                x="16"
+                y="16"
+                width="35"
+                height="35"
+                fill={recordControlHover.stop ? "green" : "white"}
+              />
+            </svg>
+          </button>
+        {/if}
+
+        {#if $Settings.record.selectedTrigger == "Time"}
+          <button
+            class="recordHiddenButton"
+            aria-label="play"
+            onclick={() => {
+              $Settings.record.playback = true;
+            }}
+            onmouseenter={() => {
+              recordControlHover.play = true;
+            }}
+            onmouseleave={() => {
+              recordControlHover.play = false;
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="recordControls"
+              viewBox="0 0 64 64"
+            >
+              <polygon
+                aria-hidden="true"
+                id="play"
+                points="24,16 24,48 48,32"
+                fill={$Settings.record.playback || recordControlHover.play
+                  ? "green"
+                  : "white"}
+              />
+            </svg>
+          </button>
+        {/if}
+        <button
+          type="button"
+          class="recordHiddenButton"
+          aria-label="reset"
+          onclick={() => {
+            $Settings.record.reset = true;
+          }}
+          onmouseenter={() => {
+            recordControlHover.reset = true;
+          }}
+          onmouseleave={() => {
+            recordControlHover.reset = false;
+          }}
+        >
+          <svg
+            aria-hidden="true"
+            class="recordControls"
+            viewBox="0 0 64 64"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Circle background -->
+            <circle
+              id="reset"
+              cx="32"
+              cy="32"
+              r="20"
+              fill={$Settings.record.reset || recordControlHover.reset
+                ? "#ff2727"
+                : "white"}
+            />
+
+            <!-- X mark -->
+            <line
+              x1="22"
+              y1="22"
+              x2="42"
+              y2="42"
+              stroke="black"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+            <line
+              x1="42"
+              y1="22"
+              x2="22"
+              y2="42"
+              stroke="black"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </controls>
+
+      <h1>Playback Method</h1>
+      <select
+        name="triggers"
+        id="triggers"
+        bind:value={$Settings.record.selectedTrigger}
+        onclick={() => {
+          if ($Settings.record.selectedTrigger == "Note down")
+            $Settings.record.playback = true;
+        }}
+      >
+        {#each $Settings.record.triggers as trigger}
+          <option value={trigger}>{trigger}</option>
+        {/each}
+      </select>
+
+      <label for="stepSpeedLabel">Step Speed</label>
+      <input
+        type="range"
+        min="0"
+        max="4000"
+        step="1"
+        id="stepSpeed"
+        bind:value={$Settings.record.speed}
       />
     {/if}
 
@@ -256,7 +447,7 @@
 
         setTimeout(() => {
           menuColour = colord(
-            `rgb(${$Settings.colours.background.r}, ${$Settings.colours.background.g}, ${$Settings.colours.background.b})`
+            `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`
           )
             .invert()
             .desaturate(0.3)
@@ -272,6 +463,7 @@
     font-family: "Oxanium";
     src: url("/fonts/Oxanium-Bold.ttf");
   }
+
   button {
     font-family: "Oxanium";
     background-color: var(--menuTextColour);
@@ -282,21 +474,52 @@
     cursor: pointer;
     border-style: none;
   }
+
+  button.small {
+    background-color: #397a4b;
+    color: white;
+    width: 50%;
+    margin: 10% 25% 2%;
+  }
+
+  button.setting:hover {
+    font-weight: bold;
+    background-color: rgb(135, 238, 149);
+    color: black;
+  }
+  button.small:hover {
+    font-weight: bold;
+    background-color: rgb(135, 238, 149);
+    color: black;
+  }
+  button#close:hover {
+    font-weight: bold;
+    background-color: rgb(135, 238, 149);
+    color: black;
+  }
+
   button#close {
+    position: absolute;
+    bottom: 0;
     background-color: #397a4b;
     color: white;
     width: 75%;
     margin: 5% 12.5% 2%;
   }
-  button#remap {
-    width: 60%;
-    margin: 10% 20%;
+
+  button.recordHiddenButton {
+    display: inline-block;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin: 0;
+    width: 20%;
   }
 
-  button:hover {
-    font-weight: bold;
-    background-color: rgb(135, 238, 149);
-    color: black;
+  .recordControls {
+    width: 50%;
+    height: auto;
   }
 
   select {
@@ -371,11 +594,10 @@
       text-align: center;
       background-image: linear-gradient(
         -45deg,
-        #000000,
-        #1b1a34,
+        #ffffff,
+        #292768,
         #e99541,
-        #397a4b,
-        #ffffff
+        #397a4b
       );
       background-size: 600% 600%;
       animation: gradientAnimation 85s infinite;
@@ -428,11 +650,10 @@
       text-align: center;
       background-image: linear-gradient(
         -45deg,
-        #000000,
-        #1b1a34,
+        #ffffff,
+        #292768,
         #e99541,
-        #397a4b,
-        #ffffff
+        #397a4b
       );
       background-size: 600% 600%;
       animation: gradientAnimation 85s infinite;

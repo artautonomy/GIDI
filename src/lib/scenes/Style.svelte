@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Tween, Spring } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { Device, MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import { Box, Flex } from "@threlte/flex";
@@ -60,11 +60,11 @@
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
-  const styles = $Settings.styles;
+  const styles = $Settings.notes.styles;
 
   let styleIndex = $state(0);
 
-  let highlighted = $state($Settings.colours.key);
+  let highlighted = $state($Settings.notes.colours.key);
 
   let selected = $state(false);
 
@@ -88,7 +88,7 @@
 
   function styleBack() {
     styleIndex > 0 ? styleIndex-- : (styleIndex = styles.length - 1);
-    $Settings.scene = styles[styleIndex];
+    $Settings.sceneSelected = styles[styleIndex];
 
     $Settings.styleReset = true;
   }
@@ -97,13 +97,13 @@
     styleIndex >= 0 && styleIndex < styles.length - 1
       ? styleIndex++
       : (styleIndex = 0);
-    $Settings.scene = styles[styleIndex];
+    $Settings.sceneSelected = styles[styleIndex];
 
     $Settings.styleReset = true;
   }
 
   function setupScene(choice: string) {
-    $Settings.scene = choice;
+    $Settings.sceneSelected = choice;
 
     selected = true;
 
@@ -132,7 +132,7 @@
 
   $effect(() => {
     if (!$hovering && !selected) {
-      highlighted = $Settings.colours.key;
+      highlighted = $Settings.notes.colours.key;
     } else {
       highlighted = { r: 77, g: 144, b: 57 };
     }
@@ -143,8 +143,6 @@
     duration: 1000,
     easing: cubicInOut,
   });
-
-  $Settings.autoRotate = false;
 
   $effect(() => {
     if (midiMessages.length > 0 && !noteTriggered) {
@@ -161,6 +159,8 @@
         1 - Math.log(midiMessages.length) / Math.log(window.innerWidth);
     }
   });
+
+  $Settings.scene.autoRotate = false;
 </script>
 
 <Lighting />
@@ -174,8 +174,8 @@
 >
   <OrbitControls
     enableDamping
-    autoRotateSpeed={$Settings.autoRotateSpeed}
-    autoRotate={$Settings.autoRotate}
+    autoRotateSpeed={$Settings.scene.autoRotateSpeed}
+    autoRotate={$Settings.scene.autoRotate}
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -234,30 +234,30 @@
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
-                  attack={$Settings.attack}
-                  release={$Settings.release}
+                  attack={$Settings.notes.attack}
+                  release={$Settings.notes.release}
                   keyColour={highlighted}
-                  expressionColour={$Settings.colours.expression}
+                  expressionColour={$Settings.notes.colours.expression}
                 />
               {:else if styles[styleIndex] === "Mirror"}
                 <Mirror
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
-                  attack={$Settings.attack}
-                  release={$Settings.release}
+                  attack={$Settings.notes.attack}
+                  release={$Settings.notes.release}
                   keyColour={highlighted}
-                  expressionColour={$Settings.colours.expression}
+                  expressionColour={$Settings.notes.colours.expression}
                 />
               {:else if styles[styleIndex] === "Cube"}
                 <Cube
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
-                  attack={$hovering ? 250 : $Settings.attack}
-                  release={$hovering ? 250 : $Settings.release}
+                  attack={$hovering ? 250 : $Settings.notes.attack}
+                  release={$hovering ? 250 : $Settings.notes.release}
                   keyColour={highlighted}
-                  expressionColour={$Settings.colours.expression}
+                  expressionColour={$Settings.notes.colours.expression}
                 />
               {/if}
             {/each}
@@ -269,20 +269,20 @@
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}
-                attack={$Settings.attack}
-                release={$Settings.release}
+                attack={$Settings.notes.attack}
+                release={$Settings.notes.release}
                 keyColour={highlighted}
-                expressionColour={$Settings.colours.expression}
+                expressionColour={$Settings.notes.colours.expression}
               />
             {:else if styles[styleIndex] === "Firework"}
               <Firework
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}
-                attack={$Settings.attack}
-                release={$Settings.release}
+                attack={$Settings.notes.attack}
+                release={$Settings.notes.release}
                 keyColour={highlighted}
-                expressionColour={$Settings.colours.expression}
+                expressionColour={$Settings.notes.colours.expression}
               />
             {/if}
           {/each}
@@ -356,8 +356,9 @@
       </Billboard>
     {/if}
   </Box>
+
   <Billboard>
-    <Box flex={1} width="100%" height="100%">
+    <Box flex={2} width="100%" height="100%">
       {#if notePlayed}
         <T.Mesh
           scale={0.75}
@@ -437,6 +438,28 @@
             <T.ConeGeometry />
             <T.MeshBasicMaterial color={"orange"} shadow />
           </T.Mesh>
+        </T.Mesh>
+        <T.Mesh
+          position.y={-3.5}
+          onpointerenter={onPointerEnterStyle}
+          onpointerleave={onPointerLeaveStyle}
+          onclick={() => setupScene(styles[styleIndex])}
+        >
+          <T.BoxGeometry args={[4, 2, 1]} />
+          <T.MeshBasicMaterial color="orange" />
+          <Text
+            font={$Settings.font}
+            fontSize={window.innerHeight > 1200 ? 0.75 : 0.4}
+            maxWidth={window.innerHeight > 1200 ? 100 : 9}
+            outlineBlur={0.06}
+            text="Select"
+            textAlign={"center"}
+            anchorX={"center"}
+            position.x={0}
+            position.y={0.45}
+            position.z={10}
+            color={"black"}
+          />
         </T.Mesh>
       {/if}
     </Box>

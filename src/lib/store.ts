@@ -35,49 +35,63 @@ export let Device = writable<Device>({
     input: {
         id: "",
     }
-})
+});
 
 export let Settings = writable({
 
-    page: 'home',
-    scene : 'Piano',
     edit: false,
     styleReset: false,
-    remap: false,
     font: "/fonts/Oxanium-Regular.ttf",
     orbitControls: false,
     zoom: true,
-    autoRotate: true,
-    autoRotateSpeed: 1.1,
-    attack: 5,
-    release: 500,
-    styles: ["Piano", "Firework", "Mirror","Swirl", "Cube"],
-    colours: {
-        background: {
+    sceneSelected: 'Piano',
+    notes: {
+        styles: ["Piano", "Firework", "Mirror","Swirl", "Cube"],
+        colours: {
+            key: {
 
-            r: 4,
-            g: 2,
-            b: 25
-        },
-        key: {
+                r: 225,
+                g: 226,
+                b: 245
+            },
+            expression: {
 
-            r: 225,
-            g: 226,
-            b: 245
+                r: 145,
+                g: 197,
+                b: 77
+            }
         },
-        expression: {
+        attack: 5,
+        release: 500,
+        remap: false,
 
-            r: 145,
-            g: 197,
-            b: 77
-        },
         
+    },
+    scene: {
+        colours: {
+            background: {
+
+                r: 4,
+                g: 2,
+                b: 25
+            }
+        },
+        lighting: {
+
+            above: 2.5,
+            front: 1,
+            side: 3
+        },
+        autoRotate: true,
+        autoRotateSpeed: 1.1,
 
     },
-    lighting: {
-
-        above: 2.5,
-        front: 1,
-        side: 3
+    record: {
+        triggers: ["Note down", "Time"],
+        selectedTrigger: "Note down",
+        enabled: false,
+        playback: false,
+        reset: false,
+        speed: 500
     }
 })

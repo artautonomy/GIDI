@@ -113,7 +113,7 @@
     easing: cubicInOut,
   });
 
-  const styles = $Settings.styles;
+  const styles = $Settings.notes.styles;
 
   let styleIndex = $state(0);
 
@@ -320,15 +320,15 @@
     if (styles[styleIndex] === "Piano") {
       mobileNotes = pianoNotes;
       noteCount = 12;
-      $Settings.attack = 15;
-      $Settings.release = 500;
+      $Settings.notes.attack = 15;
+      $Settings.notes.release = 500;
     } else if (styles[styleIndex] === "Firework") {
-      $Settings.attack = 20;
-      $Settings.release = 3500;
+      $Settings.notes.attack = 20;
+      $Settings.notes.release = 3500;
       mobileNotes = padNotes;
     } else {
-      $Settings.attack = 15;
-      $Settings.release = 500;
+      $Settings.notes.attack = 15;
+      $Settings.notes.release = 500;
       mobileNotes = padNotes;
       noteCount = 7;
     }
@@ -372,15 +372,15 @@
     if (styles[styleIndex] === "Piano") {
       mobileNotes = pianoNotes;
       noteCount = 12;
-      $Settings.attack = 5;
-      $Settings.release = 500;
+      $Settings.notes.attack = 5;
+      $Settings.notes.release = 500;
     } else if (styles[styleIndex] === "Firework") {
-      $Settings.attack = 20;
-      $Settings.release = 3500;
+      $Settings.notes.attack = 20;
+      $Settings.notes.release = 3500;
       mobileNotes = padNotes;
     } else {
-      $Settings.attack = 5;
-      $Settings.release = 500;
+      $Settings.notes.attack = 5;
+      $Settings.notes.release = 500;
       mobileNotes = padNotes;
       noteCount = 7;
     }
@@ -560,8 +560,9 @@
           cubeClicked = true;
           hintText.target = 0;
           navigationArrows.target = 0.75;
-          $Settings.colours.key = notesColours[notesIndex].key;
-          $Settings.colours.expression = notesColours[notesIndex].expression;
+          $Settings.notes.colours.key = notesColours[notesIndex].key;
+          $Settings.notes.colours.expression =
+            notesColours[notesIndex].expression;
 
           if (notesIndex >= notesColours.length - 1) {
             notesIndex = 0;
@@ -580,30 +581,30 @@
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
-                  attack={$Settings.attack}
-                  release={$Settings.release}
-                  keyColour={$Settings.colours.key}
-                  expressionColour={$Settings.colours.expression}
+                  attack={$Settings.notes.attack}
+                  release={$Settings.notes.release}
+                  keyColour={$Settings.notes.colours.key}
+                  expressionColour={$Settings.notes.colours.expression}
                 />
               {:else if styles[styleIndex] === "Mirror"}
                 <Mirror
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
-                  attack={$Settings.attack}
-                  release={$Settings.release}
-                  keyColour={$Settings.colours.key}
-                  expressionColour={$Settings.colours.expression}
+                  attack={$Settings.notes.attack}
+                  release={$Settings.notes.release}
+                  keyColour={$Settings.notes.colours.key}
+                  expressionColour={$Settings.notes.colours.expression}
                 />
               {:else if styles[styleIndex] === "Cube"}
                 <Cube
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
-                  attack={$Settings.attack}
-                  release={$Settings.release}
-                  keyColour={$Settings.colours.key}
-                  expressionColour={$Settings.colours.expression}
+                  attack={$Settings.notes.attack}
+                  release={$Settings.notes.release}
+                  keyColour={$Settings.notes.colours.key}
+                  expressionColour={$Settings.notes.colours.expression}
                 />
               {/if}
             {/each}
@@ -615,20 +616,20 @@
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}
-                attack={$Settings.attack}
-                release={$Settings.release}
-                keyColour={$Settings.colours.key}
-                expressionColour={$Settings.colours.expression}
+                attack={$Settings.notes.attack}
+                release={$Settings.notes.release}
+                keyColour={$Settings.notes.colours.key}
+                expressionColour={$Settings.notes.colours.expression}
               />
             {:else if styles[styleIndex] === "Firework"}
               <Firework
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}
-                attack={$Settings.attack}
-                release={$Settings.release}
-                keyColour={$Settings.colours.key}
-                expressionColour={$Settings.colours.expression}
+                attack={$Settings.notes.attack}
+                release={$Settings.notes.release}
+                keyColour={$Settings.notes.colours.key}
+                expressionColour={$Settings.notes.colours.expression}
               />
             {/if}
           {/each}

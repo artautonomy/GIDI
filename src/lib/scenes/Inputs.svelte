@@ -18,11 +18,12 @@
   import { goto } from "$app/navigation";
 
   import Input from "./instances/Input.svelte";
+  import Lighting from "./Lighting.svelte";
 
   const { scene } = $state(useThrelte());
 
   scene.background = new Color(
-    `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
+    `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`
   );
 
   type MIDIMessage = {
@@ -53,7 +54,7 @@
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
-  let highlighted = $state($Settings.colours.key);
+  let highlighted = $state($Settings.notes.colours.key);
 
   let selected = $state(false);
 
@@ -87,7 +88,7 @@
 
   $effect(() => {
     if (!$hovering && !selected) {
-      highlighted = $Settings.colours.key;
+      highlighted = $Settings.notes.colours.key;
     } else {
       highlighted = { r: 77, g: 144, b: 57 };
     }
@@ -99,7 +100,7 @@
     easing: cubicInOut,
   });
 
-  $Settings.autoRotate = false;
+  $Settings.scene.autoRotate = false;
 </script>
 
 <T.OrthographicCamera
@@ -111,33 +112,13 @@
 >
   <OrbitControls
     enableDamping
-    autoRotateSpeed={$Settings.autoRotateSpeed}
-    autoRotate={$Settings.autoRotate}
+    autoRotateSpeed={$Settings.scene.autoRotateSpeed}
+    autoRotate={$Settings.scene.autoRotate}
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>
 
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, 5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.front}
-  position={[0, 0, -5]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[5, 0, 0]}
-/>
-<T.DirectionalLight
-  castShadow
-  intensity={$Settings.lighting.side}
-  position={[-5, 0, 0]}
-/>
-<T.AmbientLight intensity={$Settings.lighting.above} position={[0, 15, 0]} />
+<Lighting />
 
 <Flex
   width={window.innerWidth / 40}

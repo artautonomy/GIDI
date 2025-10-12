@@ -51,16 +51,16 @@
   let inputs: WebMidi.MIDIInput[] = [];
 
   $effect(() => {
-    if ($Settings.remap) {
+    if ($Settings.notes.remap) {
       pianoNotes = [];
       padNotes = [];
       notes = [];
       MIDI.set(notes);
-      $Settings.remap = false;
+      $Settings.notes.remap = false;
     }
 
     if ($Settings.styleReset) {
-      if ($Settings.scene !== "Piano") {
+      if ($Settings.sceneSelected !== "Piano") {
         if (padNotes.length < 1) {
           padNotes = [
             ...padNotes,
@@ -113,7 +113,7 @@
         if ((device === $Device.input.id && status === 128) || status === 144) {
           let noteExists;
 
-          if ($Settings.scene !== "Piano") {
+          if ($Settings.sceneSelected !== "Piano") {
             noteExists = padNotes.some((key) => key.note === note);
           } else {
             noteExists = pianoNotes.some((key) => key.note === note);
@@ -121,7 +121,7 @@
 
           // Check if the note already exists in the notes array
           if (!noteExists) {
-            if ($Settings.scene !== "Piano") {
+            if ($Settings.sceneSelected !== "Piano") {
               // If note does not exist, add it to the notes array
               padNotes = [
                 ...padNotes,
@@ -318,7 +318,7 @@
               }
             }
           } else {
-            if ($Settings.scene !== "Piano") {
+            if ($Settings.sceneSelected !== "Piano") {
               padNotes = padNotes.map((key) => {
                 if (key.note === note) {
                   return {
@@ -356,7 +356,7 @@
             }
           }
 
-          if ($Settings.scene !== "Piano") {
+          if ($Settings.sceneSelected !== "Piano") {
             notes = padNotes;
           } else {
             notes = pianoNotes;

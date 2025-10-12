@@ -3,6 +3,9 @@
   import { colord } from "colord";
   import { Settings } from "$lib/store";
   import MIDI from "$lib/scenes/MIDI.svelte";
+  import github from "$lib/assets/socials/github.png";
+  import paypal from "$lib/assets/socials/paypal.png";
+  import instagram from "$lib/assets/socials/instagram.png";
 
   let { children } = $props();
 
@@ -20,19 +23,19 @@
 
 <socials
   style="--opacity: {loaded ? 1 : 0}; --invert: {colord(
-    $Settings.colours.background
+    $Settings.scene.colours.background
   ).isLight()
     ? 1
     : 0}"
 >
   <a href="https://github.com/artautonomy/GIDI" aria-label="github"
-    ><img src="/socials/github.png" class="icons" alt="github" /></a
+    ><img src={github} class="icons" alt="github" /></a
   >
   <a href="https://www.paypal.com/paypalme/GIDIWebApp" aria-label="paypal"
-    ><img src="/socials/paypal.png" class="icons" alt="paypal" /></a
+    ><img src={paypal} class="icons" alt="paypal" /></a
   >
   <a href="https://www.instagram.com/artautonomy" aria-label="instagram"
-    ><img src="/socials/instagram.png" class="icons" alt="instagram" /></a
+    ><img src={instagram} class="icons" alt="instagram" /></a
   >
 </socials>
 

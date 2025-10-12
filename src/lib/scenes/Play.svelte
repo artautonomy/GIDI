@@ -4,6 +4,7 @@
   import {
     Align,
     Billboard,
+    Gizmo,
     InstancedMesh,
     interactivity,
     OrbitControls,
@@ -13,7 +14,7 @@
   import { Box, Flex } from "@threlte/flex";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { Device, MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Lighting from "./Lighting.svelte";
   import Cube from "./instances/Cube.svelte";
@@ -22,7 +23,9 @@
   import Firework from "./instances/Firework.svelte";
   import Swirl from "./instances/Swirl.svelte";
 
-  const { scene } = $state(useThrelte());
+  const { scene, camera } = $state(useThrelte());
+
+  type Vec3 = [number, number, number];
 
   type MIDIMessage = {
     note: number;
@@ -51,12 +54,22 @@
   interactivity();
 
   let zoom = 50;
-  let cameraCoordinates = $state({ x: 7.5, y: 10, z: 20 });
   let menuOpened = $state(false);
 
-  let selected = $state($Settings.colours.key);
+  let selected = $state($Settings.notes.colours.key);
 
   let tips = $state("Press and hold the mouse to rotate the scene");
+
+  let cameraCord: Vec3 = $state([7.5, 10, 20]);
+
+  let recordCords: Vec3[] = $state([]);
+
+  let recordCordsTransition = new Tween(cameraCord, {
+    duration: $Settings.record.speed,
+    easing: cubicInOut,
+  });
+
+  let coordIndex = 0;
 
   setTimeout(() => {
     if (tips == "Press and hold the mouse to rotate the scene") {
@@ -92,7 +105,7 @@
   function openMenu() {
     $Settings.edit = true;
 
-    selected = $Settings.colours.key;
+    selected = $Settings.notes.colours.key;
 
     noteScale.target =
       1 - Math.log(midiMessages.length) / Math.log(window.innerWidth) - 0.2;
@@ -110,20 +123,16 @@
         openMenu();
         break;
 
-      case "ArrowUp":
-        cameraCoordinates.y++;
+      case "r":
+        toggleRecordingCoords();
         break;
 
-      case "ArrowDown":
-        cameraCoordinates.y--;
+      case " ":
+        animateCamera();
         break;
 
-      case "ArrowRight":
-        cameraCoordinates.x++;
-        break;
-
-      case "ArrowLeft":
-        cameraCoordinates.x--;
+      case "x":
+        $Settings.record.reset = true;
         break;
     }
   }
@@ -136,36 +145,124 @@
   });
 
   $effect(() => {
+    if ($Settings.record.reset) {
+      hintText.target = 1;
+      tips = "Recording reset";
+
+      recordCords = [];
+
+      recordCordsTransition.target = cameraCord;
+
+      setTimeout(() => {
+        $Settings.record.reset = false;
+      }, 1000);
+    }
+  });
+
+  $effect(() => {
+    if ($Settings.record.playback) {
+      animateCamera();
+    }
+  });
+
+  $effect(() => {
     if (scene) {
       scene.background = new Color(
-        `rgb(${$Settings.colours.background.r},${$Settings.colours.background.g},${$Settings.colours.background.b})`
+        `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`
       );
     }
 
     if ($hovering) {
       selected = {
-        r: 255 - $Settings.colours.background.r,
-        g: 255 - $Settings.colours.background.g,
-        b: 255 - $Settings.colours.background.b,
+        r: 255 - $Settings.scene.colours.background.r,
+        g: 255 - $Settings.scene.colours.background.g,
+        b: 255 - $Settings.scene.colours.background.b,
       };
     } else {
-      selected = $Settings.colours.key;
+      selected = $Settings.notes.colours.key;
     }
   });
 
+  async function animateCamera() {
+    if (
+      $Settings.record.selectedTrigger == "Note down" &&
+      !$Settings.record.enabled
+    ) {
+      if (
+        midiMessages.filter((note) => note.velocity > 0).length > 0 &&
+        recordCords.length > 0
+      ) {
+        recordCordsTransition.set(recordCords[coordIndex], {
+          duration: $Settings.record.speed,
+        });
+
+        if (coordIndex >= recordCords.length - 1) {
+          coordIndex = 0;
+        } else {
+          coordIndex++;
+        }
+      }
+    } else {
+      for (const target of recordCords) {
+        recordCordsTransition.set(target, {
+          duration: $Settings.record.speed,
+        });
+        await new Promise((r) => setTimeout(r, $Settings.record.speed));
+      }
+
+      $Settings.record.playback = false;
+    }
+  }
+
+  function toggleRecordingCoords() {
+    $Settings.record.enabled = !$Settings.record.enabled;
+
+    if ($Settings.record.selectedTrigger == "Note down") {
+      $Settings.record.playback = true;
+    }
+  }
+
+  function recordEndCoords() {
+    if ($Settings.record.enabled) {
+      tips =
+        "Angle " +
+        (recordCords.length + 1) +
+        "\n\n" +
+        "X = " +
+        camera.current.position.x +
+        "\n" +
+        "Y = " +
+        camera.current.position.y +
+        "\n" +
+        "Z = " +
+        camera.current.position.z;
+
+      hintText.target = 1;
+
+      recordCords = [
+        ...recordCords,
+        [
+          camera.current.position.clone().x,
+          camera.current.position.clone().y,
+          camera.current.position.clone().z,
+        ],
+      ];
+    }
+  }
+
   $Settings.orbitControls = true;
-  $Settings.autoRotate = false;
+  $Settings.scene.autoRotate = false;
 
   //testing new styles
   //$Device.input.id = "input-0";
-  //$Settings.scene = "Line";
+  //$Settings.sceneSelected = "Piano";
 </script>
 
 <Lighting />
 
 <T.OrthographicCamera
   makeDefault
-  position={[cameraCoordinates.x, cameraCoordinates.y, cameraCoordinates.z]}
+  position={recordCordsTransition.current}
   near={0.001}
   far={5000}
   zoom={introZoom.current}
@@ -173,15 +270,17 @@
   <OrbitControls
     enableDamping
     enableZoom={!$Settings.edit}
-    autoRotateSpeed={$Settings.autoRotateSpeed}
-    autoRotate={$Settings.autoRotate}
+    autoRotateSpeed={$Settings.scene.autoRotateSpeed}
+    autoRotate={$Settings.scene.autoRotate}
     enabled={$Settings.orbitControls}
-    onstart={(e) => {
-      hintArrow.target = 0.75;
-      tips = "To edit the scene click here or press 'e'";
-      console.log(e);
+    onstart={() => {
+      if (!menuOpened && !$Settings.record.enabled) {
+        hintArrow.target = 0.75;
+        tips = "To edit the scene click here or press 'e'";
+      }
     }}
-  ></OrbitControls>
+    onend={recordEndCoords}><Gizmo speed={0.75} /></OrbitControls
+  >
 </T.OrthographicCamera>
 
 <Flex
@@ -202,60 +301,60 @@
           <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
 
           {#each midiMessages as noteNumber}
-            {#if $Settings.scene == "Cube"}
+            {#if $Settings.sceneSelected == "Cube"}
               <Cube
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.attack}
-                release={$hovering ? 250 : $Settings.release}
+                attack={$hovering ? 250 : $Settings.notes.attack}
+                release={$hovering ? 250 : $Settings.notes.release}
                 keyColour={selected}
-                expressionColour={$Settings.colours.expression}
+                expressionColour={$Settings.notes.colours.expression}
               />
-            {:else if $Settings.scene == "Piano"}
+            {:else if $Settings.sceneSelected == "Piano"}
               <Piano
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.attack}
-                release={$hovering ? 250 : $Settings.release}
+                attack={$hovering ? 250 : $Settings.notes.attack}
+                release={$hovering ? 250 : $Settings.notes.release}
                 keyColour={selected}
-                expressionColour={$Settings.colours.expression}
+                expressionColour={$Settings.notes.colours.expression}
               />
-            {:else if $Settings.scene == "Mirror"}
+            {:else if $Settings.sceneSelected == "Mirror"}
               <Mirror
                 position={noteNumber.position}
                 scale={noteNumber.scale}
                 velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.attack}
-                release={$hovering ? 250 : $Settings.release}
+                attack={$hovering ? 250 : $Settings.notes.attack}
+                release={$hovering ? 250 : $Settings.notes.release}
                 keyColour={selected}
-                expressionColour={$Settings.colours.expression}
+                expressionColour={$Settings.notes.colours.expression}
               />
             {/if}
           {/each}
         </InstancedMesh>
 
         {#each midiMessages as noteNumber}
-          {#if $Settings.scene === "Swirl"}
+          {#if $Settings.sceneSelected === "Swirl"}
             <Swirl
               position={noteNumber.position}
               scale={noteNumber.scale}
               velocity={noteNumber.velocity}
-              attack={$Settings.attack}
-              release={$Settings.release}
+              attack={$Settings.notes.attack}
+              release={$Settings.notes.release}
               keyColour={selected}
-              expressionColour={$Settings.colours.expression}
+              expressionColour={$Settings.notes.colours.expression}
             />
-          {:else if $Settings.scene == "Firework"}
+          {:else if $Settings.sceneSelected == "Firework"}
             <Firework
               position={noteNumber.position}
               scale={noteNumber.scale}
               velocity={noteNumber.velocity}
-              attack={$hovering ? 250 : $Settings.attack}
-              release={$hovering ? 250 : $Settings.release}
+              attack={$hovering ? 250 : $Settings.notes.attack}
+              release={$hovering ? 250 : $Settings.notes.release}
               keyColour={selected}
-              expressionColour={$Settings.colours.expression}
+              expressionColour={$Settings.notes.colours.expression}
             />
           {/if}
         {/each}
@@ -264,7 +363,7 @@
   </Box>
   <Billboard>
     <Box flex={1} width="100%" height="100%">
-      {#if !menuOpened}
+      {#if !menuOpened || $Settings.record.enabled || $Settings.record.reset}
         <T.Mesh scale={hintArrow.current} position.y={3}>
           <T.ConeGeometry />
           <T.MeshBasicMaterial
