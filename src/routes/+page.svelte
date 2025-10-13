@@ -4,7 +4,7 @@
   import Page from "./play/+page.svelte";
 </script>
 
-//<Page />
+<!--<Page />-->
 
 <Canvas>
   <Scene />
