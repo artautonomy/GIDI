@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T, useThrelte } from "@threlte/core";
+  import { T } from "@threlte/core";
   import { Color } from "three";
   import {
     Align,
@@ -16,11 +16,11 @@
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Lighting from "./Lighting.svelte";
-  import Piano from "./instances/Piano.svelte";
-  import Firework from "./instances/Firework.svelte";
-  import Cube from "./instances/Cube.svelte";
-  import Mirror from "./instances/Mirror.svelte";
-  import Swirl from "./instances/Swirl.svelte";
+  import Piano from "../instances/Piano.svelte";
+  import Firework from "../instances/Firework.svelte";
+  import Cube from "../instances/Cube.svelte";
+  import Mirror from "../instances/Mirror.svelte";
+  import Swirl from "../instances/Swirl.svelte";
 
   interactivity();
 
@@ -87,7 +87,7 @@
 
   const MIDIConnectedButtonRotation = new Tween(0, {
     delay: 800,
-    duration: 2500,
+    duration: 2300,
     easing: cubicInOut,
   });
 
@@ -516,7 +516,7 @@
           />
 
           <Text
-            text={"Initialising"}
+            text={"MIDI Connected"}
             font={$Settings.font}
             fontSize={0.4}
             textAlign={"center"}
@@ -529,7 +529,7 @@
           />
 
           <Text
-            text={"Please wait"}
+            text={"Loading Styles"}
             font={$Settings.font}
             fontSize={0.4}
             textAlign={"center"}

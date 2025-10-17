@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T, useThrelte } from "@threlte/core";
+  import { T } from "@threlte/core";
   import { Color } from "three";
   import {
     Align,
@@ -12,16 +12,16 @@
   } from "@threlte/extras";
   import { Tween, Spring } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { Device, MIDI, Settings } from "../store";
+  import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import { Box, Flex } from "@threlte/flex";
   import Lighting from "./Lighting.svelte";
-  import Cube from "./instances/Cube.svelte";
-  import Mirror from "./instances/Mirror.svelte";
-  import Piano from "./instances/Piano.svelte";
-  import Firework from "./instances/Firework.svelte";
-  import Swirl from "./instances/Swirl.svelte";
+  import Cube from "../instances/Cube.svelte";
+  import Mirror from "../instances/Mirror.svelte";
+  import Piano from "../instances/Piano.svelte";
+  import Firework from "../instances/Firework.svelte";
+  import Swirl from "../instances/Swirl.svelte";
 
   type MIDIMessage = {
     note: number;
@@ -160,7 +160,7 @@
     }
   });
 
-  $Settings.scene.autoRotate = false;
+  $Settings.scene.autoRotate.enabled = false;
 </script>
 
 <Lighting />
@@ -174,8 +174,8 @@
 >
   <OrbitControls
     enableDamping
-    autoRotateSpeed={$Settings.scene.autoRotateSpeed}
-    autoRotate={$Settings.scene.autoRotate}
+    autoRotate={$Settings.scene.autoRotate.enabled}
+    autoRotateSpeed={$Settings.scene.autoRotate.speed}
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -400,7 +400,7 @@
             textAlign={"center"}
             anchorX={"center"}
             position.x={0}
-            position.y={0.5}
+            position.y={1}
             position.z={10}
             color={"white"}
           />
@@ -415,10 +415,38 @@
             textAlign={"center"}
             anchorX={"center"}
             position.x={0}
-            position.y={-0.33}
+            position.y={0.2}
             position.z={10}
             color={"white"}
           />
+          <T.Mesh
+            position.y={-1.5}
+            onpointerenter={onPointerEnterStyle}
+            onpointerleave={onPointerLeaveStyle}
+            onclick={() => setupScene(styles[styleIndex])}
+          >
+            <T.BoxGeometry args={[3, 1.5, 1]} />
+            <T.MeshBasicMaterial
+              color={[
+                highlighted.r / 255,
+                highlighted.g / 255,
+                highlighted.b / 255,
+              ]}
+            />
+            <Text
+              font={$Settings.font}
+              fontSize={window.innerHeight > 1200 ? 0.75 : 0.4}
+              maxWidth={window.innerHeight > 1200 ? 100 : 9}
+              outlineBlur={0.06}
+              text="Select"
+              textAlign={"center"}
+              anchorX={"center"}
+              position.x={0}
+              position.y={0.4}
+              position.z={10}
+              color={"black"}
+            />
+          </T.Mesh>
         </T.Mesh>
         <T.Mesh
           scale={0.75}
@@ -438,28 +466,6 @@
             <T.ConeGeometry />
             <T.MeshBasicMaterial color={"orange"} shadow />
           </T.Mesh>
-        </T.Mesh>
-        <T.Mesh
-          position.y={-3.5}
-          onpointerenter={onPointerEnterStyle}
-          onpointerleave={onPointerLeaveStyle}
-          onclick={() => setupScene(styles[styleIndex])}
-        >
-          <T.BoxGeometry args={[4, 2, 1]} />
-          <T.MeshBasicMaterial color="orange" />
-          <Text
-            font={$Settings.font}
-            fontSize={window.innerHeight > 1200 ? 0.75 : 0.4}
-            maxWidth={window.innerHeight > 1200 ? 100 : 9}
-            outlineBlur={0.06}
-            text="Select"
-            textAlign={"center"}
-            anchorX={"center"}
-            position.x={0}
-            position.y={0.45}
-            position.z={10}
-            color={"black"}
-          />
         </T.Mesh>
       {/if}
     </Box>

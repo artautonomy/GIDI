@@ -17,7 +17,7 @@
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
 
-  import Input from "./instances/Input.svelte";
+  import Input from "../instances/Input.svelte";
   import Lighting from "./Lighting.svelte";
 
   const { scene } = $state(useThrelte());
@@ -100,7 +100,7 @@
     easing: cubicInOut,
   });
 
-  $Settings.scene.autoRotate = false;
+  $Settings.scene.autoRotate.enabled = false;
 </script>
 
 <T.OrthographicCamera
@@ -112,8 +112,8 @@
 >
   <OrbitControls
     enableDamping
-    autoRotateSpeed={$Settings.scene.autoRotateSpeed}
-    autoRotate={$Settings.scene.autoRotate}
+    autoRotateSpeed={$Settings.scene.autoRotate.speed}
+    autoRotate={$Settings.scene.autoRotate.enabled}
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>

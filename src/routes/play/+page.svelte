@@ -252,8 +252,9 @@
         id="autoRotate"
         type="checkbox"
         onchange={() =>
-          ($Settings.scene.autoRotate = !$Settings.scene.autoRotate)}
-        checked={$Settings.scene.autoRotate}
+          ($Settings.scene.autoRotate.enabled =
+            !$Settings.scene.autoRotate.enabled)}
+        checked={$Settings.scene.autoRotate.enabled}
       />
       <label for="rotateSpeed">Speed</label>
       <input
@@ -262,7 +263,16 @@
         max="10"
         step="0.1"
         id="rotateSpeed"
-        bind:value={$Settings.scene.autoRotateSpeed}
+        bind:value={$Settings.scene.autoRotate.speed}
+      />
+
+      <h1>Gizmo</h1>
+
+      <input
+        id="gizmo"
+        type="checkbox"
+        onchange={() => ($Settings.scene.gizmo = !$Settings.scene.gizmo)}
+        checked={$Settings.scene.gizmo}
       />
     {:else if setting === "record"}
       <h1>Controls</h1>
@@ -380,7 +390,6 @@
             viewBox="0 0 64 64"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <!-- Circle background -->
             <circle
               id="reset"
               cx="32"
@@ -390,8 +399,6 @@
                 ? "#ff2727"
                 : "white"}
             />
-
-            <!-- X mark -->
             <line
               x1="22"
               y1="22"
@@ -568,12 +575,23 @@
     border-style: solid;
     border-width: 1px;
     border-color: var(--menuTextColour);
-    box-shadow: 0.5px 1px 2px var(--menuTextColour);
+    box-shadow: 0.25px 0.25px 1.75px var(--menuTextColour);
   }
   input[type="checkbox"]:checked {
     background-color: var(--menuTextColour);
     border-color: #397a4b;
     border-width: 2px;
+  }
+  settings {
+    font-family: "Oxanium";
+
+    background-image: linear-gradient(
+      -45deg,
+      #663e6e,
+      #2c2979,
+      #c77f38,
+      #407a51
+    );
   }
 
   settingOptions {
@@ -588,17 +606,10 @@
 
   @media (max-width: 600px) {
     settings {
-      font-family: "Oxanium";
       display: block;
       position: absolute;
       text-align: center;
-      background-image: linear-gradient(
-        -45deg,
-        #ffffff,
-        #292768,
-        #e99541,
-        #397a4b
-      );
+
       background-size: 600% 600%;
       animation: gradientAnimation 85s infinite;
       bottom: 0;
@@ -644,17 +655,10 @@
 
   @media (min-width: 600px) {
     settings {
-      font-family: "Oxanium";
       display: block;
       position: absolute;
       text-align: center;
-      background-image: linear-gradient(
-        -45deg,
-        #ffffff,
-        #292768,
-        #e99541,
-        #397a4b
-      );
+
       background-size: 600% 600%;
       animation: gradientAnimation 85s infinite;
       top: 0;

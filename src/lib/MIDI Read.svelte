@@ -371,9 +371,6 @@
   function setupMIDIInputs() {
     inputs = Array.from(midiAccess.inputs.values());
 
-    //temp fix, typescript initialising needs to be improved
-    $Device.inputs.pop();
-
     inputs.forEach((input: WebMidi.MIDIInput) => {
       const isDeviceAdded = $Device.inputs.some((item) => item.id === input.id);
 
@@ -405,6 +402,13 @@
       midiAccess.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
         setupMIDIInputs();
       };
+
+      /*
+      //in case of MIDI not recognised on page load
+      setTimeout(() => {
+        setupMIDIInputs() : ''
+      }, 2500);
+      */
 
       $Device.accessRights = "Allow";
     } catch (err) {

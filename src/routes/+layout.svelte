@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { colord } from "colord";
   import { Settings } from "$lib/store";
-  import MIDI from "$lib/scenes/MIDI.svelte";
+  import MIDI from "$lib/MIDI Read.svelte";
   import github from "$lib/assets/socials/github.png";
   import paypal from "$lib/assets/socials/paypal.png";
   import instagram from "$lib/assets/socials/instagram.png";

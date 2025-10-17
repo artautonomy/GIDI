@@ -15,25 +15,23 @@ interface MIDIMessage {
     }
 }
 
+type DeviceInput = { id: string; name: string; velocity: number };
+
 interface Device {
     accessRights: string;
     connected: boolean;
-    inputs: [{id:string,name:string,velocity:number}];
-    input: {id:string};
+    inputs: DeviceInput[];
+    input: {id:string | null};
 }
 
 export let MIDI = writable<MIDIMessage[]>([]);
 
 export let Device = writable<Device>({
-    accessRights: "",
+    accessRights: "Unknown",
     connected: false,
-    inputs: [{
-        id: "",
-        name: "",
-        velocity: 0
-    }], 
+    inputs: [] as DeviceInput[], 
     input: {
-        id: "",
+        id: null,
     }
 });
 
@@ -82,8 +80,12 @@ export let Settings = writable({
             front: 1,
             side: 3
         },
-        autoRotate: true,
-        autoRotateSpeed: 1.1,
+        autoRotate: {
+            enabled: true,
+            speed: 1.1,
+        },
+    
+        gizmo: true,
 
     },
     record: {

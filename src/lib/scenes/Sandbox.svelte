@@ -17,11 +17,11 @@
   import { Device, MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Lighting from "./Lighting.svelte";
-  import Cube from "./instances/Cube.svelte";
-  import Piano from "./instances/Piano.svelte";
-  import Mirror from "./instances/Mirror.svelte";
-  import Firework from "./instances/Firework.svelte";
-  import Swirl from "./instances/Swirl.svelte";
+  import Cube from "../instances/Cube.svelte";
+  import Piano from "../instances/Piano.svelte";
+  import Mirror from "../instances/Mirror.svelte";
+  import Firework from "../instances/Firework.svelte";
+  import Swirl from "../instances/Swirl.svelte";
 
   const { scene, camera } = $state(useThrelte());
 
@@ -197,7 +197,7 @@
   }
 
   $Settings.orbitControls = true;
-  $Settings.scene.autoRotate = false;
+  $Settings.scene.autoRotate.enabled = false;
 
   //testing new styles
   //$Device.input.id = "input-0";
@@ -216,8 +216,8 @@
   <OrbitControls
     enableDamping
     enableZoom={!$Settings.edit}
-    autoRotateSpeed={$Settings.scene.autoRotateSpeed}
-    autoRotate={$Settings.scene.autoRotate}
+    autoRotate={$Settings.scene.autoRotate.enabled}
+    autoRotateSpeed={$Settings.scene.autoRotate.speed}
     enabled={$Settings.orbitControls}
     onstart={(e) => {
       hintArrow.target = 0.75;
