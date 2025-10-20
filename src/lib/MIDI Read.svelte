@@ -47,7 +47,6 @@
     };
   }[] = $state([]);
 
-  let midiAccess: WebMidi.MIDIAccess | null = null;
   let inputs: WebMidi.MIDIInput[] = [];
 
   let noteExists;
@@ -371,7 +370,7 @@
     }
   };
 
-  function setupMIDIInputs() {
+  function setupMIDIInputs(midiAccess: WebMidi.MIDIAccess | null) {
     inputs = Array.from(midiAccess.inputs.values());
 
     if (inputs.length > 0) {
@@ -398,14 +397,14 @@
     }
 
     try {
-      midiAccess = await navigator.requestMIDIAccess({ sysex: true });
+      const midiAccess = await navigator.requestMIDIAccess();
 
       setTimeout(() => {
-        setupMIDIInputs();
+        setupMIDIInputs(midiAccess);
       }, 1750);
 
       midiAccess.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
-        setupMIDIInputs();
+        setupMIDIInputs(midiAccess);
       };
 
       $Device.accessRights = "Allow";
