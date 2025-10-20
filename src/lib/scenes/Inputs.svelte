@@ -19,6 +19,7 @@
 
   import Input from "../instances/Input.svelte";
   import Lighting from "./Lighting.svelte";
+  import { dev } from "$app/environment";
 
   const { scene } = $state(useThrelte());
 
@@ -64,7 +65,10 @@
 
   onDestroy(unsubscribe);
 
-  function setupStyle() {
+  function setupStyle(deviceID: string) {
+    $Device.selected = true;
+    $Device.id = deviceID;
+
     introZoom.set(0, {
       delay: 250,
       duration: 750,
@@ -159,7 +163,7 @@
         <T.Group
           onpointerenter={onPointerEnterStyle}
           onpointerleave={onPointerLeaveStyle}
-          onclick={() => setupStyle()}
+          onclick={() => setupStyle(device.id)}
         >
           <InstancedMesh>
             <T.BoxGeometry args={[10, 0.75, 1]} />

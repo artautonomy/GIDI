@@ -1,8 +1,7 @@
 <script lang="ts">
   import { Instance } from "@threlte/extras";
   import { Tween } from "svelte/motion";
-  import { Device } from "$lib/store";
-  import { cubicIn, cubicOut, cubicInOut } from "svelte/easing";
+  import { cubicInOut } from "svelte/easing";
 
   interface Props {
     position: {
@@ -69,8 +68,5 @@
     r.set(keyColour.r, { duration: 250 });
     g.set(keyColour.g, { duration: 250 });
     b.set(keyColour.b, { duration: 250 });
-  }}
-  onclick={() => {
-    $Device.input.id = device;
   }}
 />

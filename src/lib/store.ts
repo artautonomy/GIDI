@@ -20,8 +20,9 @@ type DeviceInput = { id: string; name: string; velocity: number };
 interface Device {
     accessRights: string;
     connected: boolean;
+    selected: boolean;
+    id: string | null;
     inputs: DeviceInput[];
-    input: {id:string | null};
 }
 
 export let MIDI = writable<MIDIMessage[]>([]);
@@ -29,10 +30,10 @@ export let MIDI = writable<MIDIMessage[]>([]);
 export let Device = writable<Device>({
     accessRights: "Unknown",
     connected: false,
+    selected: false,
+    id:null,
     inputs: [] as DeviceInput[], 
-    input: {
-        id: null,
-    }
+    
 });
 
 export let Settings = writable({

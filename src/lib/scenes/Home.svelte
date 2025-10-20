@@ -307,7 +307,8 @@
         }
         //if 1 input go to style page
         else {
-          $Device.input.id = $Device.inputs[0].id;
+          $Device.selected = true;
+          $Device.id = $Device.inputs[0].id;
           goto("./style");
         }
       }, 1000);

@@ -379,74 +379,60 @@
             <T.MeshBasicMaterial color={"orange"} shadow />
           </T.Mesh>
         </T.Mesh>
+        <Text
+          font={$Settings.font}
+          fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
+          outlineBlur={0.06}
+          text={styles[styleIndex]}
+          textAlign={"center"}
+          anchorX={"center"}
+          position.x={0}
+          position.y={1}
+          position.z={10}
+          color={"white"}
+        />
+        <Text
+          font={$Settings.font}
+          fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
+          maxWidth={window.innerHeight > 1200 ? 100 : 9}
+          outlineBlur={0.06}
+          text={styles[styleIndex] === "Piano"
+            ? "Recommended for keyboards and synthesizers. Automapping enabled."
+            : "Recommended for pads and samplers."}
+          textAlign={"center"}
+          anchorX={"center"}
+          position.x={0}
+          position.y={0.2}
+          position.z={10}
+          color={"white"}
+        />
         <T.Mesh
+          position.y={-1.5}
           onpointerenter={onPointerEnterStyle}
           onpointerleave={onPointerLeaveStyle}
           onclick={() => setupScene(styles[styleIndex])}
         >
-          <T.BoxGeometry
-            args={[
-              window.innerHeight > 1200 ? 17 : 7,
-              window.innerHeight > 1200 ? 2.75 : 1.25,
-              1,
+          <T.BoxGeometry args={[3, 1.5, 1]} />
+          <T.MeshBasicMaterial
+            color={[
+              highlighted.r / 255,
+              highlighted.g / 255,
+              highlighted.b / 255,
             ]}
           />
-          <T.MeshBasicMaterial opacity={0} transparent />
           <Text
             font={$Settings.font}
-            fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
-            outlineBlur={0.06}
-            text={styles[styleIndex]}
-            textAlign={"center"}
-            anchorX={"center"}
-            position.x={0}
-            position.y={1}
-            position.z={10}
-            color={"white"}
-          />
-          <Text
-            font={$Settings.font}
-            fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
+            fontSize={window.innerHeight > 1200 ? 0.75 : 0.4}
             maxWidth={window.innerHeight > 1200 ? 100 : 9}
             outlineBlur={0.06}
-            text={styles[styleIndex] === "Piano"
-              ? "Recommended for keyboards and synthesizers. Automapping enabled."
-              : "Recommended for pads and samplers."}
+            text="Select"
             textAlign={"center"}
             anchorX={"center"}
             position.x={0}
-            position.y={0.2}
+            position.y={0.4}
             position.z={10}
-            color={"white"}
+            color={"black"}
           />
-          <T.Mesh
-            position.y={-1.5}
-            onpointerenter={onPointerEnterStyle}
-            onpointerleave={onPointerLeaveStyle}
-            onclick={() => setupScene(styles[styleIndex])}
-          >
-            <T.BoxGeometry args={[3, 1.5, 1]} />
-            <T.MeshBasicMaterial
-              color={[
-                highlighted.r / 255,
-                highlighted.g / 255,
-                highlighted.b / 255,
-              ]}
-            />
-            <Text
-              font={$Settings.font}
-              fontSize={window.innerHeight > 1200 ? 0.75 : 0.4}
-              maxWidth={window.innerHeight > 1200 ? 100 : 9}
-              outlineBlur={0.06}
-              text="Select"
-              textAlign={"center"}
-              anchorX={"center"}
-              position.x={0}
-              position.y={0.4}
-              position.z={10}
-              color={"black"}
-            />
-          </T.Mesh>
         </T.Mesh>
         <T.Mesh
           scale={0.75}
