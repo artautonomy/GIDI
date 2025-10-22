@@ -393,6 +393,8 @@
     }
 
     try {
+      $Device.accessRights = "Allow";
+
       const midiAccess = await navigator.requestMIDIAccess();
 
       setupMIDIInputs(midiAccess);
@@ -400,11 +402,10 @@
       midiAccess.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
         setupMIDIInputs(midiAccess);
       };
-
-      $Device.accessRights = "Allow";
     } catch (err) {
-      console.error("Failed to get MIDI access", err);
       $Device.accessRights = "Deny";
+
+      console.error("Failed to get MIDI access", err);
     }
   });
 </script>
