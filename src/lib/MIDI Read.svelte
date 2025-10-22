@@ -395,9 +395,7 @@
     try {
       const midiAccess = await navigator.requestMIDIAccess();
 
-      setTimeout(() => {
-        setupMIDIInputs(midiAccess);
-      }, 1750);
+      setupMIDIInputs(midiAccess);
 
       midiAccess.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
         setupMIDIInputs(midiAccess);
