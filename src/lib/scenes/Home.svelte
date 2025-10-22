@@ -21,6 +21,7 @@
   import Cube from "../instances/Cube.svelte";
   import Mirror from "../instances/Mirror.svelte";
   import Swirl from "../instances/Swirl.svelte";
+  import { onMount } from "svelte";
 
   interactivity();
 
@@ -74,8 +75,6 @@
   let tips = $state("Swipe to rotate this demo scene");
 
   let cubeClicked = $state(false);
-
-  let connectedTriggered = false;
 
   const introZoom = new Tween(0);
 
@@ -190,12 +189,6 @@
     "A#",
     "B",
   ];
-
-  introZoom.set(35, {
-    delay: 200,
-    duration: 1000,
-    easing: cubicInOut,
-  });
 
   for (let i = 0; i < 7; i++) {
     padNotes.push({
@@ -418,11 +411,17 @@
   }
 
   $effect(() => {
-    if ($Device.connected && !connectedTriggered) {
+    if ($Device.connected) {
       Setup();
-
-      connectedTriggered = true;
     }
+  });
+
+  onMount(() => {
+    introZoom.set(35, {
+      delay: 200,
+      duration: 1000,
+      easing: cubicInOut,
+    });
   });
 </script>
 

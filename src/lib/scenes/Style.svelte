@@ -146,7 +146,7 @@
 
   $effect(() => {
     if (midiMessages.length > 0 && !noteTriggered) {
-      MIDIConnectedButtonPosition.target = window.innerHeight * -0.015;
+      MIDIConnectedButtonPosition.target = window.innerHeight * -0.017;
       MIDIConnectedButtonRotation.target = 4.712389;
 
       noteTriggered = true;

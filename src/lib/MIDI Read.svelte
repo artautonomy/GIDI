@@ -104,7 +104,7 @@
     }
 
     if ($Settings.styleReset) {
-      if ($Settings.sceneSelected == "Piano") {
+      if ($Settings.sceneSelected === "Piano") {
         notes = pianoNotes;
       } else {
         if (padNotes.length < 1) {
@@ -145,25 +145,27 @@
 
       //Device selected
       if ($Device.selected && $Device.id == device) {
-        if ($Settings.sceneSelected !== "Piano") {
-          noteExists = padNotes.some((key) => key.note === note);
-        } else {
+        //piano
+        if ($Settings.sceneSelected === "Piano") {
           noteExists = pianoNotes.some((key) => key.note === note);
-        }
 
-        // Check if the note already exists in the notes array
-        if (!noteExists) {
-          if ($Settings.sceneSelected !== "Piano") {
-            // If note does not exist, add it to the notes array
-            padNotes = [
-              ...padNotes,
-              {
-                note,
-                velocity,
-                position: { x: padNotes.length, y: 0, z: 0 },
-                scale: { x: 1, y: 1, z: 1 },
-              },
-            ];
+          if (noteExists) {
+            pianoNotes = pianoNotes.map((key) => {
+              if (key.note === note) {
+                return {
+                  device,
+                  note,
+                  velocity,
+                  position: {
+                    x: key.position.x,
+                    y: key.position.y,
+                    z: key.position.z,
+                  },
+                  scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
+                };
+              }
+              return key;
+            });
           } else {
             //if first note
             if (pianoNotes.length < 1) {
@@ -305,27 +307,14 @@
               pianoNotes = pianoNotes.toSorted((a, b) => a.note - b.note);
             }
           }
+
+          notes = pianoNotes;
         }
-        // If note exists, update the velocity
+        //pads
         else {
-          if ($Settings.sceneSelected == "Piano") {
-            pianoNotes = pianoNotes.map((key) => {
-              if (key.note === note) {
-                return {
-                  device,
-                  note,
-                  velocity,
-                  position: {
-                    x: key.position.x,
-                    y: key.position.y,
-                    z: key.position.z,
-                  },
-                  scale: { x: key.scale.x, y: key.scale.y, z: key.scale.z },
-                };
-              }
-              return key;
-            });
-          } else {
+          noteExists = padNotes.some((key) => key.note === note);
+
+          if (noteExists) {
             padNotes = padNotes.map((key) => {
               if (key.note === note) {
                 return {
@@ -342,12 +331,19 @@
               }
               return key;
             });
+          } else {
+            // If note does not exist, add it to the notes array
+            padNotes = [
+              ...padNotes,
+              {
+                note,
+                velocity,
+                position: { x: padNotes.length, y: 0, z: 0 },
+                scale: { x: 1, y: 1, z: 1 },
+              },
+            ];
           }
-        }
 
-        if ($Settings.sceneSelected == "Piano") {
-          notes = pianoNotes;
-        } else {
           notes = padNotes;
         }
 

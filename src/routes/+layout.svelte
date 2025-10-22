@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import { colord } from "colord";
   import { Settings } from "$lib/store";
   import MIDI from "$lib/MIDI Read.svelte";
@@ -8,23 +7,16 @@
   import instagram from "$lib/assets/socials/instagram.png";
 
   let { children } = $props();
-
-  let loaded = $state(false);
-
-  onMount(() => {
-    loaded = true;
-  });
 </script>
 
 <MIDI />
-<threlte style:display={loaded ? "block" : "none"}>
+
+<threlte>
   {@render children()}
 </threlte>
 
 <socials
-  style="--opacity: {loaded ? 1 : 0}; --invert: {colord(
-    $Settings.scene.colours.background
-  ).isLight()
+  style="--invert: {colord($Settings.scene.colours.background).isLight()
     ? 1
     : 0}"
 >
@@ -41,7 +33,7 @@
 
 <style>
   threlte {
-    display: none;
+    display: block;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
