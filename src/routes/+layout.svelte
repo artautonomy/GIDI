@@ -44,11 +44,6 @@
     filter: invert(var(--invert));
   }
 
-  socials {
-    opacity: var(--opacity, 1);
-    transition: opacity 2.4s 1s ease;
-  }
-
   @media (min-width: 600px) {
     socials {
       position: absolute;

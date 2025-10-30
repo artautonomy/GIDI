@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { MIDI, Device, Settings } from "$lib/store";
+  import { MIDI, Device, Settings, storeMIDIPermission } from "$lib/store";
 
   let notes: {
     note: number;
@@ -366,13 +366,13 @@
     }
   };
 
-  function setupMIDIInputs(midiAccess: WebMidi.MIDIAccess | null) {
+  function setupMIDIInputs(midiAccess: WebMidi.MIDIAccess) {
     inputs = Array.from(midiAccess.inputs.values());
 
     if (inputs.length > 0) {
-      $Device.connected = true;
-    } else {
-      $Device.connected = false;
+      setTimeout(() => {
+        $Device.connected = true;
+      }, 350);
     }
 
     inputs.forEach((input: WebMidi.MIDIInput) => {
@@ -386,26 +386,25 @@
     });
   }
 
-  onMount(async () => {
-    if (!navigator.requestMIDIAccess) {
-      console.error("Web MIDI API not supported in this browser.");
-      return;
-    }
+  onMount(() => {
+    const init = async () => {
+      try {
+        let midiAccess: WebMidi.MIDIAccess | null = null;
 
-    try {
-      $Device.accessRights = "Allow";
+        midiAccess = await navigator.requestMIDIAccess();
 
-      const midiAccess = await navigator.requestMIDIAccess();
+        storeMIDIPermission("Allow");
 
-      setupMIDIInputs(midiAccess);
-
-      midiAccess.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
         setupMIDIInputs(midiAccess);
-      };
-    } catch (err) {
-      $Device.accessRights = "Deny";
 
-      console.error("Failed to get MIDI access", err);
-    }
+        midiAccess.onstatechange = () => setupMIDIInputs(midiAccess);
+      } catch (err) {
+        storeMIDIPermission("Deny");
+
+        console.error("Failed to get MIDI", err);
+      }
+    };
+
+    window.addEventListener("click", init, { once: true });
   });
 </script>

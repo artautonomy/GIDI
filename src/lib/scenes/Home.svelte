@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { Spring, Tween } from "svelte/motion";
-  import { cubicOut, cubicInOut } from "svelte/easing";
+  import { cubicOut, cubicIn, cubicInOut } from "svelte/easing";
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Lighting from "./Lighting.svelte";
@@ -96,6 +96,12 @@
     easing: cubicInOut,
   });
 
+  const MIDIConnectedScenePosition = new Tween(-1.5, {
+    delay: 500,
+    duration: 1250,
+    easing: cubicInOut,
+  });
+
   const hintText = new Tween(1, {
     duration: 1000,
     easing: cubicInOut,
@@ -143,6 +149,10 @@
       },
     },
   ];
+
+  let allowMIDIAccess = $state(false);
+
+  let clearScene = $state(false);
 
   const title = "GIDI - a visualiser for MIDI";
 
@@ -285,10 +295,25 @@
   }, 500);
 
   function Setup() {
+    allowMIDIAccess = true;
+
+    clearTimeout(randomMIDINotesTimeout);
+
+    clearTimeout(randomMIDINotesStopTimeout);
+
+    clearTimeout(randomMIDINotesInterval);
+
+    MIDIConnectedButtonScale.target = 5;
+
     MIDIConnectedButtonPosition.target = -window.innerHeight / 150;
+
     MIDIConnectedButtonRotation.target = 4.712389;
-    1;
+
+    MIDIConnectedScenePosition.target = -window.innerHeight / 50;
+
     setTimeout(() => {
+      clearScene = true;
+
       introZoom.set(0, {
         duration: 750,
         easing: cubicOut,
@@ -417,6 +442,8 @@
   });
 
   onMount(() => {
+    allowMIDIAccess = localStorage.getItem("content") === "Allow";
+
     introZoom.set(35, {
       delay: 200,
       duration: 1000,
@@ -481,11 +508,13 @@
     </Box>
   </Billboard>
   <Billboard>
-    {#if $Device.accessRights !== "Deny"}
-      <Box flex={1} width="100%" height="100%">
+    <Box flex={1} width="100%" height="100%">
+      {#if allowMIDIAccess}
         <T.Mesh
           position={[0, MIDIConnectedButtonPosition.current, 0]}
           rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
+          onpointerenter={onPointerEnter}
+          onpointerleave={onPointerLeave}
         >
           <Text
             text={"Please wait"}
@@ -500,11 +529,9 @@
             outlineBlur={0.06}
           />
           <Text
-            text={$Device.accessRights === ""
-              ? "Press 'Allow' when prompted to allow MIDI access"
-              : $Device.connected
-                ? "MIDI Connected"
-                : "Connect a MIDI device"}
+            text={$Device.connected
+              ? "MIDI Connected"
+              : "I've connected a MIDI device"}
             font={$Settings.font}
             fontSize={0.4}
             textAlign={"center"}
@@ -542,17 +569,23 @@
           />
 
           <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 0.5, 1]} />
-          <T.MeshPhongMaterial
-            color={$Device.connected ? new Color("rgb(22, 90, 11)") : "darkred"}
+          <T.MeshStandardMaterial
+            color={$Device.connected
+              ? new Color("rgb(22, 55, 11)")
+              : new Color("rgb(66,11,77)")}
+            emissive={$Device.connected
+              ? new Color("rgb(22, 55, 11)")
+              : new Color("rgb(66,11,77)")}
+            emissiveIntensity={0.4}
           />
         </T.Mesh>
-      </Box>
-    {/if}
+      {/if}
+    </Box>
   </Billboard>
   <Box flex={9} width="100%" height="100%">
-    {#if !$Device.connected}
+    {#if !clearScene}
       <T.Group
-        position.y={-1.5}
+        position.y={MIDIConnectedScenePosition.current}
         onpointerenter={onPointerEnter}
         onpointerleave={onPointerLeave}
         onclick={(event) => {
@@ -641,101 +674,103 @@
   <Billboard>
     <Box flex={3} width="100%" height="100%">
       {#snippet children({ width })}
-        {#if !$Device.connected}
-          {#if cubeClicked}
-            <T.Mesh
-              receiveShadow
-              scale={navigationArrows.current}
-              position.x={width / 2}
-              rotation.z={-Math.PI / 2}
-              onpointerenter={onPointerEnter}
-              onpointerleave={onPointerLeave}
-              onclick={(event) => {
-                event.stopPropagation();
-                styleNext();
-              }}
-            >
-              <T.BoxGeometry args={[2.75, 2.75, 1]} />
-              <T.MeshBasicMaterial transparent opacity={0} />
-              <T.Mesh>
-                <T.ConeGeometry />
-                <T.MeshBasicMaterial color={"orange"} shadow />
+        {#if !clearScene}
+          <T.Group position.y={MIDIConnectedScenePosition.current + 1.5}>
+            {#if cubeClicked}
+              <T.Mesh
+                receiveShadow
+                scale={navigationArrows.current}
+                position.x={width / 2}
+                rotation.z={-Math.PI / 2}
+                onpointerenter={onPointerEnter}
+                onpointerleave={onPointerLeave}
+                onclick={(event) => {
+                  event.stopPropagation();
+                  styleNext();
+                }}
+              >
+                <T.BoxGeometry args={[2.75, 2.75, 1]} />
+                <T.MeshBasicMaterial transparent opacity={0} />
+                <T.Mesh>
+                  <T.ConeGeometry />
+                  <T.MeshBasicMaterial color={"orange"} shadow />
+                </T.Mesh>
               </T.Mesh>
-            </T.Mesh>
-            <T.Mesh scale={navigationArrows.current}>
-              <Text
-                font={$Settings.font}
-                fontSize={width > 20 ? 1 : 0.6}
-                outlineBlur={0.06}
-                text={styles[styleIndex]}
-                textAlign={"center"}
-                anchorX={"center"}
-                position.x={0}
-                position.y={0.5}
-                position.z={10}
-                color={"white"}
-              />
+              <T.Mesh scale={navigationArrows.current}>
+                <Text
+                  font={$Settings.font}
+                  fontSize={width > 20 ? 1 : 0.6}
+                  outlineBlur={0.06}
+                  text={styles[styleIndex]}
+                  textAlign={"center"}
+                  anchorX={"center"}
+                  position.x={0}
+                  position.y={0.5}
+                  position.z={10}
+                  color={"white"}
+                />
 
+                <Text
+                  font={$Settings.font}
+                  fontSize={width > 20 ? 0.55 : 0.4}
+                  maxWidth={width * 2.5}
+                  outlineBlur={0.06}
+                  text={styles[styleIndex] === "Piano"
+                    ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
+                    : "Recommended for pads and samplers."}
+                  textAlign={"center"}
+                  anchorX={"center"}
+                  position.x={0}
+                  position.y={width > 20 ? -1 : -0.5}
+                  position.z={10}
+                  color={"white"}
+                />
+                <T.MeshBasicMaterial
+                  color={"orange"}
+                  transparent={true}
+                  opacity={hintText.current}
+                />
+              </T.Mesh>
+              <T.Mesh
+                scale={navigationArrows.current}
+                position.x={-width / 2}
+                rotation.z={Math.PI / 2}
+                onpointerenter={onPointerEnter}
+                onpointerleave={onPointerLeave}
+                onclick={(event) => {
+                  event.stopPropagation();
+                  styleBack();
+                }}
+              >
+                <T.BoxGeometry args={[2.75, 2.75, 1]} />
+                <T.MeshBasicMaterial transparent opacity={0} />
+                <T.Mesh>
+                  <T.ConeGeometry />
+                  <T.MeshBasicMaterial color={"orange"} shadow />
+                </T.Mesh>
+              </T.Mesh>
+            {:else}
+              <T.Mesh scale={hintArrow.current} position.y={1} position.z={7}>
+                <T.ConeGeometry />
+                <T.MeshBasicMaterial
+                  color={"orange"}
+                  transparent={true}
+                  opacity={hintText.current}
+                />
+              </T.Mesh>
               <Text
+                fillOpacity={hintText.current}
+                text={tips}
+                color={"orange"}
                 font={$Settings.font}
-                fontSize={width > 20 ? 0.55 : 0.4}
-                maxWidth={width * 2.5}
-                outlineBlur={0.06}
-                text={styles[styleIndex] === "Piano"
-                  ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
-                  : "Recommended for pads and samplers."}
+                fontSize={width > 20 ? 0.5 : 0.45}
                 textAlign={"center"}
                 anchorX={"center"}
-                position.x={0}
-                position.y={width > 20 ? -1 : -0.5}
-                position.z={10}
-                color={"white"}
+                position.y={0}
+                position.z={7}
               />
-              <T.MeshBasicMaterial
-                color={"orange"}
-                transparent={true}
-                opacity={hintText.current}
-              />
-            </T.Mesh>
-            <T.Mesh
-              scale={navigationArrows.current}
-              position.x={-width / 2}
-              rotation.z={Math.PI / 2}
-              onpointerenter={onPointerEnter}
-              onpointerleave={onPointerLeave}
-              onclick={(event) => {
-                event.stopPropagation();
-                styleBack();
-              }}
-            >
-              <T.BoxGeometry args={[2.75, 2.75, 1]} />
-              <T.MeshBasicMaterial transparent opacity={0} />
-              <T.Mesh>
-                <T.ConeGeometry />
-                <T.MeshBasicMaterial color={"orange"} shadow />
-              </T.Mesh>
-            </T.Mesh>
-          {:else}
-            <T.Mesh scale={hintArrow.current} position.y={1} position.z={7}>
-              <T.ConeGeometry />
-              <T.MeshBasicMaterial
-                color={"orange"}
-                transparent={true}
-                opacity={hintText.current}
-              />
-            </T.Mesh>
-            <Text
-              fillOpacity={hintText.current}
-              text={tips}
-              color={"orange"}
-              font={$Settings.font}
-              fontSize={width > 20 ? 0.5 : 0.45}
-              textAlign={"center"}
-              anchorX={"center"}
-              position.y={0}
-              position.z={7}
-            />
-          {/if}
+            {/if}
+          </T.Group>
         {/if}
       {/snippet}
     </Box>

@@ -587,10 +587,10 @@
 
     background-image: linear-gradient(
       -45deg,
-      #663e6e,
-      #2c2979,
-      #c77f38,
-      #407a51
+      #5e4663,
+      #2e2d49,
+      #b6895c,
+      #558163
     );
   }
 

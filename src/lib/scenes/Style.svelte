@@ -347,10 +347,14 @@
           />
 
           <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
-          <T.MeshPhongMaterial
+          <T.MeshStandardMaterial
             color={midiMessages.length != 0
-              ? new Color("rgb(22, 90, 11)")
-              : "darkred"}
+              ? new Color("rgb(22, 55, 11)")
+              : new Color("rgb(66,11,77)")}
+            emissive={midiMessages.length != 0
+              ? new Color("rgb(22, 55, 11)")
+              : new Color("rgb(66,11,77)")}
+            emissiveIntensity={0.6}
           />
         </T.Mesh>
       </Billboard>

@@ -1,14 +1,18 @@
 # GIDI - a visualiser for MIDI
 
-A free web application intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser.
+A free web application intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser. GIDI offers:
 
-## How to use
+- Multiple styles to choose from (Piano, Smoke, Mirror, Swirl, Cube)
+- Full customisation of the scene e.g. change note/expression/background colours, Lighting, Autorotate, Attack & Release
+- Record camera animations, transition shots by either 'Note down' or 'Time'
 
-1. Plug in a MIDI instrument to your PC using a MIDI-to-USB cable (or for newer MIDI devices a USB-C cable)
+## Guide
+
+1. Plug in a MIDI instrument to your PC using a MIDI-to-USB cable
 2. Go to [gidi.uk](https://gidi.uk)
 3. The browser will show a prompt 'gidi.uk wants to "Control and reprogram your MIDI devices"', click 'Allow'
-4. Select a 'Style' from the following 5 options: 'Piano', 'Smoke', 'Mirror', 'Swirl', 'Cube'
-5. Play
+4. Press the button "I've connected a MIDI device" or simply interact with the scene
+5. Select a 'Style' from the following 5 options: 'Piano', 'Smoke', 'Mirror', 'Swirl', 'Cube'
 
 #### <ins>Video demo</ins>
 

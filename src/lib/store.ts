@@ -18,7 +18,6 @@ interface MIDIMessage {
 type DeviceInput = { id: string; name: string; velocity: number };
 
 interface Device {
-    accessRights: string;
     connected: boolean;
     selected: boolean;
     id: string | null;
@@ -28,7 +27,6 @@ interface Device {
 export let MIDI = writable<MIDIMessage[]>([]);
 
 export let Device = writable<Device>({
-    accessRights: "Unknown",
     connected: false,
     selected: false,
     id:null,
@@ -77,9 +75,9 @@ export let Settings = writable({
         },
         lighting: {
 
-            above: 2.5,
-            front: 1,
-            side: 3
+            above: 1.6,
+            front: 0.5,
+            side: 1
         },
         autoRotate: {
             enabled: true,
@@ -98,3 +96,11 @@ export let Settings = writable({
         speed: 500
     }
 })
+
+export function storeMIDIPermission(data: string) {
+
+   const accessRights = writable(data);
+
+   accessRights.subscribe((value) => localStorage.content = value)
+   
+}
