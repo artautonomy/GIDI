@@ -47,9 +47,9 @@ export let Settings = writable({
         colours: {
             key: {
 
-                r: 225,
-                g: 226,
-                b: 245
+                r: 255,
+                g: 255,
+                b: 255
             },
             expression: {
 

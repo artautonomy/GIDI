@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import { colord } from "colord";
   import { Settings } from "$lib/store";
   import MIDI from "$lib/MIDI Read.svelte";
@@ -7,18 +8,25 @@
   import instagram from "$lib/assets/socials/instagram.png";
 
   let { children } = $props();
+
+  let loaded = $state(false);
+
+  onMount(() => {
+    loaded = true;
+  });
 </script>
 
 <MIDI />
 
-<threlte>
+<threlte style:display={loaded ? "block" : "none"}>
   {@render children()}
 </threlte>
 
 <socials
-  style="--invert: {colord($Settings.scene.colours.background).isLight()
-    ? 1
-    : 0}"
+  style="--opacity: {loaded ? 1 : 0}; --invert: {colord(
+    $Settings.scene.colours.background
+  ).isLight()}
+ --invert: {colord($Settings.scene.colours.background).isLight() ? 1 : 0}"
 >
   <a href="https://github.com/artautonomy/GIDI" aria-label="github"
     ><img src={github} class="icons" alt="github" /></a
@@ -33,7 +41,7 @@
 
 <style>
   threlte {
-    display: block;
+    display: none;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
@@ -43,7 +51,10 @@
     -webkit-filter: invert(var(--invert));
     filter: invert(var(--invert));
   }
-
+  socials {
+    opacity: var(--opacity, 1);
+    transition: opacity 3s 750ms ease;
+  }
   @media (min-width: 600px) {
     socials {
       position: absolute;

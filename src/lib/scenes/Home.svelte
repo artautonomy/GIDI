@@ -133,14 +133,14 @@
   let randomMIDINotesInterval: ReturnType<typeof setInterval>;
 
   const notesColours = [
-    { key: { r: 0, g: 70, b: 65 }, expression: { r: 211, g: 77, b: 66 } },
-    { key: { r: 222, g: 178, b: 226 }, expression: { r: 254, g: 228, b: 129 } },
+    { key: { r: 222, g: 188, b: 55 }, expression: { r: 199, g: 78, b: 222 } },
+    { key: { r: 88, g: 125, b: 88 }, expression: { r: 211, g: 77, b: 66 } },
 
     {
       key: {
-        r: 225,
-        g: 226,
-        b: 245,
+        r: 255,
+        g: 255,
+        b: 255,
       },
       expression: {
         r: 145,
