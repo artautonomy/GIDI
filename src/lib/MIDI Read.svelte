@@ -385,25 +385,29 @@
       input.onmidimessage = (event) => handleMIDIMessage(event, input.id);
     });
   }
+  let init = async () => {
+    try {
+      let midiAccess: WebMidi.MIDIAccess | null = null;
+
+      midiAccess = await navigator.requestMIDIAccess();
+
+      storeMIDIPermission("Allow");
+
+      setupMIDIInputs(midiAccess);
+
+      midiAccess.onstatechange = () => setupMIDIInputs(midiAccess);
+    } catch (err) {
+      storeMIDIPermission("Deny");
+
+      console.error("Failed to get MIDI", err);
+    }
+  };
+
+  onMount(() => {
+    init();
+  });
 
   $effect(() => {
-    const init = async () => {
-      try {
-        let midiAccess: WebMidi.MIDIAccess | null = null;
-
-        midiAccess = await navigator.requestMIDIAccess();
-
-        storeMIDIPermission("Allow");
-
-        setupMIDIInputs(midiAccess);
-
-        midiAccess.onstatechange = () => setupMIDIInputs(midiAccess);
-      } catch (err) {
-        storeMIDIPermission("Deny");
-
-        console.error("Failed to get MIDI", err);
-      }
-    };
     if ($Device.enableSearch) {
       init();
 
