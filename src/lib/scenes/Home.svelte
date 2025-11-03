@@ -25,8 +25,6 @@
 
   interactivity();
 
-  //let deviceOrientation = $state(screen.orientation.type);
-
   let padNotes: {
     note: number;
     velocity: number;
@@ -149,6 +147,8 @@
       },
     },
   ];
+
+  let MIDIStatus = $state("Search MIDI devices");
 
   let allowMIDIAccess = $state(false);
 
@@ -295,6 +295,8 @@
   }, 500);
 
   function Setup() {
+    MIDIStatus = "MIDI Connected";
+
     allowMIDIAccess = true;
 
     clearTimeout(randomMIDINotesTimeout);
@@ -515,6 +517,10 @@
           rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
           onpointerenter={onPointerEnter}
           onpointerleave={onPointerLeave}
+          onclick={() => {
+            $Device.enableSearch = true;
+            MIDIStatus = "Searching MIDI devices ...";
+          }}
         >
           <Text
             text={"Please wait"}
@@ -529,9 +535,7 @@
             outlineBlur={0.06}
           />
           <Text
-            text={$Device.connected
-              ? "MIDI Connected"
-              : "I've connected a MIDI device"}
+            text={MIDIStatus}
             font={$Settings.font}
             fontSize={0.4}
             textAlign={"center"}

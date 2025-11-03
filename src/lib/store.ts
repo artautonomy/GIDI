@@ -18,6 +18,7 @@ interface MIDIMessage {
 type DeviceInput = { id: string; name: string; velocity: number };
 
 interface Device {
+    enableSearch: boolean;
     connected: boolean;
     selected: boolean;
     id: string | null;
@@ -27,6 +28,7 @@ interface Device {
 export let MIDI = writable<MIDIMessage[]>([]);
 
 export let Device = writable<Device>({
+    enableSearch: false,
     connected: false,
     selected: false,
     id:null,

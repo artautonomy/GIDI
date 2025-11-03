@@ -386,7 +386,7 @@
     });
   }
 
-  onMount(() => {
+  $effect(() => {
     const init = async () => {
       try {
         let midiAccess: WebMidi.MIDIAccess | null = null;
@@ -404,7 +404,10 @@
         console.error("Failed to get MIDI", err);
       }
     };
+    if ($Device.enableSearch) {
+      init();
 
-    window.addEventListener("click", init, { once: true });
+      $Device.enableSearch = false;
+    }
   });
 </script>
