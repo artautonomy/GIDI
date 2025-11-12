@@ -127,21 +127,95 @@
     }
   });
 
+  function handleChannels(status: number, note: number) {
+    switch (status) {
+      //note off channels
+
+      case 128:
+        return 61;
+      case 129:
+        return 62;
+      case 130:
+        return 63;
+      case 131:
+        return 64;
+      case 132:
+        return 65;
+      case 133:
+        return 66;
+      case 134:
+        return 67;
+      case 135:
+        return 68;
+      case 136:
+        return 69;
+      case 137:
+        return 70;
+      case 138:
+        return 71;
+      case 139:
+        return 72;
+      case 140:
+        return 73;
+      case 141:
+        return 74;
+      case 142:
+        return 75;
+      case 143:
+        return 76;
+
+      //note on channels
+
+      case 144:
+        return 61;
+      case 145:
+        return 62;
+      case 146:
+        return 63;
+      case 147:
+        return 64;
+      case 148:
+        return 65;
+      case 149:
+        return 66;
+      case 150:
+        return 67;
+      case 151:
+        return 68;
+      case 152:
+        return 69;
+      case 153:
+        return 70;
+      case 154:
+        return 71;
+      case 155:
+        return 72;
+      case 156:
+        return 73;
+      case 157:
+        return 74;
+      case 158:
+        return 75;
+      case 159:
+        return 76;
+      default:
+        return note;
+    }
+  }
+
   const handleMIDIMessage = (message: MIDIMessageEvent, device: string) => {
     const status = message.data[0];
-    const note = message.data[1];
+    let note = message.data[1];
     let velocity = message.data[2];
 
     //if MIDI data and no program change, pitch bend recognised
     if (
       note !== null &&
       velocity !== null &&
-      (status === 128 || status === 144)
+      note !== undefined &&
+      velocity !== undefined
     ) {
-      //if note off
-      if (status === 128) {
-        velocity = 0;
-      }
+      note = handleChannels(status, note);
 
       //Device selected
       if ($Device.selected && $Device.id == device) {
