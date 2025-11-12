@@ -132,7 +132,11 @@
       //note off channels
 
       case 128:
-        return 61;
+        if (note === 60) {
+          return 61;
+        } else {
+          return note;
+        }
       case 129:
         return 62;
       case 130:
@@ -167,7 +171,11 @@
       //note on channels
 
       case 144:
-        return 61;
+        if (note === 60) {
+          return 61;
+        } else {
+          return note;
+        }
       case 145:
         return 62;
       case 146:
