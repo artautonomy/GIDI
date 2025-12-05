@@ -12,7 +12,7 @@
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { Spring, Tween } from "svelte/motion";
-  import { cubicOut, cubicIn, cubicInOut } from "svelte/easing";
+  import { cubicOut, cubicInOut } from "svelte/easing";
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Lighting from "./Lighting.svelte";
@@ -592,7 +592,7 @@
         position.y={MIDIConnectedScenePosition.current}
         onpointerenter={onPointerEnter}
         onpointerleave={onPointerLeave}
-        onclick={(event) => {
+        onclick={(event: MouseEvent) => {
           event.stopPropagation();
           cubeClicked = true;
           hintText.target = 0;
@@ -688,7 +688,7 @@
                 rotation.z={-Math.PI / 2}
                 onpointerenter={onPointerEnter}
                 onpointerleave={onPointerLeave}
-                onclick={(event) => {
+                onclick={(event: MouseEvent) => {
                   event.stopPropagation();
                   styleNext();
                 }}
@@ -741,7 +741,7 @@
                 rotation.z={Math.PI / 2}
                 onpointerenter={onPointerEnter}
                 onpointerleave={onPointerLeave}
-                onclick={(event) => {
+                onclick={(event: MouseEvent) => {
                   event.stopPropagation();
                   styleBack();
                 }}

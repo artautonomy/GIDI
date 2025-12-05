@@ -104,7 +104,7 @@
     easing: cubicInOut,
   });
 
-  $Settings.scene.autoRotate.enabled = false;
+  $Settings.camera.autoRotate.enabled = false;
 </script>
 
 <T.OrthographicCamera
@@ -116,8 +116,8 @@
 >
   <OrbitControls
     enableDamping
-    autoRotateSpeed={$Settings.scene.autoRotate.speed}
-    autoRotate={$Settings.scene.autoRotate.enabled}
+    autoRotateSpeed={$Settings.camera.autoRotate.speed}
+    autoRotate={$Settings.camera.autoRotate.enabled}
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>

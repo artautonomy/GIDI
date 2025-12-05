@@ -14,7 +14,7 @@
   import { Box, Flex } from "@threlte/flex";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { Device, MIDI, Settings } from "../store";
+  import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
   import Lighting from "./Lighting.svelte";
   import Cube from "../instances/Cube.svelte";
@@ -22,6 +22,7 @@
   import Mirror from "../instances/Mirror.svelte";
   import Firework from "../instances/Firework.svelte";
   import Swirl from "../instances/Swirl.svelte";
+  import { ConvexObjectBreaker } from "three/examples/jsm/Addons.js";
 
   const { scene, camera } = $state(useThrelte());
 
@@ -65,7 +66,7 @@
   let recordCords: Vec3[] = $state([]);
 
   let recordCordsTransition = new Tween(cameraCord, {
-    duration: $Settings.record.speed,
+    duration: $Settings.camera.sequence.speed,
     easing: cubicInOut,
   });
 
@@ -117,7 +118,7 @@
     }, 2000);
   }
 
-  function onKeyDown(e) {
+  function onKeyDown(e: KeyboardEvent) {
     switch (e.key) {
       case "e":
         openMenu();
@@ -132,7 +133,7 @@
         break;
 
       case "x":
-        $Settings.record.reset = true;
+        $Settings.camera.sequence.reset = true;
         break;
     }
   }
@@ -145,7 +146,7 @@
   });
 
   $effect(() => {
-    if ($Settings.record.reset) {
+    if ($Settings.camera.sequence.reset) {
       hintText.target = 1;
       tips = "Recording reset";
 
@@ -154,13 +155,13 @@
       recordCordsTransition.target = cameraCord;
 
       setTimeout(() => {
-        $Settings.record.reset = false;
+        $Settings.camera.sequence.reset = false;
       }, 1000);
     }
   });
 
   $effect(() => {
-    if ($Settings.record.playback) {
+    if ($Settings.camera.sequence.playing) {
       animateCamera();
     }
   });
@@ -184,46 +185,56 @@
   });
 
   async function animateCamera() {
-    if (
-      $Settings.record.selectedTrigger == "Note down" &&
-      !$Settings.record.enabled
-    ) {
-      if (
-        midiMessages.filter((note) => note.velocity > 0).length > 0 &&
-        recordCords.length > 0
-      ) {
-        recordCordsTransition.set(recordCords[coordIndex], {
-          duration: $Settings.record.speed,
-        });
+    //if sequence recorded
+    if (recordCords.length > 0) {
+      //note down
+      if ($Settings.camera.sequence.selected == "Note down") {
+        //if note playing
+        if (midiMessages.filter((note) => note.velocity > 0).length > 0) {
+          recordCordsTransition.set(recordCords[coordIndex], {
+            duration: $Settings.camera.sequence.speed,
+          });
 
-        if (coordIndex >= recordCords.length - 1) {
-          coordIndex = 0;
-        } else {
-          coordIndex++;
+          if (coordIndex >= recordCords.length - 1) {
+            coordIndex = 0;
+          } else {
+            coordIndex++;
+          }
         }
       }
-    } else {
-      for (const target of recordCords) {
-        recordCordsTransition.set(target, {
-          duration: $Settings.record.speed,
-        });
-        await new Promise((r) => setTimeout(r, $Settings.record.speed));
-      }
+      //time
+      else {
+        while (
+          $Settings.camera.sequence.selected == "Time" &&
+          $Settings.camera.sequence.playing
+        ) {
+          recordCordsTransition.set(recordCords[coordIndex], {
+            duration: $Settings.camera.sequence.speed,
+          });
+          await new Promise((r) =>
+            setTimeout(r, $Settings.camera.sequence.speed)
+          );
 
-      $Settings.record.playback = false;
+          if (coordIndex >= recordCords.length - 1) {
+            coordIndex = 0;
+          } else {
+            coordIndex++;
+          }
+        }
+      }
     }
   }
 
   function toggleRecordingCoords() {
-    $Settings.record.enabled = !$Settings.record.enabled;
+    $Settings.camera.sequence.recording = !$Settings.camera.sequence.recording;
 
-    if ($Settings.record.selectedTrigger == "Note down") {
-      $Settings.record.playback = true;
+    if ($Settings.camera.sequence.selected == "Note down") {
+      $Settings.camera.sequence.playing = true;
     }
   }
 
   function recordEndCoords() {
-    if ($Settings.record.enabled) {
+    if ($Settings.camera.sequence.recording) {
       tips =
         "Angle " +
         (recordCords.length + 1) +
@@ -251,10 +262,6 @@
   }
 
   $Settings.orbitControls = true;
-
-  //testing new styles
-  //$Device.input.id = "input-0";
-  //$Settings.sceneSelected = "Piano";
 </script>
 
 <Lighting />
@@ -269,11 +276,11 @@
   <OrbitControls
     enableDamping
     enableZoom={!$Settings.edit}
-    autoRotate={$Settings.scene.autoRotate.enabled}
-    autoRotateSpeed={$Settings.scene.autoRotate.speed}
+    autoRotate={$Settings.camera.autoRotate.enabled}
+    autoRotateSpeed={$Settings.camera.autoRotate.speed}
     enabled={$Settings.orbitControls}
     onstart={() => {
-      if (!menuOpened && !$Settings.record.enabled) {
+      if (!menuOpened && !$Settings.camera.sequence.recording) {
         hintArrow.target = 0.75;
         tips = "To edit the scene click here or press 'e'";
       }
@@ -366,7 +373,7 @@
   </Box>
   <Billboard>
     <Box flex={1} width="100%" height="100%">
-      {#if !menuOpened || $Settings.record.enabled || $Settings.record.reset}
+      {#if !menuOpened || $Settings.camera.sequence.recording || $Settings.camera.sequence.reset}
         <T.Mesh scale={hintArrow.current} position.y={3}>
           <T.ConeGeometry />
           <T.MeshBasicMaterial

@@ -1,14 +1,14 @@
 <script>
-  //import Scene from "$lib/scenes/Sandbox.svelte";
   import { Canvas } from "@threlte/core";
   import Scene from "$lib/scenes/Play.svelte";
-  import { Settings } from "$lib/store";
+  import { Map, Settings } from "$lib/store";
   import { Tween } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
   import ColorPicker from "svelte-awesome-color-picker";
   import { colord } from "colord";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
+  import { faceDirection } from "three/src/nodes/TSL.js";
 
   let setting = $state("notes");
 
@@ -111,12 +111,21 @@
       >
       <button
         class="setting"
-        onclick={() => (setting = "record")}
+        onclick={() => (setting = "camera")}
         style="background-color:{setting === 'record'
           ? '#397a4b'
           : '--menuTextColor'};color:{setting === 'record'
           ? 'white'
-          : '--menuTextColor'}">Record</button
+          : '--menuTextColor'}">Camera</button
+      >
+      <button
+        class="setting"
+        onclick={() => (setting = "Mapping")}
+        style="background-color:{setting === 'record'
+          ? '#397a4b'
+          : '--menuTextColor'};color:{setting === 'record'
+          ? 'white'
+          : '--menuTextColor'}">Mapping</button
       >
     </settingOptions>
 
@@ -171,8 +180,8 @@
               : event.detail.rgb;
         }}
       />
-      <h1>ADSR</h1>
-      <label for="attack">Attack</label>
+      <h1>Dampening</h1>
+      <label for="attack">Rise</label>
       <input
         type="range"
         min="0"
@@ -181,7 +190,7 @@
         id="attack"
         bind:value={$Settings.notes.attack}
       />
-      <label for="release">Release</label>
+      <label for="release">Fall</label>
       <input
         type="range"
         min="0"
@@ -246,26 +255,6 @@
         bind:value={$Settings.scene.lighting.above}
       />
 
-      <h1>Autorotate</h1>
-
-      <input
-        id="autoRotate"
-        type="checkbox"
-        onchange={() =>
-          ($Settings.scene.autoRotate.enabled =
-            !$Settings.scene.autoRotate.enabled)}
-        checked={$Settings.scene.autoRotate.enabled}
-      />
-      <label for="rotateSpeed">Speed</label>
-      <input
-        type="range"
-        min="0.5"
-        max="10"
-        step="0.1"
-        id="rotateSpeed"
-        bind:value={$Settings.scene.autoRotate.speed}
-      />
-
       <h1>Gizmo</h1>
 
       <input
@@ -274,15 +263,51 @@
         onchange={() => ($Settings.scene.gizmo = !$Settings.scene.gizmo)}
         checked={$Settings.scene.gizmo}
       />
-    {:else if setting === "record"}
-      <h1>Controls</h1>
+    {:else if setting === "camera"}
+      <h1>Autorotate</h1>
+
+      <input
+        id="autoRotate"
+        type="checkbox"
+        onchange={() =>
+          ($Settings.camera.autoRotate.enabled =
+            !$Settings.camera.autoRotate.enabled)}
+        checked={$Settings.camera.autoRotate.enabled}
+      />
+      <label for="rotateSpeed">Speed</label>
+      <input
+        type="range"
+        min="0.5"
+        max="10"
+        step="0.1"
+        id="rotateSpeed"
+        bind:value={$Settings.camera.autoRotate.speed}
+      />
+
+      <h1>Sequence Record</h1>
+
+      <label for="playbackMethodLabel">Playback Method</label>
+      <select
+        name="triggers"
+        id="triggers"
+        bind:value={$Settings.camera.sequence.selected}
+        onchange={() => {
+          $Settings.camera.sequence.playing = true;
+        }}
+      >
+        {#each $Settings.camera.sequence.triggers as trigger}
+          <option value={trigger}>{trigger}</option>
+        {/each}
+      </select>
+
       <controls>
-        {#if !$Settings.record.enabled}
+        {#if !$Settings.camera.sequence.recording}
           <button
             class="recordHiddenButton"
             aria-label="record"
             onclick={() => {
-              $Settings.record.enabled = true;
+              $Settings.camera.sequence.recording = true;
+              $Settings.camera.sequence.playing = false;
             }}
             onmouseenter={() => {
               recordControlHover.record = true;
@@ -311,9 +336,8 @@
             class="recordHiddenButton"
             aria-label="stop"
             onclick={() => {
-              $Settings.record.enabled = false;
-              if ($Settings.record.selectedTrigger == "Note down")
-                $Settings.record.playback = true;
+              $Settings.camera.sequence.recording = false;
+              $Settings.camera.sequence.playing = true;
             }}
             onmouseenter={() => {
               recordControlHover.stop = true;
@@ -340,42 +364,95 @@
           </button>
         {/if}
 
-        {#if $Settings.record.selectedTrigger == "Time"}
-          <button
-            class="recordHiddenButton"
-            aria-label="play"
-            onclick={() => {
-              $Settings.record.playback = true;
-            }}
-            onmouseenter={() => {
-              recordControlHover.play = true;
-            }}
-            onmouseleave={() => {
-              recordControlHover.play = false;
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="recordControls"
-              viewBox="0 0 64 64"
+        {#if $Settings.camera.sequence.selected == "Time"}
+          {#if !$Settings.camera.sequence.playing}
+            <button
+              class="recordHiddenButton"
+              aria-label="play"
+              onclick={() => {
+                $Settings.camera.sequence.playing = true;
+              }}
+              onmouseenter={() => {
+                recordControlHover.play = true;
+              }}
+              onmouseleave={() => {
+                recordControlHover.play = false;
+              }}
             >
-              <polygon
-                aria-hidden="true"
-                id="play"
-                points="24,16 24,48 48,32"
-                fill={$Settings.record.playback || recordControlHover.play
-                  ? "green"
-                  : "white"}
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="recordControls"
+                viewBox="0 0 64 64"
+              >
+                <polygon
+                  aria-hidden="true"
+                  id="play"
+                  points="24,16 24,48 48,32"
+                  fill={$Settings.camera.sequence.playing ||
+                  recordControlHover.play
+                    ? "green"
+                    : "white"}
+                />
+              </svg>
+            </button>
+          {:else}
+            <button
+              class="recordHiddenButton"
+              aria-label="pause"
+              onclick={() => {
+                $Settings.camera.sequence.playing = false;
+              }}
+              onmouseenter={() => {
+                recordControlHover.play = true;
+              }}
+              onmouseleave={() => {
+                recordControlHover.play = false;
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="recordControls"
+                viewBox="0 0 64 64"
+              >
+                <!-- Left bar -->
+                <rect
+                  aria-hidden="true"
+                  id="pause-left"
+                  x="20"
+                  y="16"
+                  width="8"
+                  height="32"
+                  rx="1"
+                  fill={!$Settings.camera.sequence.playing ||
+                  recordControlHover.play
+                    ? "green"
+                    : "white"}
+                />
+                <!-- Right bar -->
+                <rect
+                  aria-hidden="true"
+                  id="pause-right"
+                  x="36"
+                  y="16"
+                  width="8"
+                  height="32"
+                  rx="1"
+                  fill={!$Settings.camera.sequence.playing ||
+                  recordControlHover.play
+                    ? "green"
+                    : "white"}
+                />
+              </svg>
+            </button>
+          {/if}
         {/if}
         <button
           type="button"
           class="recordHiddenButton"
           aria-label="reset"
           onclick={() => {
-            $Settings.record.reset = true;
+            $Settings.camera.sequence.playing = false;
+            $Settings.camera.sequence.reset = true;
           }}
           onmouseenter={() => {
             recordControlHover.reset = true;
@@ -395,7 +472,7 @@
               cx="32"
               cy="32"
               r="20"
-              fill={$Settings.record.reset || recordControlHover.reset
+              fill={$Settings.camera.sequence.reset || recordControlHover.reset
                 ? "#ff2727"
                 : "white"}
             />
@@ -421,21 +498,6 @@
         </button>
       </controls>
 
-      <h1>Playback Method</h1>
-      <select
-        name="triggers"
-        id="triggers"
-        bind:value={$Settings.record.selectedTrigger}
-        onclick={() => {
-          if ($Settings.record.selectedTrigger == "Note down")
-            $Settings.record.playback = true;
-        }}
-      >
-        {#each $Settings.record.triggers as trigger}
-          <option value={trigger}>{trigger}</option>
-        {/each}
-      </select>
-
       <label for="stepSpeedLabel">Step Speed</label>
       <input
         type="range"
@@ -443,8 +505,40 @@
         max="4000"
         step="1"
         id="stepSpeed"
-        bind:value={$Settings.record.speed}
+        bind:value={$Settings.camera.sequence.speed}
       />
+    {:else if setting === "Mapping"}
+      {#if $Map.inputs.length < 1}
+        <label for="noChannelsSelected"
+          >Play a control slider/knob to map to GIDI</label
+        >
+      {:else}
+        {#each $Map.inputs as channel}
+          <label for="channelLabel-{channel.id}">Status ({channel.id})</label>
+
+          <select
+            name="channelSetting-{channel.id}"
+            id="channels"
+            bind:value={channel.setting}
+          >
+            <option value="attack">Attack</option>
+            <option value="release">Release</option>
+            <option value="autorotate">Autorotate</option>
+            <option value="frontLight">Front Light</option>
+            <option value="sideLight">Side Light</option>
+            <option value="aboveLight">Above Light</option>
+            <option value="sequenceStepSpeed">Sequence Step Speed</option>
+          </select>
+          <input
+            type="range"
+            min="0"
+            max="127"
+            step="0.1"
+            id="channelSlider-{channel.id}"
+            bind:value={channel.value}
+          />
+        {/each}
+      {/if}
     {/if}
 
     <button
@@ -598,6 +692,11 @@
     display: flex;
     justify-content: center;
   }
+
+  controls {
+    display: block;
+    padding-top: 5%;
+  }
   .setting {
     width: 50%;
     height: 100%;
@@ -623,7 +722,7 @@
     h1 {
       color: var(--menuTextColour);
       font-size: 1.25em;
-      margin-top: 5%;
+      margin-top: 2.5%;
       text-decoration: underline;
       text-shadow: 1px 1px 1px BLACK;
     }
@@ -650,6 +749,7 @@
 
     settingOptions {
       height: 10%;
+      padding-bottom: 2.5%;
     }
   }
 
@@ -663,16 +763,17 @@
       animation: gradientAnimation 85s infinite;
       top: 0;
       height: 66vh;
-      width: 20vw;
+      width: 27.5vw;
       margin: 0;
       padding: 0;
       transform-origin: top;
     }
 
     h1 {
+      margin-top: 5%;
+
       color: var(--menuTextColour);
       font-size: 1.3em;
-      margin-top: 7.5%;
       text-decoration: underline;
       text-shadow: 1px 1px 1px BLACK;
     }
@@ -698,6 +799,7 @@
 
     settingOptions {
       height: 5%;
+      padding-bottom: 5%;
     }
   }
   @keyframes gradientAnimation {

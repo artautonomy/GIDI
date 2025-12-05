@@ -17,12 +17,18 @@ interface MIDIMessage {
 
 type DeviceInput = { id: string; name: string; velocity: number };
 
+type Channel = { setting: string | null; id: number; value: number };
+
 interface Device {
     enableSearch: boolean;
     connected: boolean;
     selected: boolean;
     id: string | null;
     inputs: DeviceInput[];
+}
+
+interface Channels{
+    inputs: Channel[];
 }
 
 export let MIDI = writable<MIDIMessage[]>([]);
@@ -81,23 +87,33 @@ export let Settings = writable({
             front: 0.5,
             side: 1
         },
-        autoRotate: {
-            enabled: true,
-            speed: 1.1,
-        },
+       
     
         gizmo: true,
 
     },
-    record: {
-        triggers: ["Note down", "Time"],
-        selectedTrigger: "Note down",
-        enabled: false,
-        playback: false,
-        reset: false,
-        speed: 500
+    camera: {
+         autoRotate: {
+            enabled: true,
+            speed: 1.1,
+        },
+        sequence: {
+
+            triggers: ["Note down", "Time"],
+            selected: "Note down",
+            recording: false,
+            playing: false,
+            speed: 500,
+            reset: false
+        }
     }
 })
+
+export let Map = writable<Channels>({
+
+    inputs: [] as Channel[]
+    
+});
 
 export function storeMIDIPermission(data: string) {
 

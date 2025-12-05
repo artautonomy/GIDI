@@ -160,7 +160,7 @@
     }
   });
 
-  $Settings.scene.autoRotate.enabled = false;
+  $Settings.camera.autoRotate.enabled = false;
 </script>
 
 <Lighting />
@@ -174,8 +174,8 @@
 >
   <OrbitControls
     enableDamping
-    autoRotate={$Settings.scene.autoRotate.enabled}
-    autoRotateSpeed={$Settings.scene.autoRotate.speed}
+    autoRotate={$Settings.camera.autoRotate.enabled}
+    autoRotateSpeed={$Settings.camera.autoRotate.speed}
     enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -371,7 +371,7 @@
           rotation.z={-Math.PI / 2}
           onpointerenter={onPointerEnter}
           onpointerleave={onPointerLeave}
-          onclick={(event) => {
+          onclick={(event: MouseEvent) => {
             event.stopPropagation();
             styleNext();
           }}
@@ -445,7 +445,7 @@
           rotation.z={Math.PI / 2}
           onpointerenter={onPointerEnter}
           onpointerleave={onPointerLeave}
-          onclick={(event) => {
+          onclick={(event: MouseEvent) => {
             event.stopPropagation();
             styleBack();
           }}
