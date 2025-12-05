@@ -364,7 +364,7 @@
           </button>
         {/if}
 
-        {#if $Settings.camera.sequence.selected == "Time"}
+        {#if $Settings.camera.sequence.selected == "Time interval"}
           {#if !$Settings.camera.sequence.playing}
             <button
               class="recordHiddenButton"
@@ -498,13 +498,13 @@
         </button>
       </controls>
 
-      <label for="stepSpeedLabel">Step Speed</label>
+      <label for="transitionSpeedLabel">Transition Speed</label>
       <input
         type="range"
         min="0"
         max="4000"
         step="1"
-        id="stepSpeed"
+        id="transitionSpeed"
         bind:value={$Settings.camera.sequence.speed}
       />
     {:else if setting === "Mapping"}

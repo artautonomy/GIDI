@@ -205,7 +205,7 @@
       //time
       else {
         while (
-          $Settings.camera.sequence.selected == "Time" &&
+          $Settings.camera.sequence.selected == "Time interval" &&
           $Settings.camera.sequence.playing
         ) {
           recordCordsTransition.set(recordCords[coordIndex], {

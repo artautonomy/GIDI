@@ -99,7 +99,7 @@ export let Settings = writable({
         },
         sequence: {
 
-            triggers: ["Note down", "Time"],
+            triggers: ["Note down", "Time interval"],
             selected: "Note down",
             recording: false,
             playing: false,
