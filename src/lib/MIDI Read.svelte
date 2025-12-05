@@ -482,7 +482,7 @@
               break;
 
             case "sequenceStepSpeed":
-              $Settings.camera.speed = velocity * 31.496063;
+              $Settings.camera.sequence.speed = velocity * 31.496063;
               break;
           }
         } else {

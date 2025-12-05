@@ -615,7 +615,7 @@
     padding: 0;
     cursor: pointer;
     margin: 0;
-    width: 20%;
+    width: 12.5%;
   }
 
   .recordControls {

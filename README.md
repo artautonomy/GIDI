@@ -4,7 +4,7 @@ A free web application intended for live performances. By interpreting MIDI note
 
 - Multiple styles to choose from (Piano, Firework, Mirror, Swirl, Cube)
 - Full customisation of the scene e.g. change note/expression/background colours, lighting, autorotate, note dampening
-- Record camera animations, transition shots by either 'Note down' or 'Time'
+- Record camera sequences, transition between shots by either 'Note down' or 'Time interval'
 - Map different MIDI statuses (e.g. Pitch Wheel or Sliders) to change the scene in real-time
 
 ## Guide
