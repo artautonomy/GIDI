@@ -456,11 +456,11 @@
           const getChannel = $Map.inputs.find((key) => key.id === status);
 
           switch (getChannel?.setting) {
-            case "attack":
+            case "rise":
               $Settings.notes.attack = velocity * 31.496063;
               break;
 
-            case "release":
+            case "fall":
               $Settings.notes.release = velocity * 31.496063;
               break;
 

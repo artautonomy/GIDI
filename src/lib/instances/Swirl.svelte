@@ -2,6 +2,7 @@
   import { T } from "@threlte/core";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicOut } from "svelte/easing";
+  import { MathUtils } from "three";
 
   interface Props {
     position: {
@@ -42,13 +43,15 @@
   const g = new Tween(keyColour.g);
   const b = new Tween(keyColour.b);
 
-  const randEnhance = 50 + Math.random() * 50;
+  const randEnhance = 5 + Math.random() * 75;
 
   const randP = Math.random() * 5 + 2;
 
-  const randQ = randP / 10;
+  const randQ = randP % Math.PI;
 
   let distort = new Tween(randEnhance);
+
+  const Z = new Tween(position.z, { easing: cubicOut });
 
   const radius = new Tween(0.25, { easing: cubicOut });
 
@@ -58,7 +61,9 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
 
-      radius.set(0.3, { duration: attack, easing: cubicIn });
+      radius.set(1, { duration: attack, easing: cubicIn });
+
+      Z.set(6.5, { duration: attack, easing: cubicOut });
     } else {
       r.set(keyColour.r, { duration: release });
       g.set(keyColour.g, { duration: release });
@@ -68,15 +73,22 @@
 
       distort.set(randEnhance, {
         delay: 1,
-        duration: release,
+        duration: release * 5,
       });
 
       radius.set(0.25, { duration: release, easing: cubicOut });
+
+      Z.set(position.z, { duration: release, easing: cubicIn });
     }
   });
 </script>
 
-<T.Mesh position.x={position.x} position.y={position.y}>
+<T.Mesh
+  position.x={position.x}
+  position.y={position.y}
+  position.z={Z.current}
+  rotation.z={Math.PI / (position.x + 1)}
+>
   <T.TorusKnotGeometry
     args={[
       radius.current,
@@ -94,4 +106,8 @@
     roughness={0.4}
     metalness={0.7}
   />
+</T.Mesh>
+<T.Mesh position.x={position.x} position.y={position.y - 0.25}>
+  <T.SphereGeometry args={[0.25]} />
+  <T.MeshBasicMaterial opacity={0} transparent />
 </T.Mesh>

@@ -22,7 +22,6 @@
   import Mirror from "../instances/Mirror.svelte";
   import Firework from "../instances/Firework.svelte";
   import Swirl from "../instances/Swirl.svelte";
-  import { ConvexObjectBreaker } from "three/examples/jsm/Addons.js";
 
   const { scene, camera } = $state(useThrelte());
 
@@ -61,7 +60,7 @@
 
   let tips = $state("Press and hold the mouse to rotate the scene");
 
-  let cameraCord: Vec3 = $state([7.5, 10, 20]);
+  let cameraCord: Vec3 = $state([5, 10, 15]);
 
   let recordCords: Vec3[] = $state([]);
 
@@ -91,6 +90,11 @@
     }
   );
 
+  const fadeIn = new Tween(0, {
+    duration: 1000,
+    easing: cubicIn,
+  });
+
   const hintText = new Tween(1, {
     duration: 500,
     easing: cubicInOut,
@@ -101,6 +105,7 @@
     easing: cubicInOut,
   });
 
+  fadeIn.target = 85;
   introZoom.target = zoom;
 
   function openMenu() {
@@ -208,12 +213,9 @@
           $Settings.camera.sequence.selected == "Time interval" &&
           $Settings.camera.sequence.playing
         ) {
-          recordCordsTransition.set(recordCords[coordIndex], {
+          await recordCordsTransition.set(recordCords[coordIndex], {
             duration: $Settings.camera.sequence.speed,
           });
-          await new Promise((r) =>
-            setTimeout(r, $Settings.camera.sequence.speed)
-          );
 
           if (coordIndex >= recordCords.length - 1) {
             coordIndex = 0;
@@ -288,7 +290,7 @@
     onend={recordEndCoords}
   >
     {#if $Settings.scene.gizmo}
-      <Gizmo speed={0.75} />
+      <Gizmo speed={0.75} size={fadeIn.current} />
     {/if}
   </OrbitControls>
 </T.OrthographicCamera>

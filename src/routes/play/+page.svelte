@@ -112,18 +112,18 @@
       <button
         class="setting"
         onclick={() => (setting = "camera")}
-        style="background-color:{setting === 'record'
+        style="background-color:{setting === 'camera'
           ? '#397a4b'
-          : '--menuTextColor'};color:{setting === 'record'
+          : '--menuTextColor'};color:{setting === 'camera'
           ? 'white'
           : '--menuTextColor'}">Camera</button
       >
       <button
         class="setting"
-        onclick={() => (setting = "Mapping")}
-        style="background-color:{setting === 'record'
+        onclick={() => (setting = "mapping")}
+        style="background-color:{setting === 'mapping'
           ? '#397a4b'
-          : '--menuTextColor'};color:{setting === 'record'
+          : '--menuTextColor'};color:{setting === 'mapping'
           ? 'white'
           : '--menuTextColor'}">Mapping</button
       >
@@ -425,7 +425,7 @@
                   rx="1"
                   fill={!$Settings.camera.sequence.playing ||
                   recordControlHover.play
-                    ? "green"
+                    ? "black"
                     : "white"}
                 />
                 <!-- Right bar -->
@@ -439,7 +439,7 @@
                   rx="1"
                   fill={!$Settings.camera.sequence.playing ||
                   recordControlHover.play
-                    ? "green"
+                    ? "black"
                     : "white"}
                 />
               </svg>
@@ -473,7 +473,7 @@
               cy="32"
               r="20"
               fill={$Settings.camera.sequence.reset || recordControlHover.reset
-                ? "#ff2727"
+                ? "black"
                 : "white"}
             />
             <line
@@ -481,7 +481,10 @@
               y1="22"
               x2="42"
               y2="42"
-              stroke="black"
+              stroke={$Settings.camera.sequence.reset ||
+              recordControlHover.reset
+                ? "white"
+                : "black"}
               stroke-width="4"
               stroke-linecap="round"
             />
@@ -490,7 +493,10 @@
               y1="22"
               x2="22"
               y2="42"
-              stroke="black"
+              stroke={$Settings.camera.sequence.reset ||
+              recordControlHover.reset
+                ? "white"
+                : "black"}
               stroke-width="4"
               stroke-linecap="round"
             />
@@ -507,7 +513,7 @@
         id="transitionSpeed"
         bind:value={$Settings.camera.sequence.speed}
       />
-    {:else if setting === "Mapping"}
+    {:else if setting === "mapping"}
       {#if $Map.inputs.length < 1}
         <label for="noChannelsSelected"
           >Play a control slider/knob to map to GIDI</label
@@ -521,8 +527,8 @@
             id="channels"
             bind:value={channel.setting}
           >
-            <option value="attack">Attack</option>
-            <option value="release">Release</option>
+            <option value="rise">Rise</option>
+            <option value="fall">Fall</option>
             <option value="autorotate">Autorotate</option>
             <option value="frontLight">Front Light</option>
             <option value="sideLight">Side Light</option>
