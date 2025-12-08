@@ -86,7 +86,7 @@
   $effect(() => {
     if (velocity > 0) {
       useTask((delta) => {
-        offset -= delta * ((4000 - attack) / 2000 + 0.25);
+        offset -= delta * ((4000 - attack) / 1000 + 0.25);
 
         dashOffset.set(offset);
       });
@@ -94,7 +94,7 @@
       color.lerpColors(expression, key, Math.sin(offset * 2) / 2 + 0.5);
     } else {
       dashOffset.set(-0.1, {
-        duration: release + 200,
+        duration: release + 150,
       });
 
       offset = -0.1;
@@ -115,8 +115,8 @@
     scaleDown={0.8}
     transparent
   />
-</T.Mesh>
-<T.Mesh position.x={position.x * 1.25} position.y={position.y - 0.25}>
-  <T.SphereGeometry args={[0.25]} />
-  <T.MeshBasicMaterial opacity={0} transparent />
+  <T.Mesh position.x={position.x} position.y={position.y + 0.2}>
+    <T.SphereGeometry args={[0.33]} />
+    <T.MeshBasicMaterial opacity={0} transparent />
+  </T.Mesh>
 </T.Mesh>

@@ -2,7 +2,6 @@
   import { T } from "@threlte/core";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicOut } from "svelte/easing";
-  import { MathUtils } from "three";
 
   interface Props {
     position: {
@@ -43,13 +42,15 @@
   const g = new Tween(keyColour.g);
   const b = new Tween(keyColour.b);
 
-  const randEnhance = 5 + Math.random() * 75;
+  const randEnhance = 10 + Math.random() * 15;
 
   const randP = Math.random() * 5 + 2;
 
   const randQ = randP % Math.PI;
 
   let distort = new Tween(randEnhance);
+
+  const X = new Tween(position.y, { easing: cubicOut });
 
   const Z = new Tween(position.z, { easing: cubicOut });
 
@@ -61,22 +62,37 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
 
-      radius.set(1, { duration: attack, easing: cubicIn });
+      distort.set(randEnhance * 10, {
+        duration: attack + 25 * 10,
+        easing: cubicIn,
+      });
 
-      Z.set(6.5, { duration: attack, easing: cubicOut });
+      radius.set(0.675, { duration: attack, easing: cubicIn });
+
+      X.set(position.x * 2, {
+        delay: attack / 2,
+        duration: attack / 2,
+        easing: cubicOut,
+      });
+
+      Z.set(2.5, { duration: attack / 2, easing: cubicOut });
     } else {
       r.set(keyColour.r, { duration: release });
       g.set(keyColour.g, { duration: release });
       b.set(keyColour.b, { duration: release });
 
-      distort = new Tween(1);
+      distort = new Tween(randEnhance);
 
       distort.set(randEnhance, {
-        delay: 1,
         duration: release * 5,
+        easing: cubicOut,
       });
 
       radius.set(0.25, { duration: release, easing: cubicOut });
+      X.set(position.x, {
+        duration: release,
+        easing: cubicIn,
+      });
 
       Z.set(position.z, { duration: release, easing: cubicIn });
     }
@@ -84,7 +100,7 @@
 </script>
 
 <T.Mesh
-  position.x={position.x}
+  position.x={X.current}
   position.y={position.y}
   position.z={Z.current}
   rotation.z={Math.PI / (position.x + 1)}
@@ -107,7 +123,7 @@
     metalness={0.7}
   />
 </T.Mesh>
-<T.Mesh position.x={position.x} position.y={position.y - 0.25}>
-  <T.SphereGeometry args={[0.25]} />
+<T.Mesh position.x={position.x} position.y={position.y + 0.25}>
+  <T.SphereGeometry args={[0.33]} />
   <T.MeshBasicMaterial opacity={0} transparent />
 </T.Mesh>
