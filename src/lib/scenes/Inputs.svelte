@@ -146,80 +146,10 @@
           <button
             onpointerdown={() => setupStyle(device.id)}
             style={device.velocity > 0 ? "green" : "white"}
-            >{device.name}</button
+            id="input">{device.name}</button
           >
         {/each}
       </HTML>
     {/if}
   </Box>
 </Flex>
-
-<style>
-  h1,
-  h2,
-  button {
-    font-family: "Oxanium", sans-serif;
-    width: 32vw;
-    text-align: center;
-    opacity: 0;
-    color: white;
-
-    animation: 1s fadeIn 0.5s forwards;
-  }
-
-  button {
-    display: block;
-    background-color: rgb(90, 187, 66);
-    font-size: 1em;
-    padding: 20px;
-    width: 15vw;
-    height: auto;
-    margin: 0.75vh;
-    cursor: pointer;
-    color: black;
-    font-weight: bolder;
-  }
-
-  @media (max-width: 600px) {
-    h1,
-    h2,
-    button {
-      font-family: "Oxanium", sans-serif;
-      width: 75vw;
-      text-align: center;
-      opacity: 0;
-      color: white;
-
-      animation: 1s fadeIn 0.5s forwards;
-    }
-
-    button {
-      display: block;
-      background-color: rgb(90, 187, 66);
-      font-size: 1em;
-      padding: 20px;
-      width: 70vw;
-      height: auto;
-      margin: 0.75vh;
-      cursor: pointer;
-      color: black;
-      font-weight: bolder;
-    }
-  }
-
-  h1 {
-    color: orange;
-    margin-bottom: 3.33vh;
-  }
-  h2 {
-    font-size: 1.1em;
-
-    text-align: center;
-  }
-
-  @keyframes fadeIn {
-    100% {
-      opacity: 1;
-    }
-  }
-</style>

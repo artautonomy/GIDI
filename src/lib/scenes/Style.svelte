@@ -349,7 +349,7 @@
     {/if}
   </Box>
 
-  <Box flex={2} width="100%" height="100%">
+  <Box flex={1} width="100%" height="100%">
     {#if notePlayed && !clearScene}
       <HTML center>
         <div class="nav-bar">
@@ -424,55 +424,6 @@
 </Flex>
 
 <style>
-  h1,
-  h2,
-  span,
-  button {
-    font-family: "Oxanium", sans-serif;
-    width: 32vw;
-    text-align: center;
-    opacity: 0;
-    color: white;
-
-    animation: 1s fadeIn 0.5s forwards;
-  }
-
-  @media (max-width: 600px) {
-    h1,
-    h2,
-    span,
-    button {
-      font-family: "Oxanium", sans-serif;
-      width: 75vw;
-      text-align: center;
-      opacity: 0;
-      color: white;
-
-      animation: 2s fadeIn 0.5s forwards;
-    }
-  }
-
-  h1 {
-    color: orange;
-    margin-bottom: 1vh;
-  }
-  h2 {
-    font-size: 1.1em;
-
-    text-align: center;
-
-    margin-bottom: 0.5vh;
-  }
-
-  .nav-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0;
-    color: white;
-  }
-
   .styleDescription {
     flex: 1;
     display: flex;
