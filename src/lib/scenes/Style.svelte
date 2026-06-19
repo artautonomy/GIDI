@@ -4,6 +4,7 @@
   import {
     Align,
     Billboard,
+    HTML,
     InstancedMesh,
     interactivity,
     OrbitControls,
@@ -43,7 +44,9 @@
     "Play your MIDI device to sample styles\n\nTo confirm your style select it";
 
   const MIDIConnectedButtonScale = new Spring(
-    window.innerWidth < 475 ? window.innerWidth / 37.5 : window.innerWidth / 150
+    window.innerWidth < 475
+      ? window.innerWidth / 37.5
+      : window.innerWidth / 150,
   );
 
   const MIDIConnectedButtonRotation = new Tween(0, {
@@ -72,6 +75,8 @@
 
   let noteTriggered = false;
 
+  let clearScene = $state(false);
+
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
   });
@@ -83,7 +88,7 @@
     {
       duration: 750,
       easing: cubicInOut,
-    }
+    },
   );
 
   function styleBack() {
@@ -104,6 +109,7 @@
 
   function setupScene(choice: string) {
     $Settings.sceneSelected = choice;
+    clearScene = true;
 
     selected = true;
 
@@ -181,37 +187,19 @@
 </T.OrthographicCamera>
 
 <Flex
-  width={window.innerWidth / 40}
+  width={window.innerWidth / 50}
   height={window.innerHeight / 40}
   gap={window.innerHeight / 300}
   flexDirection="Column"
 >
   <Billboard>
     <Box flex={1} width="100%" height="100%">
-      {#snippet children({ width })}
-        <Text
-          text={title}
-          color={"orange"}
-          font={$Settings.font}
-          fontSize={width > 20 ? 0.8 : 0.75}
-          textAlign={"center"}
-          anchorX={"center"}
-          position.y={2.5}
-          position.z="7"
-        />
-        <Text
-          text={summary}
-          maxWidth={width > 20 ? 21 : 10}
-          font={$Settings.font}
-          fontSize={width > 20 ? 0.5 : 0.45}
-          textAlign={"center"}
-          smooth={1}
-          anchorX={"center"}
-          position.y={1}
-          position.z="7"
-          outlineBlur={0.06}
-        />
-      {/snippet}
+      {#if !clearScene}
+        <HTML center>
+          <h1>{title}</h1>
+          <h2>{summary}</h2>
+        </HTML>
+      {/if}
     </Box>
   </Billboard>
 
@@ -361,103 +349,167 @@
     {/if}
   </Box>
 
-  <Billboard>
-    <Box flex={2} width="100%" height="100%">
-      {#if notePlayed}
-        <T.Mesh
-          scale={0.75}
-          position.x={window.innerWidth > 900 ? 10 : 4.5}
-          position.z={10}
-          rotation.z={-Math.PI / 2}
-          onpointerenter={onPointerEnter}
-          onpointerleave={onPointerLeave}
-          onclick={(event: MouseEvent) => {
-            event.stopPropagation();
-            styleNext();
-          }}
-        >
-          <T.BoxGeometry args={[2.75, 2.75, 1]} />
-          <T.MeshBasicMaterial transparent opacity={0} />
-          <T.Mesh>
-            <T.ConeGeometry />
-            <T.MeshBasicMaterial color={"orange"} shadow />
-          </T.Mesh>
-        </T.Mesh>
-        <Text
-          font={$Settings.font}
-          fontSize={window.innerHeight > 1200 ? 0.7 : 0.375}
-          outlineBlur={0.06}
-          text={styles[styleIndex]}
-          textAlign={"center"}
-          anchorX={"center"}
-          position.x={0}
-          position.y={1}
-          position.z={10}
-          color={"white"}
-        />
-        <Text
-          font={$Settings.font}
-          fontSize={window.innerHeight > 1200 ? 0.45 : 0.33}
-          maxWidth={window.innerHeight > 1200 ? 100 : 9}
-          outlineBlur={0.06}
-          text={styles[styleIndex] === "Piano"
-            ? "Recommended for keyboards and synthesizers. Automapping enabled."
-            : "Recommended for pads and samplers."}
-          textAlign={"center"}
-          anchorX={"center"}
-          position.x={0}
-          position.y={0.2}
-          position.z={10}
-          color={"white"}
-        />
-        <T.Mesh
-          position.y={-1.5}
-          onpointerenter={onPointerEnterStyle}
-          onpointerleave={onPointerLeaveStyle}
-          onclick={() => setupScene(styles[styleIndex])}
-        >
-          <T.BoxGeometry args={[3, 1.5, 1]} />
-          <T.MeshBasicMaterial
-            color={[
-              highlighted.r / 255,
-              highlighted.g / 255,
-              highlighted.b / 255,
-            ]}
-          />
-          <Text
-            font={$Settings.font}
-            fontSize={window.innerHeight > 1200 ? 0.75 : 0.4}
-            maxWidth={window.innerHeight > 1200 ? 100 : 9}
-            outlineBlur={0.06}
-            text="Select"
-            textAlign={"center"}
-            anchorX={"center"}
-            position.x={0}
-            position.y={0.4}
-            position.z={10}
-            color={"black"}
-          />
-        </T.Mesh>
-        <T.Mesh
-          scale={0.75}
-          position.x={window.innerWidth > 900 ? -10 : -4.5}
-          position.z={10}
-          rotation.z={Math.PI / 2}
-          onpointerenter={onPointerEnter}
-          onpointerleave={onPointerLeave}
-          onclick={(event: MouseEvent) => {
-            event.stopPropagation();
-            styleBack();
-          }}
-        >
-          <T.BoxGeometry args={[2.75, 2.75, 1]} />
-          <T.MeshBasicMaterial transparent opacity={0} />
-          <T.Mesh>
-            <T.ConeGeometry />
-            <T.MeshBasicMaterial color={"orange"} shadow />
-          </T.Mesh>
-        </T.Mesh>
-      {/if}
-    </Box>
-  </Billboard>
+  <Box flex={2} width="100%" height="100%">
+    {#if notePlayed && !clearScene}
+      <HTML center>
+        <div class="nav-bar">
+          <button
+            onpointerdown={(event: MouseEvent) => {
+              event.stopPropagation();
+              styleBack();
+            }}
+            aria-label="Back"
+            class="icon-btn"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 18L9 12L15 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg></button
+          >
+          <div class="styleDescription">
+            <h2>{styles[styleIndex]}</h2>
+
+            <span>
+              {styles[styleIndex] === "Piano"
+                ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
+                : "Recommended for pads and samplers."}
+            </span>
+
+            <button
+              onpointerdown={() => setupScene(styles[styleIndex])}
+              aria-label="Setup Scene"
+              class="icon-btn"
+              id="select">Select</button
+            >
+          </div>
+          <button
+            onpointerdown={(event: MouseEvent) => {
+              event.stopPropagation();
+              styleNext();
+            }}
+            aria-label="Forward"
+            class="icon-btn"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 18L15 12L9 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg></button
+          >
+        </div>
+      </HTML>
+    {/if}
+  </Box>
 </Flex>
+
+<style>
+  h1,
+  h2,
+  span,
+  button {
+    font-family: "Oxanium", sans-serif;
+    width: 32vw;
+    text-align: center;
+    opacity: 0;
+    color: white;
+
+    animation: 1s fadeIn 0.5s forwards;
+  }
+
+  @media (max-width: 600px) {
+    h1,
+    h2,
+    span,
+    button {
+      font-family: "Oxanium", sans-serif;
+      width: 75vw;
+      text-align: center;
+      opacity: 0;
+      color: white;
+
+      animation: 2s fadeIn 0.5s forwards;
+    }
+  }
+
+  h1 {
+    color: orange;
+    margin-bottom: 1vh;
+  }
+  h2 {
+    font-size: 1.1em;
+
+    text-align: center;
+
+    margin-bottom: 0.5vh;
+  }
+
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0;
+    color: white;
+  }
+
+  .styleDescription {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    opacity: 0;
+
+    animation: 2s fadeIn 0.5s forwards;
+  }
+
+  .icon-btn#select {
+    background-color: rgb(90, 187, 66);
+    font-size: 1em;
+    padding: 20px;
+    width: 20%;
+    height: 20px;
+    margin: 0.75vh;
+    color: black;
+    font-weight: bolder;
+  }
+
+  @keyframes fadeIn {
+    100% {
+      opacity: 1;
+    }
+  }
+</style>

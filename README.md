@@ -1,6 +1,6 @@
 # GIDI - a visualiser for MIDI
 
-A free web application intended for live performances. By interpreting MIDI note on/off messages GIDI renders and animates a scene on a web browser. GIDI offers:
+GIDI is a free web application to play MIDI live. Use note on/off messages to create animations on a web browser, no account required. The web app offers:
 
 - Multiple styles to choose from (Piano, Firework, Mirror, Swirl, Cube)
 - Full customisation of the scene e.g. change note/expression/background colours, lighting, autorotate, note dampening
@@ -9,9 +9,9 @@ A free web application intended for live performances. By interpreting MIDI note
 
 ## Guide
 
-1. Plug in a MIDI instrument to your PC using a MIDI-to-USB cable
-2. Go to [gidi.uk](https://gidi.uk)
-3. The browser will show a prompt 'gidi.uk wants to "Control and reprogram your MIDI devices"', click 'Allow'
+1. Go to [gidi.uk](https://gidi.uk)
+2. The browser will show a prompt 'gidi.uk wants to "Control and reprogram your MIDI devices"', click 'Allow'
+3. Plug in a MIDI instrument to your PC using a MIDI-to-USB cable
 4. Press the button "I've connected a MIDI device"
 5. Select a 'Style' from the following 5 options: 'Piano', 'Firework', 'Mirror', 'Swirl', 'Cube'
 

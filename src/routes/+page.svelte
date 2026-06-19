@@ -7,7 +7,7 @@
   import { onMount } from "svelte";
 
   onMount(() => {
-    goto("../play");
+    goto("../style");
   });
   */
 </script>

@@ -6,6 +6,7 @@
   import github from "$lib/assets/socials/github.png";
   import paypal from "$lib/assets/socials/paypal.png";
   import instagram from "$lib/assets/socials/instagram.png";
+  import "../app.css";
 
   let { children } = $props();
 
@@ -24,7 +25,7 @@
 
 <socials
   style="--opacity: {loaded ? 1 : 0}; --invert: {colord(
-    $Settings.scene.colours.background
+    $Settings.scene.colours.background,
   ).isLight()}
  --invert: {colord($Settings.scene.colours.background).isLight() ? 1 : 0}"
 >

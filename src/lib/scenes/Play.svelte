@@ -5,6 +5,7 @@
     Align,
     Billboard,
     Gizmo,
+    HTML,
     InstancedMesh,
     interactivity,
     OrbitControls,
@@ -87,7 +88,7 @@
     {
       duration: 750,
       easing: cubicInOut,
-    }
+    },
   );
 
   const fadeIn = new Tween(0, {
@@ -174,7 +175,7 @@
   $effect(() => {
     if (scene) {
       scene.background = new Color(
-        `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`
+        `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`,
       );
     }
 
@@ -373,30 +374,72 @@
       </T.Group>
     </Align>
   </Box>
-  <Billboard>
-    <Box flex={1} width="100%" height="100%">
-      {#if !menuOpened || $Settings.camera.sequence.recording || $Settings.camera.sequence.reset}
-        <T.Mesh scale={hintArrow.current} position.y={3}>
-          <T.ConeGeometry />
-          <T.MeshBasicMaterial
-            color={"orange"}
-            transparent={true}
-            opacity={hintText.current}
-          />
-        </T.Mesh>
-        <Text
-          fillOpacity={hintText.current}
-          text={tips}
-          color={"orange"}
-          font={$Settings.font}
-          textAlign={"center"}
-          anchorX={"center"}
-          fontSize={window.innerHeight > 950 ? 0.45 : 0.3}
-          position.y={2}
-        />
-      {/if}
-    </Box>
-  </Billboard>
+  <Box flex={1} width="100%" height="100%">
+    {#if !menuOpened || $Settings.camera.sequence.recording || $Settings.camera.sequence.reset}
+      <HTML center>
+        <div class="hint">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M6 15L12 9L18 15"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <span>{tips}</span>
+        </div>
+      </HTML>
+    {/if}
+  </Box>
 </Flex>
 
 <svelte:window on:keydown|preventDefault={onKeyDown} />
+
+<style>
+  span {
+    font-family: "Oxanium", sans-serif;
+    width: 32vw;
+    text-align: center;
+    opacity: 0;
+    color: white;
+
+    animation: 1s fadeIn 0.5s forwards;
+  }
+
+  @media (max-width: 600px) {
+    span {
+      font-family: "Oxanium", sans-serif;
+      width: 75vw;
+      text-align: center;
+      opacity: 0;
+      color: white;
+
+      animation: 2s fadeIn 0.5s forwards;
+    }
+  }
+
+  .hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    gap: 20px;
+  }
+
+  .hint svg {
+    display: block;
+    opacity: 0;
+
+    animation: 2s fadeIn 0.5s forwards;
+  }
+
+  @keyframes fadeIn {
+    100% {
+      opacity: 1;
+    }
+  }
+</style>

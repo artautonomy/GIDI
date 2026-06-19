@@ -4,6 +4,7 @@
   import {
     Align,
     Billboard,
+    HTML,
     interactivity,
     OrbitControls,
     InstancedMesh,
@@ -79,7 +80,7 @@
   const MIDIConnectedButtonScale = new Spring(
     window.innerWidth < 475
       ? window.innerWidth / 37.5
-      : window.innerWidth / 127.5
+      : window.innerWidth / 127.5,
   );
 
   const MIDIConnectedButtonRotation = new Tween(0, {
@@ -88,7 +89,7 @@
     easing: cubicInOut,
   });
 
-  const MIDIConnectedButtonPosition = new Tween(1, {
+  const MIDIConnectedButtonPosition = new Tween(0, {
     delay: 1500,
     duration: 1500,
     easing: cubicInOut,
@@ -157,8 +158,7 @@
   const title = "GIDI - a visualiser for MIDI";
 
   const summary =
-    "A free, web application intended for live performances. By interpreting MIDI note on/off messages GIDI then renders and animates a scene on a web browser.";
-
+    "A free web application to play MIDI live. Use note on/off messages to create animations on a web browser, no account required.";
   const instruction =
     "To get started click 'Allow' on the MIDI permission window or try the demo below";
 
@@ -285,12 +285,12 @@
           () => {
             mobileNotes[index].velocity = 0;
           },
-          Math.floor(Math.random() * 1000)
+          Math.floor(Math.random() * 1000),
         );
 
         oldIndex = index;
       },
-      Math.floor((Math.random() + 0.5) * 500)
+      Math.floor((Math.random() + 0.5) * 500),
     );
   }, 500);
 
@@ -375,12 +375,12 @@
             () => {
               mobileNotes[index].velocity = 0;
             },
-            Math.floor(Math.random() * 1000)
+            Math.floor(Math.random() * 1000),
           );
 
           oldIndex = index;
         },
-        Math.floor((Math.random() + 0.5) * 500)
+        Math.floor((Math.random() + 0.5) * 500),
       );
     }, 500);
   }
@@ -427,12 +427,12 @@
             () => {
               mobileNotes[index].velocity = 0;
             },
-            Math.floor(Math.random() * 1000)
+            Math.floor(Math.random() * 1000),
           );
 
           oldIndex = index;
         },
-        Math.floor((Math.random() + 0.5) * 500)
+        Math.floor((Math.random() + 0.5) * 500),
       );
     }, 500);
   }
@@ -465,13 +465,14 @@
 >
   <OrbitControls
     enableDamping
+    rotateSpeed={2}
     enablePan={false}
     enableZoom={false}
     maxPolarAngle={Math.PI / 2.5}
     minPolarAngle={Math.PI / 2.5}
     onstart={(e) => {
       hintArrow.target = 0.75;
-      tips = "To shuffle colours tap here";
+      tips = "To shuffle colours tap the scene";
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -481,34 +482,14 @@
   height={window.innerHeight / 40}
   flexDirection="Column"
 >
-  <Billboard>
-    <Box flex={4} width="100%" height="100%">
-      {#snippet children({ width })}
-        <Text
-          text={title}
-          color={"orange"}
-          font={$Settings.font}
-          fontSize={width > 20 ? 0.8 : 0.75}
-          textAlign={"center"}
-          anchorX={"center"}
-          position.y={2.5}
-          position.z="7"
-        />
-        <Text
-          text={summary}
-          maxWidth={width > 20 ? 21 : 10}
-          font={$Settings.font}
-          fontSize={width > 20 ? 0.5 : 0.45}
-          textAlign={"center"}
-          smooth={1}
-          anchorX={"center"}
-          position.y={1}
-          position.z="7"
-          outlineBlur={0.06}
-        />
-      {/snippet}
-    </Box>
-  </Billboard>
+  <Box flex={4} width="100%" height="100%">
+    {#if !clearScene}
+      <HTML center>
+        <h1>{title}</h1>
+        <h2>{summary}</h2>
+      </HTML>
+    {/if}
+  </Box>
   <Billboard>
     <Box flex={1} width="100%" height="100%">
       {#if allowMIDIAccess}
@@ -675,108 +656,194 @@
     {/if}
   </Box>
 
-  <Billboard>
-    <Box flex={3} width="100%" height="100%">
-      {#snippet children({ width })}
-        {#if !clearScene}
-          <T.Group position.y={MIDIConnectedScenePosition.current + 1.5}>
-            {#if cubeClicked}
-              <T.Mesh
-                receiveShadow
-                scale={navigationArrows.current}
-                position.x={width / 2}
-                rotation.z={-Math.PI / 2}
-                onpointerenter={onPointerEnter}
-                onpointerleave={onPointerLeave}
-                onclick={(event: MouseEvent) => {
-                  event.stopPropagation();
-                  styleNext();
-                }}
-              >
-                <T.BoxGeometry args={[2.75, 2.75, 1]} />
-                <T.MeshBasicMaterial transparent opacity={0} />
-                <T.Mesh>
-                  <T.ConeGeometry />
-                  <T.MeshBasicMaterial color={"orange"} shadow />
-                </T.Mesh>
-              </T.Mesh>
-              <T.Mesh scale={navigationArrows.current}>
-                <Text
-                  font={$Settings.font}
-                  fontSize={width > 20 ? 1 : 0.6}
-                  outlineBlur={0.06}
-                  text={styles[styleIndex]}
-                  textAlign={"center"}
-                  anchorX={"center"}
-                  position.x={0}
-                  position.y={0.5}
-                  position.z={10}
-                  color={"white"}
-                />
-
-                <Text
-                  font={$Settings.font}
-                  fontSize={width > 20 ? 0.55 : 0.4}
-                  maxWidth={width * 2.5}
-                  outlineBlur={0.06}
-                  text={styles[styleIndex] === "Piano"
-                    ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
-                    : "Recommended for pads and samplers."}
-                  textAlign={"center"}
-                  anchorX={"center"}
-                  position.x={0}
-                  position.y={width > 20 ? -1 : -0.5}
-                  position.z={10}
-                  color={"white"}
-                />
-                <T.MeshBasicMaterial
-                  color={"orange"}
-                  transparent={true}
-                  opacity={hintText.current}
-                />
-              </T.Mesh>
-              <T.Mesh
-                scale={navigationArrows.current}
-                position.x={-width / 2}
-                rotation.z={Math.PI / 2}
-                onpointerenter={onPointerEnter}
-                onpointerleave={onPointerLeave}
-                onclick={(event: MouseEvent) => {
+  <Box flex={3} width="100%" height="100%">
+    {#if !clearScene}
+      <T.Group position.y={MIDIConnectedScenePosition.current + 1.5}>
+        {#if cubeClicked}
+          <HTML center>
+            <div class="nav-bar">
+              <button
+                onpointerdown={(event: MouseEvent) => {
                   event.stopPropagation();
                   styleBack();
                 }}
+                aria-label="Back"
+                class="icon-btn"
               >
-                <T.BoxGeometry args={[2.75, 2.75, 1]} />
-                <T.MeshBasicMaterial transparent opacity={0} />
-                <T.Mesh>
-                  <T.ConeGeometry />
-                  <T.MeshBasicMaterial color={"orange"} shadow />
-                </T.Mesh>
-              </T.Mesh>
-            {:else}
-              <T.Mesh scale={hintArrow.current} position.y={1} position.z={7}>
-                <T.ConeGeometry />
-                <T.MeshBasicMaterial
-                  color={"orange"}
-                  transparent={true}
-                  opacity={hintText.current}
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15 18L9 12L15 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg></button
+              >
+              <div class="styleDescription">
+                <h2>{styles[styleIndex]}</h2>
+
+                <span>
+                  {styles[styleIndex] === "Piano"
+                    ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
+                    : "Recommended for pads and samplers."}
+                </span>
+              </div>
+              <button
+                onpointerdown={(event: MouseEvent) => {
+                  event.stopPropagation();
+                  styleNext();
+                }}
+                aria-label="Forward"
+                class="icon-btn"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 18L15 12L9 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg></button
+              >
+            </div>
+          </HTML>
+        {:else}
+          <HTML center>
+            <div class="hint">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6 15L12 9L18 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
                 />
-              </T.Mesh>
-              <Text
-                fillOpacity={hintText.current}
-                text={tips}
-                color={"orange"}
-                font={$Settings.font}
-                fontSize={width > 20 ? 0.5 : 0.45}
-                textAlign={"center"}
-                anchorX={"center"}
-                position.y={0}
-                position.z={7}
-              />
-            {/if}
-          </T.Group>
+              </svg>
+
+              <span>To shuffle colours tap the scene</span>
+            </div>
+          </HTML>
         {/if}
-      {/snippet}
-    </Box>
-  </Billboard>
+      </T.Group>
+    {/if}
+  </Box>
 </Flex>
+
+<style>
+  h1,
+  h2,
+  span {
+    font-family: "Oxanium", sans-serif;
+    width: 32vw;
+    text-align: center;
+    opacity: 0;
+    color: white;
+
+    animation: 2s fadeIn 0.5s forwards;
+  }
+
+  h1 {
+    color: orange;
+    margin-bottom: 3.33vh;
+  }
+  h2 {
+    font-size: 1.1em;
+
+    text-align: center;
+  }
+  span {
+    font-size: 1em;
+  }
+
+  @media (max-width: 600px) {
+    h1,
+    h2,
+    span {
+      font-family: "Oxanium", sans-serif;
+      width: 75vw;
+      text-align: center;
+      opacity: 0;
+      color: white;
+
+      animation: 2s fadeIn 0.5s forwards;
+    }
+
+    h2 {
+      font-size: 1em;
+
+      text-align: center;
+    }
+
+    span {
+      font-size: 0.8em;
+    }
+  }
+
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0;
+    color: white;
+  }
+
+  .styleDescription {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    opacity: 0;
+
+    animation: 2s fadeIn 0.5s forwards;
+  }
+  .hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    gap: 20px;
+  }
+
+  .hint svg {
+    display: block;
+    opacity: 0;
+
+    animation: 2s fadeIn 0.5s forwards;
+  }
+
+  @keyframes fadeIn {
+    100% {
+      opacity: 1;
+    }
+  }
+</style>

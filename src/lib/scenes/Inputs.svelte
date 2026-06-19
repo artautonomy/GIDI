@@ -2,8 +2,8 @@
   import { T, useTask, useThrelte } from "@threlte/core";
   import { Color } from "three";
   import {
-    Align,
     Billboard,
+    HTML,
     InstancedMesh,
     interactivity,
     OrbitControls,
@@ -19,12 +19,11 @@
 
   import Input from "../instances/Input.svelte";
   import Lighting from "./Lighting.svelte";
-  import { dev } from "$app/environment";
 
   const { scene } = $state(useThrelte());
 
   scene.background = new Color(
-    `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`
+    `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`,
   );
 
   type MIDIMessage = {
@@ -42,10 +41,11 @@
     };
   };
 
-  const title = "Inputs";
+  const title = "MIDI inputs found";
 
-  const summary =
-    "Multiple MIDI inputs found\n\nIf you are unsure on the MIDI input you require play a note to see";
+  const summary = "Play a note to see an input's note on messages";
+
+  let clearScene = $state(false);
 
   let rotation = $state(0);
 
@@ -66,6 +66,8 @@
   onDestroy(unsubscribe);
 
   function setupStyle(deviceID: string) {
+    clearScene = true;
+
     $Device.selected = true;
     $Device.id = deviceID;
 
@@ -125,72 +127,99 @@
 <Lighting />
 
 <Flex
-  width={window.innerWidth / 40}
+  width={window.innerWidth / 50}
   height={window.innerHeight / 40}
   flexDirection="Column"
 >
-  <Billboard>
-    <Box flex={1} width="100%" height="100%">
-      {#snippet children({ width })}
-        <Text
-          text={title}
-          color={"orange"}
-          font={$Settings.font}
-          fontSize={width > 20 ? 0.8 : 0.75}
-          textAlign={"center"}
-          anchorX={"center"}
-          position.y={2.5}
-          position.z="7"
-        />
-        <Text
-          text={summary}
-          maxWidth={width > 20 ? 21 : 10}
-          font={$Settings.font}
-          fontSize={width > 20 ? 0.5 : 0.45}
-          textAlign={"center"}
-          smooth={1}
-          anchorX={"center"}
-          position.y={1}
-          position.z="7"
-          outlineBlur={0.06}
-        />
-      {/snippet}
-    </Box>
-  </Billboard>
-  <Billboard follow>
-    <Box flex={1} width="100%" height="100%">
-      {#each $Device.inputs as device, index}
-        <T.Group
-          onpointerenter={onPointerEnterStyle}
-          onpointerleave={onPointerLeaveStyle}
-          onclick={() => setupStyle(device.id)}
-        >
-          <InstancedMesh>
-            <T.BoxGeometry args={[10, 0.75, 1]} />
-            <T.MeshStandardMaterial shadow />
-
-            <Input
-              position={{ x: 0, y: index, z: 0 }}
-              keyColour={{ r: 80, g: 50, b: 111 }}
-              expressionColour={{ r: 77, g: 144, b: 57 }}
-              device={device.id}
-              velocity={device.velocity}
-            />
-
-            <Text
-              text={device.name}
-              font={$Settings.font}
-              fontSize={0.5}
-              textAlign={"center"}
-              smooth={1}
-              anchorX={"center"}
-              anchorY={"middle"}
-              position={[0, index, 0.505]}
-              outlineBlur={0.06}
-            />
-          </InstancedMesh>
-        </T.Group>
-      {/each}
-    </Box>
-  </Billboard>
+  <Box flex={2} width="100%" height="100%">
+    {#if !clearScene}
+      <HTML center>
+        <h1>{title}</h1>
+        <h2>{summary}</h2>
+      </HTML>
+    {/if}
+  </Box>
+  <Box flex={12} width="100%" height="100%">
+    {#if !clearScene}
+      <HTML center>
+        {#each $Device.inputs as device, index}
+          <button
+            onpointerdown={() => setupStyle(device.id)}
+            style={device.velocity > 0 ? "green" : "white"}
+            >{device.name}</button
+          >
+        {/each}
+      </HTML>
+    {/if}
+  </Box>
 </Flex>
+
+<style>
+  h1,
+  h2,
+  button {
+    font-family: "Oxanium", sans-serif;
+    width: 32vw;
+    text-align: center;
+    opacity: 0;
+    color: white;
+
+    animation: 1s fadeIn 0.5s forwards;
+  }
+
+  button {
+    display: block;
+    background-color: rgb(90, 187, 66);
+    font-size: 1em;
+    padding: 20px;
+    width: 15vw;
+    height: auto;
+    margin: 0.75vh;
+    cursor: pointer;
+    color: black;
+    font-weight: bolder;
+  }
+
+  @media (max-width: 600px) {
+    h1,
+    h2,
+    button {
+      font-family: "Oxanium", sans-serif;
+      width: 75vw;
+      text-align: center;
+      opacity: 0;
+      color: white;
+
+      animation: 1s fadeIn 0.5s forwards;
+    }
+
+    button {
+      display: block;
+      background-color: rgb(90, 187, 66);
+      font-size: 1em;
+      padding: 20px;
+      width: 70vw;
+      height: auto;
+      margin: 0.75vh;
+      cursor: pointer;
+      color: black;
+      font-weight: bolder;
+    }
+  }
+
+  h1 {
+    color: orange;
+    margin-bottom: 3.33vh;
+  }
+  h2 {
+    font-size: 1.1em;
+
+    text-align: center;
+  }
+
+  @keyframes fadeIn {
+    100% {
+      opacity: 1;
+    }
+  }
+</style>
