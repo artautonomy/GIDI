@@ -3,16 +3,15 @@
   import { Color } from "three";
   import {
     Align,
-    Billboard,
     Gizmo,
     HTML,
     InstancedMesh,
     interactivity,
     OrbitControls,
-    Text,
     useCursor,
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
+  import { fade } from "svelte/transition";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
@@ -96,16 +95,6 @@
     easing: cubicIn,
   });
 
-  const hintText = new Tween(1, {
-    duration: 500,
-    easing: cubicInOut,
-  });
-
-  const hintArrow = new Tween(0, {
-    duration: 500,
-    easing: cubicInOut,
-  });
-
   fadeIn.target = 85;
   introZoom.target = zoom;
 
@@ -116,8 +105,6 @@
 
     noteScale.target =
       1 - Math.log(midiMessages.length) / Math.log(window.innerWidth) - 0.2;
-
-    hintText.target = 0;
 
     setTimeout(() => {
       menuOpened = true;
@@ -153,7 +140,6 @@
 
   $effect(() => {
     if ($Settings.camera.sequence.reset) {
-      hintText.target = 1;
       tips = "Recording reset";
 
       recordCords = [];
@@ -251,8 +237,6 @@
         "Z = " +
         camera.current.position.z;
 
-      hintText.target = 1;
-
       recordCords = [
         ...recordCords,
         [
@@ -263,8 +247,6 @@
       ];
     }
   }
-
-  $Settings.orbitControls = true;
 </script>
 
 <Lighting />
@@ -281,10 +263,8 @@
     enableZoom={!$Settings.edit}
     autoRotate={$Settings.camera.autoRotate.enabled}
     autoRotateSpeed={$Settings.camera.autoRotate.speed}
-    enabled={$Settings.orbitControls}
     onstart={() => {
       if (!menuOpened && !$Settings.camera.sequence.recording) {
-        hintArrow.target = 0.75;
         tips = "To edit the scene click here or press 'e'";
       }
     }}
@@ -377,7 +357,11 @@
   <Box flex={1} width="100%" height="100%">
     {#if !menuOpened || $Settings.camera.sequence.recording || $Settings.camera.sequence.reset}
       <HTML center>
-        <div class="hint">
+        <div
+          class="hint"
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200, delay: 1000 }}
+        >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path
               d="M6 15L12 9L18 15"

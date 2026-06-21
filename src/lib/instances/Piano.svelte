@@ -92,7 +92,7 @@
             ? 0
             : 255
           : keyColour.r,
-        { duration: release }
+        { duration: release },
       );
       g.set(
         scale.x === 0.5
@@ -100,7 +100,7 @@
             ? 0
             : 255
           : keyColour.g,
-        { duration: release }
+        { duration: release },
       );
       b.set(
         scale.x === 0.5
@@ -108,7 +108,7 @@
             ? 0
             : 255
           : keyColour.b,
-        { duration: release }
+        { duration: release },
       );
     }
   });

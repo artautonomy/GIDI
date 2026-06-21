@@ -1,45 +1,20 @@
 <script lang="ts">
   import { T, useTask, useThrelte } from "@threlte/core";
   import { Color } from "three";
-  import {
-    Billboard,
-    HTML,
-    InstancedMesh,
-    interactivity,
-    OrbitControls,
-    Text,
-    useCursor,
-  } from "@threlte/extras";
+  import { HTML, OrbitControls } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
-  import { Tween, Spring } from "svelte/motion";
+  import { Tween } from "svelte/motion";
+  import { fade } from "svelte/transition";
   import { cubicInOut } from "svelte/easing";
-  import { Device, MIDI, Settings } from "../store";
-  import { onDestroy } from "svelte";
-  import { goto } from "$app/navigation";
-
-  import Input from "../instances/Input.svelte";
+  import { Device, Settings } from "../store";
   import Lighting from "./Lighting.svelte";
+  import { goto } from "$app/navigation";
 
   const { scene } = $state(useThrelte());
 
   scene.background = new Color(
     `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`,
   );
-
-  type MIDIMessage = {
-    note: number;
-    velocity: number;
-    position: {
-      x: number;
-      y: number;
-      z: number;
-    };
-    scale: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
 
   const title = "MIDI inputs found";
 
@@ -52,18 +27,6 @@
   useTask((delta) => {
     rotation += delta;
   });
-
-  let midiMessages = $state<MIDIMessage[]>([]);
-
-  let highlighted = $state($Settings.notes.colours.key);
-
-  let selected = $state(false);
-
-  const unsubscribe = MIDI.subscribe((notes) => {
-    midiMessages = notes;
-  });
-
-  onDestroy(unsubscribe);
 
   function setupStyle(deviceID: string) {
     clearScene = true;
@@ -84,21 +47,6 @@
     }, 750);
   }
 
-  const { onPointerEnter, onPointerLeave } = useCursor();
-  const {
-    hovering,
-    onPointerEnter: onPointerEnterStyle,
-    onPointerLeave: onPointerLeaveStyle,
-  } = useCursor();
-  interactivity();
-
-  $effect(() => {
-    if (!$hovering && !selected) {
-      highlighted = $Settings.notes.colours.key;
-    } else {
-      highlighted = { r: 77, g: 144, b: 57 };
-    }
-  });
   const introZoom = new Tween(0);
 
   introZoom.set(35, {
@@ -120,7 +68,6 @@
     enableDamping
     autoRotateSpeed={$Settings.camera.autoRotate.speed}
     autoRotate={$Settings.camera.autoRotate.enabled}
-    enabled={$Settings.orbitControls}
   ></OrbitControls>
 </T.OrthographicCamera>
 
@@ -134,22 +81,43 @@
   <Box flex={2} width="100%" height="100%">
     {#if !clearScene}
       <HTML center>
-        <h1>{title}</h1>
-        <h2>{summary}</h2>
+        <h1
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
+          {title}
+        </h1>
+        <h2
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
+          {summary}
+        </h2>
       </HTML>
     {/if}
   </Box>
   <Box flex={12} width="100%" height="100%">
-    {#if !clearScene}
-      <HTML center>
-        {#each $Device.inputs as device, index}
-          <button
-            onpointerdown={() => setupStyle(device.id)}
-            style={device.velocity > 0 ? "green" : "white"}
-            id="input">{device.name}</button
-          >
-        {/each}
-      </HTML>
-    {/if}
+    <HTML center>
+      {#each $Device.inputs as device}
+        <button
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+          onpointerdown={() => setupStyle(device.id)}
+          style:background-Color={device.velocity > 0
+            ? "rgb(140, 237, 116)"
+            : "rgb(90, 187, 66)"}
+          id="input">{device.name}</button
+        >
+      {/each}
+    </HTML>
   </Box>
 </Flex>
+
+<style>
+  button {
+    font-family: "Oxanium", sans-serif;
+    width: 32vw;
+    text-align: center;
+    color: white;
+  }
+</style>

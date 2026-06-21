@@ -71,10 +71,8 @@ threlte {
     font-family: "Oxanium", sans-serif;
     width: 32vw;
     text-align: center;
-    opacity: 0;
     color: white;
 
-    animation: 2s fadeIn 0.5s forwards;
   }
 
   h1 {
@@ -130,9 +128,9 @@ threlte {
     align-items: center;
     justify-content: center;
     color: inherit;
-    opacity: 0;
 
-    animation: 2s fadeIn 0.5s forwards;
+    
+
   }
   .icon-btn#select {
     background-color: rgb(90, 187, 66);
@@ -157,9 +155,7 @@ threlte {
 
   .hint svg {
     display: block;
-    opacity: 0;
 
-    animation: 2s fadeIn 0.5s forwards;
   }
 
   .styleDescription {
@@ -179,10 +175,8 @@ threlte {
       font-family: "Oxanium", sans-serif;
       width: 75vw;
       text-align: center;
-      opacity: 0;
       color: white;
 
-      animation: 2s fadeIn 0.5s forwards;
     }
 
     h1 {
@@ -214,9 +208,3 @@ threlte {
   }
 
   
-  
-  @keyframes fadeIn {
-    100% {
-      opacity: 1;
-    }
-  }

@@ -40,23 +40,23 @@
 
   let hsv = $state(
     colord(
-      `rgb(${$Settings.notes.colours.expression.r}, ${$Settings.notes.colours.expression.g}, ${$Settings.notes.colours.expression.b})`
-    ).toHsv()
+      `rgb(${$Settings.notes.colours.expression.r}, ${$Settings.notes.colours.expression.g}, ${$Settings.notes.colours.expression.b})`,
+    ).toHsv(),
   );
 
   let hex = $state(
     colord(
-      `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`
-    ).toHex()
+      `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`,
+    ).toHex(),
   );
 
   let menuColour = $state(
     colord(
-      `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`
+      `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`,
     )
       .invert()
       .desaturate(0.3)
-      .darken(0.1)
+      .darken(0.1),
   );
 
   function styleChange() {
@@ -554,7 +554,7 @@
 
         setTimeout(() => {
           menuColour = colord(
-            `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`
+            `rgb(${$Settings.scene.colours.background.r}, ${$Settings.scene.colours.background.g}, ${$Settings.scene.colours.background.b})`,
           )
             .invert()
             .desaturate(0.3)
@@ -571,15 +571,19 @@
     src: url("/fonts/Oxanium-Bold.ttf");
   }
 
-  button {
+  button,
+  select {
     font-family: "Oxanium";
+  }
+
+  button {
     background-color: var(--menuTextColour);
     color: black;
     display: block;
     width: 25%;
     margin: 2.5% 37.5%;
     cursor: pointer;
-    border-style: none;
+    border: none;
   }
 
   button.small {
@@ -587,22 +591,6 @@
     color: white;
     width: 50%;
     margin: 10% 25% 2%;
-  }
-
-  button.setting:hover {
-    font-weight: bold;
-    background-color: rgb(135, 238, 149);
-    color: black;
-  }
-  button.small:hover {
-    font-weight: bold;
-    background-color: rgb(135, 238, 149);
-    color: black;
-  }
-  button#close:hover {
-    font-weight: bold;
-    background-color: rgb(135, 238, 149);
-    color: black;
   }
 
   button#close {
@@ -624,74 +612,24 @@
     width: 12.5%;
   }
 
+  button:hover,
+  button.small:hover,
+  button.setting:hover,
+  button#close:hover {
+    font-weight: bold;
+    background-color: rgb(135, 238, 149);
+    color: black;
+  }
+
   .recordControls {
     width: 50%;
     height: auto;
   }
 
-  select {
-    font-family: "Oxanium";
-    border-style: solid;
-    color: var(--menuTextColour);
-    border-width: 1px;
-    background: rgba(0, 0, 0, 0);
-    width: 75%;
-    outline: 0;
-    box-shadow: 0.5px 1px 2px var(--menuTextColour);
-    border-color: var(--menuTextColour);
-    height: 20px;
-    margin-bottom: 1vh;
-    text-shadow: 1px 1px 1px BLACK;
-  }
-  select * {
-    color: #000;
-  }
-
-  input[type="range"] {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    border-style: solid;
-    color: var(--menuTextColour);
-    border-width: 1px;
-    background: rgba(0, 0, 0, 0);
-    height: 10px;
-    width: 75%;
-    outline: 0;
-    box-shadow: 0.5px 1px 2px var(--menuTextColour);
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
-    background: var(--menuTextColour);
-    height: 10px;
-    width: 10px;
-  }
-
-  input[type="checkbox"] {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    cursor: pointer;
-    height: 17.5px;
-    width: 17.5px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: var(--menuTextColour);
-    box-shadow: 0.25px 0.25px 1.75px var(--menuTextColour);
-  }
-  input[type="checkbox"]:checked {
-    background-color: var(--menuTextColour);
-    border-color: #397a4b;
-    border-width: 2px;
-  }
-  settings {
-    font-family: "Oxanium";
-
-    background-image: linear-gradient(
-      -45deg,
-      #5e4663,
-      #2e2d49,
-      #b6895c,
-      #558163
-    );
+  .setting {
+    width: 50%;
+    height: 100%;
+    margin: 2.5%;
   }
 
   settingOptions {
@@ -703,10 +641,82 @@
     display: block;
     padding-top: 5%;
   }
-  .setting {
-    width: 50%;
-    height: 100%;
-    margin: 2.5%;
+
+  span {
+    animation: none;
+    opacity: 1;
+  }
+
+  label {
+    animation: none;
+    opacity: 1;
+  }
+  select {
+    border: 1px solid var(--menuTextColour);
+    background: transparent;
+    width: 75%;
+    outline: none;
+    box-shadow: 0.5px 1px 2px var(--menuTextColour);
+    color: var(--menuTextColour);
+    height: 20px;
+    margin-bottom: 1vh;
+    text-shadow: 1px 1px 1px black;
+  }
+
+  select * {
+    color: #000;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid var(--menuTextColour);
+    background: transparent;
+    height: 10px;
+    width: 75%;
+    outline: none;
+    box-shadow: 0.5px 1px 2px var(--menuTextColour);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: var(--menuTextColour);
+    height: 10px;
+    width: 10px;
+  }
+
+  input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    height: 17.5px;
+    width: 17.5px;
+    border: 1px solid var(--menuTextColour);
+    box-shadow: 0.25px 0.25px 1.75px var(--menuTextColour);
+  }
+
+  input[type="checkbox"]:checked {
+    background-color: var(--menuTextColour);
+    border: 2px solid #397a4b;
+  }
+
+  settings {
+    font-family: "Oxanium";
+    background-image: linear-gradient(
+      -45deg,
+      #5e4663,
+      #2e2d49,
+      #b6895c,
+      #558163
+    );
+  }
+
+  scene {
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: var(--sceneHeight);
   }
 
   @media (max-width: 600px) {
@@ -714,43 +724,37 @@
       display: block;
       position: absolute;
       text-align: center;
-
-      background-size: 600% 600%;
-      animation: gradientAnimation 85s infinite;
       bottom: 0;
       width: 100vw;
       margin: 0;
       padding: 0;
       z-index: 1;
+      background-size: 600% 600%;
+      animation: gradientAnimation 85s infinite;
       transform-origin: top;
     }
 
     h1 {
+      width: 100%;
       color: var(--menuTextColour);
       font-size: 1.25em;
       margin-top: 2.5%;
       text-decoration: underline;
-      text-shadow: 1px 1px 1px BLACK;
+      text-shadow: 1px 1px 1px black;
+      animation: none;
+      opacity: 1;
     }
+
     label {
       display: block;
       font-size: 0.9em;
       color: var(--menuTextColour);
-      margin-top: 0.5px;
-      margin-bottom: 0.5px;
-      text-shadow: 1px 1px 1px BLACK;
+      margin: 0.5px 0;
+      text-shadow: 1px 1px 1px black;
     }
 
     button {
       height: 7.5%;
-    }
-
-    scene {
-      display: block;
-      position: absolute;
-      top: 0;
-      width: 100vw;
-      height: var(--sceneHeight);
     }
 
     settingOptions {
@@ -764,50 +768,49 @@
       display: block;
       position: absolute;
       text-align: center;
-
-      background-size: 600% 600%;
-      animation: gradientAnimation 85s infinite;
       top: 0;
       height: 66vh;
       width: 27.5vw;
       margin: 0;
       padding: 0;
+      background-size: 600% 600%;
+      animation: gradientAnimation 85s infinite;
       transform-origin: top;
     }
 
     h1 {
-      margin-top: 5%;
-
+      width: 100%;
+      margin: 5% 0%;
       color: var(--menuTextColour);
       font-size: 1.3em;
       text-decoration: underline;
-      text-shadow: 1px 1px 1px BLACK;
+      text-shadow: 1px 1px 1px black;
+      animation: none;
+      opacity: 1;
     }
+
     label {
       display: block;
       font-size: 0.9em;
       color: var(--menuTextColour);
-      margin-top: 20px;
-      margin-bottom: 10px;
-      text-shadow: 1px 1px 1px BLACK;
-    }
-    button {
-      height: 5%;
+      margin: 20px 0 10px;
+      text-shadow: 1px 1px 1px black;
     }
 
-    scene {
-      display: block;
-      position: absolute;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
+    button {
+      height: 5%;
     }
 
     settingOptions {
       height: 5%;
       padding-bottom: 5%;
     }
+
+    scene {
+      height: 100vh;
+    }
   }
+
   @keyframes gradientAnimation {
     0% {
       background-position: 100% 90%;

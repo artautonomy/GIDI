@@ -47,7 +47,6 @@ export let Settings = writable({
     edit: false,
     styleReset: false,
     font: "/fonts/Oxanium-Regular.ttf",
-    orbitControls: false,
     zoom: true,
     sceneSelected: 'Piano',
     notes: {

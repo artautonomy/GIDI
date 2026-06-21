@@ -219,12 +219,7 @@
         note = handleMIDIStatus(status, note);
 
         //Device selected
-
-        //testing new styles
-        $Device.selected = true;
-        //if ($Device.selected && $Device.id == device) {
-
-        if ($Device.selected) {
+        if ($Device.selected && $Device.id == device) {
           //piano
           if ($Settings.sceneSelected === "Piano") {
             noteExists = pianoNotes.some((key) => key.note === note);
@@ -353,7 +348,7 @@
                   //if first note white
                   if (!firstNoteName.includes("#")) {
                     whiteNote = whiteKeys.find(
-                      (element) => element.note === key.note - 1
+                      (element) => element.note === key.note - 1,
                     );
 
                     offsetBlackKey = whiteNote.position.x + 0.5;
@@ -362,7 +357,7 @@
                       offsetBlackKey = 0.5;
                     } else {
                       whiteNote = whiteKeys.find(
-                        (element) => element.note === key.note - 1
+                        (element) => element.note === key.note - 1,
                       );
 
                       offsetBlackKey = whiteNote.position.x + 0.5;
@@ -450,7 +445,7 @@
 
         if (channelExists) {
           $Map.inputs = $Map.inputs.map((key) =>
-            key.id === status ? { ...key, value: velocity } : key
+            key.id === status ? { ...key, value: velocity } : key,
           );
 
           const getChannel = $Map.inputs.find((key) => key.id === status);

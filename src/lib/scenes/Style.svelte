@@ -11,6 +11,7 @@
     Text,
     useCursor,
   } from "@threlte/extras";
+  import { fade } from "svelte/transition";
   import { Tween, Spring } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
@@ -41,7 +42,7 @@
   const title = "Style";
 
   const summary =
-    "Play your MIDI device to sample styles\n\nTo confirm your style select it";
+    "Play your MIDI device to sample styles.\n\nTo confirm your style select it";
 
   const MIDIConnectedButtonScale = new Spring(
     window.innerWidth < 475
@@ -128,7 +129,6 @@
     }, 750);
   }
 
-  const { onPointerEnter, onPointerLeave } = useCursor();
   const {
     hovering,
     onPointerEnter: onPointerEnterStyle,
@@ -182,7 +182,8 @@
     enableDamping
     autoRotate={$Settings.camera.autoRotate.enabled}
     autoRotateSpeed={$Settings.camera.autoRotate.speed}
-    enabled={$Settings.orbitControls}
+    maxPolarAngle={Math.PI / 3}
+    minPolarAngle={Math.PI / 3}
   ></OrbitControls>
 </T.OrthographicCamera>
 
@@ -192,16 +193,24 @@
   gap={window.innerHeight / 300}
   flexDirection="Column"
 >
-  <Billboard>
-    <Box flex={1} width="100%" height="100%">
-      {#if !clearScene}
-        <HTML center>
-          <h1>{title}</h1>
-          <h2>{summary}</h2>
-        </HTML>
-      {/if}
-    </Box>
-  </Billboard>
+  <Box flex={1} width="100%" height="100%">
+    {#if !clearScene}
+      <HTML center>
+        <h1
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
+          {title}
+        </h1>
+        <h2
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
+          {summary}
+        </h2>
+      </HTML>
+    {/if}
+  </Box>
 
   <Box flex={1} width="100%" height="100%">
     {#if notePlayed}
@@ -212,13 +221,49 @@
           onpointerleave={onPointerLeaveStyle}
           onclick={() => setupScene(styles[styleIndex])}
         >
-          <InstancedMesh>
-            <T.BoxGeometry />
-            <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
+          {#key $Settings.styleReset}
+            <InstancedMesh>
+              <T.BoxGeometry />
+              <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
+              {#each midiMessages as noteNumber}
+                <!-- Show sample of styles -->
+                {#if styles[styleIndex] === "Piano"}
+                  <Piano
+                    position={noteNumber.position}
+                    scale={noteNumber.scale}
+                    velocity={noteNumber.velocity}
+                    attack={$Settings.notes.attack}
+                    release={$Settings.notes.release}
+                    keyColour={highlighted}
+                    expressionColour={$Settings.notes.colours.expression}
+                  />
+                {:else if styles[styleIndex] === "Mirror"}
+                  <Mirror
+                    position={noteNumber.position}
+                    scale={noteNumber.scale}
+                    velocity={noteNumber.velocity}
+                    attack={$Settings.notes.attack}
+                    release={$Settings.notes.release}
+                    keyColour={highlighted}
+                    expressionColour={$Settings.notes.colours.expression}
+                  />
+                {:else if styles[styleIndex] === "Cube"}
+                  <Cube
+                    position={noteNumber.position}
+                    scale={noteNumber.scale}
+                    velocity={noteNumber.velocity}
+                    attack={$hovering ? 250 : $Settings.notes.attack}
+                    release={$hovering ? 250 : $Settings.notes.release}
+                    keyColour={highlighted}
+                    expressionColour={$Settings.notes.colours.expression}
+                  />
+                {/if}
+              {/each}
+            </InstancedMesh>
+
             {#each midiMessages as noteNumber}
-              <!-- Show sample of styles -->
-              {#if styles[styleIndex] === "Piano"}
-                <Piano
+              {#if styles[styleIndex] === "Swirl"}
+                <Swirl
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
@@ -227,53 +272,19 @@
                   keyColour={highlighted}
                   expressionColour={$Settings.notes.colours.expression}
                 />
-              {:else if styles[styleIndex] === "Mirror"}
-                <Mirror
+              {:else if styles[styleIndex] === "Firework"}
+                <Firework
                   position={noteNumber.position}
                   scale={noteNumber.scale}
                   velocity={noteNumber.velocity}
                   attack={$Settings.notes.attack}
                   release={$Settings.notes.release}
-                  keyColour={highlighted}
-                  expressionColour={$Settings.notes.colours.expression}
-                />
-              {:else if styles[styleIndex] === "Cube"}
-                <Cube
-                  position={noteNumber.position}
-                  scale={noteNumber.scale}
-                  velocity={noteNumber.velocity}
-                  attack={$hovering ? 250 : $Settings.notes.attack}
-                  release={$hovering ? 250 : $Settings.notes.release}
                   keyColour={highlighted}
                   expressionColour={$Settings.notes.colours.expression}
                 />
               {/if}
             {/each}
-          </InstancedMesh>
-
-          {#each midiMessages as noteNumber}
-            {#if styles[styleIndex] === "Swirl"}
-              <Swirl
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$Settings.notes.attack}
-                release={$Settings.notes.release}
-                keyColour={highlighted}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {:else if styles[styleIndex] === "Firework"}
-              <Firework
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$Settings.notes.attack}
-                release={$Settings.notes.release}
-                keyColour={highlighted}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {/if}
-          {/each}
+          {/key}
         </T.Group>
       </Align>
     {:else}
@@ -352,7 +363,11 @@
   <Box flex={1} width="100%" height="100%">
     {#if notePlayed && !clearScene}
       <HTML center>
-        <div class="nav-bar">
+        <div
+          class="nav-bar"
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
           <button
             onpointerdown={(event: MouseEvent) => {
               event.stopPropagation();

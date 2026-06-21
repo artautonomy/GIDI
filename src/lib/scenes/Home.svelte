@@ -12,6 +12,7 @@
     useCursor,
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
+  import { fade } from "svelte/transition";
   import { Spring, Tween } from "svelte/motion";
   import { cubicOut, cubicInOut } from "svelte/easing";
   import { Device, Settings } from "../store";
@@ -71,7 +72,11 @@
     };
   }[] = $state([]);
 
+  let firstContact = $state(false);
+
   let tips = $state("Swipe to rotate this demo scene");
+
+  let page = $state("");
 
   let cubeClicked = $state(false);
 
@@ -98,22 +103,6 @@
   const MIDIConnectedScenePosition = new Tween(-1.5, {
     delay: 500,
     duration: 1250,
-    easing: cubicInOut,
-  });
-
-  const hintText = new Tween(1, {
-    duration: 1000,
-    easing: cubicInOut,
-  });
-
-  const hintArrow = new Tween(0, {
-    duration: 1000,
-    easing: cubicInOut,
-  });
-
-  const navigationArrows = new Tween(0, {
-    delay: 1000,
-    duration: 1000,
     easing: cubicInOut,
   });
 
@@ -313,6 +302,12 @@
 
     MIDIConnectedScenePosition.target = -window.innerHeight / 50;
 
+    if ($Device.inputs.length > 1) {
+      page = "inputs";
+    } else {
+      page = "style";
+    }
+
     setTimeout(() => {
       clearScene = true;
 
@@ -322,14 +317,14 @@
       });
       setTimeout(() => {
         //if multiple inputs redirect to inputs page
-        if ($Device.inputs.length > 1) {
-          goto("./inputs");
+        if ((page = "inputs")) {
+          goto(`./inputs`);
         }
         //if 1 input go to style page
         else {
           $Device.selected = true;
           $Device.id = $Device.inputs[0].id;
-          goto("./style");
+          goto(`./style`);
         }
       }, 1000);
     }, 4000);
@@ -438,7 +433,9 @@
   }
 
   $effect(() => {
-    if ($Device.connected) {
+    if ($Device.connected && !firstContact) {
+      firstContact = true;
+
       Setup();
     }
   });
@@ -470,8 +467,7 @@
     enableZoom={false}
     maxPolarAngle={Math.PI / 2.5}
     minPolarAngle={Math.PI / 2.5}
-    onstart={(e) => {
-      hintArrow.target = 0.75;
+    onstart={() => {
       tips = "To shuffle colours tap the scene";
     }}
   ></OrbitControls>
@@ -485,8 +481,18 @@
   <Box flex={4} width="100%" height="100%">
     {#if !clearScene}
       <HTML center>
-        <h1>{title}</h1>
-        <h2>{summary}</h2>
+        <h1
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
+          {title}
+        </h1>
+        <h2
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
+          {summary}
+        </h2>
       </HTML>
     {/if}
   </Box>
@@ -541,7 +547,7 @@
           />
 
           <Text
-            text={"Loading Styles"}
+            text={`Loading ${page}`}
             font={$Settings.font}
             fontSize={0.4}
             textAlign={"center"}
@@ -576,8 +582,6 @@
         onclick={(event: MouseEvent) => {
           event.stopPropagation();
           cubeClicked = true;
-          hintText.target = 0;
-          navigationArrows.target = 0.75;
           $Settings.notes.colours.key = notesColours[notesIndex].key;
           $Settings.notes.colours.expression =
             notesColours[notesIndex].expression;
@@ -723,7 +727,11 @@
           </HTML>
         {:else}
           <HTML center>
-            <div class="hint">
+            <div
+              class="hint"
+              in:fade|global={{ duration: 1000, delay: 500 }}
+              out:fade|global={{ duration: 200 }}
+            >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M6 15L12 9L18 15"
