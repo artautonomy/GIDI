@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import { colord } from "colord";
   import { Settings } from "$lib/store";
+  import { Button, type Theme, ThemeUtils } from "svelte-tweakpane-ui";
+
   import MIDI from "$lib/MIDI Read.svelte";
   import github from "$lib/assets/socials/github.png";
   import paypal from "$lib/assets/socials/paypal.png";
@@ -11,6 +13,12 @@
   let { children } = $props();
 
   let loaded = $state(false);
+
+  const customizedTheme: Theme = {
+    ...ThemeUtils.presets.iceberg,
+    baseBackgroundColor: "hsla(230, 20%, 11%, 0.5)",
+    labelForegroundColor: "hsla(230, 12%, 88%, 1.00)",
+  };
 
   onMount(() => {
     loaded = true;

@@ -265,7 +265,7 @@
     autoRotateSpeed={$Settings.camera.autoRotate.speed}
     onstart={() => {
       if (!menuOpened && !$Settings.camera.sequence.recording) {
-        tips = "To edit the scene click here or press 'e'";
+        tips = "To edit select the style or press 'e'";
       }
     }}
     onend={recordEndCoords}
@@ -359,8 +359,8 @@
       <HTML center>
         <div
           class="hint"
-          in:fade|global={{ duration: 1000, delay: 500 }}
-          out:fade|global={{ duration: 200, delay: 1000 }}
+          in:fade|global={{ duration: 750, delay: 250 }}
+          out:fade|global={{ duration: 900, delay: 100 }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path
@@ -372,7 +372,7 @@
             />
           </svg>
 
-          <span>{tips}</span>
+          <span id="tips">{tips}</span>
         </div>
       </HTML>
     {/if}

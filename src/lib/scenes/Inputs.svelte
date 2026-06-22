@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { T, useTask, useThrelte } from "@threlte/core";
-  import { Color } from "three";
+  import { T } from "@threlte/core";
   import { HTML, OrbitControls } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { Tween } from "svelte/motion";
@@ -10,25 +9,17 @@
   import Lighting from "./Lighting.svelte";
   import { goto } from "$app/navigation";
 
-  const { scene } = $state(useThrelte());
-
-  scene.background = new Color(
-    `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`,
-  );
-
   const title = "MIDI inputs found";
 
   const summary = "Play a note to see an input's note on messages";
 
   let clearScene = $state(false);
 
-  let rotation = $state(0);
+  function setupStyle(deviceID: string, e: MouseEvent) {
+    const target = e.currentTarget as HTMLButtonElement;
 
-  useTask((delta) => {
-    rotation += delta;
-  });
+    target.style.backgroundColor = "rgb(22, 55, 11)";
 
-  function setupStyle(deviceID: string) {
     clearScene = true;
 
     $Device.selected = true;
@@ -66,7 +57,11 @@
 >
   <OrbitControls
     enableDamping
-    autoRotateSpeed={$Settings.camera.autoRotate.speed}
+    rotateSpeed={2}
+    enablePan={false}
+    enableZoom={false}
+    maxPolarAngle={Math.PI / 2.5}
+    minPolarAngle={Math.PI / 2.5}
     autoRotate={$Settings.camera.autoRotate.enabled}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -97,27 +92,21 @@
     {/if}
   </Box>
   <Box flex={12} width="100%" height="100%">
-    <HTML center>
+    <HTML style="pointer-events: auto;" center>
       {#each $Device.inputs as device}
         <button
           in:fade|global={{ duration: 1000, delay: 500 }}
           out:fade|global={{ duration: 200 }}
-          onpointerdown={() => setupStyle(device.id)}
+          onpointerenter={(e) =>
+            (e.currentTarget.style.color = "rgb(185, 249, 169)")}
+          onpointerleave={(e) => (e.currentTarget.style.color = "white")}
+          onpointerdown={(e) => setupStyle(device.id, e)}
           style:background-Color={device.velocity > 0
-            ? "rgb(140, 237, 116)"
-            : "rgb(90, 187, 66)"}
+            ? "rgb(22, 55, 11)"
+            : "rgb(66,11,77)"}
           id="input">{device.name}</button
         >
       {/each}
     </HTML>
   </Box>
 </Flex>
-
-<style>
-  button {
-    font-family: "Oxanium", sans-serif;
-    width: 32vw;
-    text-align: center;
-    color: white;
-  }
-</style>

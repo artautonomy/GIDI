@@ -587,7 +587,7 @@
   }
 
   button.small {
-    background-color: #397a4b;
+    background-color: rgb(66, 11, 77);
     color: white;
     width: 50%;
     margin: 10% 25% 2%;
@@ -596,7 +596,7 @@
   button#close {
     position: absolute;
     bottom: 0;
-    background-color: #397a4b;
+    background-color: rgb(66, 11, 77);
     color: white;
     width: 75%;
     margin: 5% 12.5% 2%;
@@ -617,8 +617,7 @@
   button.setting:hover,
   button#close:hover {
     font-weight: bold;
-    background-color: rgb(135, 238, 149);
-    color: black;
+    color: rgb(185, 249, 169);
   }
 
   .recordControls {
@@ -630,6 +629,8 @@
     width: 50%;
     height: 100%;
     margin: 2.5%;
+    color: white;
+    background-color: rgb(66, 11, 77);
   }
 
   settingOptions {
@@ -640,11 +641,6 @@
   controls {
     display: block;
     padding-top: 5%;
-  }
-
-  span {
-    animation: none;
-    opacity: 1;
   }
 
   label {
@@ -704,8 +700,8 @@
     font-family: "Oxanium";
     background-image: linear-gradient(
       -45deg,
-      #5e4663,
-      #2e2d49,
+      #eeb448,
+      #0c1d51,
       #b6895c,
       #558163
     );

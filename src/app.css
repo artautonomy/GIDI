@@ -1,210 +1,215 @@
 @font-face {
-	font-family: 'Oxanium';
-	src: url('/fonts/Oxanium-Regular.ttf') format('truetype');
-	font-weight: 100;
-	font-style: normal;
+  font-family: 'Oxanium';
+  src: url('/fonts/Oxanium-Regular.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+/* --- Base layout --- */
+threlte {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* --- Typography --- */
+h1,
+h2,
+label,
+span {
+  font-family: "Oxanium", sans-serif;
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  color: orange;
+  margin-bottom: 3.33vh;
+  width: 32vw;
 
 }
 
-threlte {
-    display: none;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
+h2 {
+  font-size: 1.1em;
+  width: 32vw;
+}
 
-  img {
-    -webkit-filter: invert(var(--invert));
-    filter: invert(var(--invert));
-  }
+span {
+  font-size: 1em;
+}
+
+label {
+  display: block;
+  text-align: center;
+  margin-top: 1vh;
+  font-weight: bolder;
+}
+
+/* --- Buttons --- */
+button {
+  background-color: hsl(289, 77%, 17%);
+}
+
+/* --- Inputs --- */
+#input {
+  display: block;
+  background-color: hsl(108, 48%, 50%);
+  font-size: 1em;
+  padding: 20px;
+  width: 15vw;
+  margin: 0.75vh;
+  cursor: pointer;
+  color: white;
+  font-weight: bolder;
+  border: none;
+}
+
+#tips{
+  width: max-content;
+}
+
+/* --- Icons --- */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.icon-btn#select {
+  background-color: rgb(66, 11, 77);
+}
+
+.icons {
+  height: 100%;
+  width: auto;
+}
+
+/* --- Images --- */
+img {
+  -webkit-filter: invert(var(--invert));
+  filter: invert(var(--invert));
+}
+
+/* --- Layout blocks --- */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: white;
+}
+
+.style,
+.styleDescription {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+
+/* --- Hint UI --- */
+.hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  gap: 20px;
+}
+
+.hint svg {
+  display: block;
+}
+
+/* --- Socials (custom element) --- */
+socials {
+  opacity: var(--opacity, 1);
+  transition: opacity 3s 750ms ease;
+}
+
+/* Desktop socials */
+@media (min-width: 600px) {
   socials {
-    opacity: var(--opacity, 1);
-    transition: opacity 3s 750ms ease;
-  }
-  @media (min-width: 600px) {
-    socials {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      height: 2.75vh;
-      display: flex;
-      width: 175px;
-      float: right;
-      align-items: center;
-      flex-wrap: nowrap;
-      justify-content: space-around;
-      flex-direction: row;
-    }
-
-    a {
-      height: 55%;
-    }
-  }
-  @media (max-width: 600px) {
-    socials {
-      display: flex;
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      height: 3.75vh;
-      width: 100vw;
-      float: right;
-      align-items: center;
-      flex-wrap: nowrap;
-      justify-content: space-evenly;
-      flex-direction: row;
-    }
-    a {
-      height: 55%;
-    }
-  }
-  .icons {
-    height: 100%;
-    width: auto;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 2.75vh;
+    width: 175px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: nowrap;
   }
 
+  a {
+    height: 55%;
+  }
+}
 
+/* Mobile socials */
+@media (max-width: 600px) {
+  socials {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 3.75vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
 
+  a {
+    height: 55%;
+  }
+}
+
+/* --- Mobile typography overrides --- */
+@media (max-width: 600px) {
   h1,
   h2,
   span {
     font-family: "Oxanium", sans-serif;
-    width: 32vw;
     text-align: center;
     color: white;
-
   }
 
   h1 {
     color: orange;
-    margin-bottom: 3.33vh;
+    font-size: 1.5em;
+    width: 75vw;
   }
+
   h2 {
-    font-size: 1.1em;
+    font-size: 0.9em;
+    width: 75vw;
   }
+
   span {
-    font-size: 1em;
+    font-size: 0.8em;
   }
+
   #input {
     display: block;
     background-color: rgb(90, 187, 66);
     font-size: 1em;
     padding: 20px;
-    width: 15vw;
-    height: auto;
+    width: 70vw;
     margin: 0.75vh;
     cursor: pointer;
-    color: black;
-    font-weight: bolder;
-	border-style: none;
-  }
-
- 
-
-  .nav-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0;
     color: white;
-  }
-
-  .styleDescription {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 2px;
-  }
-
-  .icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: inherit;
-
-    
-
-  }
-  .icon-btn#select {
-    background-color: rgb(90, 187, 66);
-    font-size: 1em;
-    padding: 20px;
-    width: 20%;
-    height: 20px;
-    margin: 0.75vh;
-    color: black;
     font-weight: bolder;
   }
-
-  .hint {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-    gap: 20px;
-  }
-
-  .hint svg {
-    display: block;
-
-  }
-
-  .styleDescription {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 2px;
-  }
-
-
-  @media (max-width: 600px) {
-    h1,
-    h2,
-    span {
-      font-family: "Oxanium", sans-serif;
-      width: 75vw;
-      text-align: center;
-      color: white;
-
-    }
-
-    h1 {
-      color: orange;
-      font-size: 1.5em;
-    }
-
-    h2 {
-      font-size: 0.9em;
-    }
-
-    span {
-      font-size: 0.8em;
-    }
-
-	#input {
-		display: block;
-		background-color: rgb(90, 187, 66);
-		font-size: 1em;
-		padding: 20px;
-		width: 70vw;
-		height: auto;
-		margin: 0.75vh;
-		cursor: pointer;
-		color: black;
-		font-weight: bolder;
-	  }
-  
-  }
-
-  
+}

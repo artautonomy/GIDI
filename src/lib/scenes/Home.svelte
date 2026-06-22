@@ -1,6 +1,6 @@
 <script lang="ts">
   import { T } from "@threlte/core";
-  import { Color } from "three";
+  import { Color as ThreeColor } from "three";
   import {
     Align,
     Billboard,
@@ -15,6 +15,16 @@
   import { fade } from "svelte/transition";
   import { Spring, Tween } from "svelte/motion";
   import { cubicOut, cubicInOut } from "svelte/easing";
+
+  import {
+    Color,
+    Folder,
+    Slider,
+    ThemeUtils,
+    type Theme,
+    Pane,
+  } from "svelte-tweakpane-ui";
+
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Lighting from "./Lighting.svelte";
@@ -24,6 +34,19 @@
   import Mirror from "../instances/Mirror.svelte";
   import Swirl from "../instances/Swirl.svelte";
   import { onMount } from "svelte";
+
+  const customizedTheme: Theme = {
+    ...ThemeUtils.presets.jetblack,
+    baseFontFamily: "'Oxanium', sans-serif",
+    baseBackgroundColor: "hsla(289, 77%, 17%, 0.5)",
+    labelForegroundColor: "rgba(255,255,255,1)",
+    containerUnitSpacing: "5px",
+    bladeValueWidth: "60%",
+    grooveForegroundColor: "hsl(230, 80%, 55%)",
+    inputBackgroundColor: "rgba(0, 0, 0, 0.5)",
+    inputForegroundColor: "rgba(255, 255, 255, 1)",
+    containerForegroundColor: "rgba(255, 255, 255, 1)",
+  };
 
   interactivity();
 
@@ -82,6 +105,8 @@
 
   const introZoom = new Tween(0);
 
+  const sceneScale = new Spring([1, 1, 1]);
+
   const MIDIConnectedButtonScale = new Spring(
     window.innerWidth < 475
       ? window.innerWidth / 37.5
@@ -105,6 +130,8 @@
     duration: 1250,
     easing: cubicInOut,
   });
+
+  let editing = $state(false);
 
   const styles = $Settings.notes.styles;
 
@@ -432,6 +459,21 @@
     }, 500);
   }
 
+  function sceneClicked() {
+    cubeClicked = true;
+    sceneScale.target = [1.3, 1.3, 1.3];
+
+    setInterval(function () {
+      sceneScale.target = [1, 1, 1];
+    }, 200);
+
+    if (notesIndex >= notesColours.length - 1) {
+      notesIndex = 0;
+    } else {
+      notesIndex++;
+    }
+  }
+
   $effect(() => {
     if ($Device.connected && !firstContact) {
       firstContact = true;
@@ -461,6 +503,7 @@
   zoom={introZoom.current}
 >
   <OrbitControls
+    enabled={!editing}
     enableDamping
     rotateSpeed={2}
     enablePan={false}
@@ -468,7 +511,7 @@
     maxPolarAngle={Math.PI / 2.5}
     minPolarAngle={Math.PI / 2.5}
     onstart={() => {
-      tips = "To shuffle colours tap the scene";
+      tips = "To shuffle settings tap the scene";
     }}
   ></OrbitControls>
 </T.OrthographicCamera>
@@ -478,7 +521,7 @@
   height={window.innerHeight / 40}
   flexDirection="Column"
 >
-  <Box flex={4} width="100%" height="100%">
+  <Box flex={8} width="100%" height="100%">
     {#if !clearScene}
       <HTML center>
         <h1
@@ -487,12 +530,87 @@
         >
           {title}
         </h1>
-        <h2
-          in:fade|global={{ duration: 1000, delay: 500 }}
-          out:fade|global={{ duration: 200 }}
-        >
-          {summary}
-        </h2>
+
+        {#if cubeClicked}
+          <div
+            role="button"
+            tabindex="0"
+            in:fade|global={{ duration: 1000, delay: 500 }}
+            out:fade|global={{ duration: 200 }}
+            onpointerenter={() => {
+              editing = true;
+            }}
+            onpointerleave={() => {
+              editing = false;
+            }}
+          >
+            <Pane theme={customizedTheme} position="inline">
+              <Folder title="Colours" expanded={false}>
+                <Color
+                  bind:value={$Settings.notes.colours.key}
+                  label="Key Colour"
+                />
+                <Color
+                  bind:value={$Settings.notes.colours.expression}
+                  label="Key Expression Colour"
+                />
+              </Folder>
+              <Folder title="Note Weight" expanded={false}>
+                <Slider
+                  label="Note rise time"
+                  bind:value={$Settings.notes.attack}
+                  min={0}
+                  max={4000}
+                  step={0.1}
+                  wide
+                />
+                <Slider
+                  label="Note fall time"
+                  bind:value={$Settings.notes.release}
+                  min={0}
+                  max={4000}
+                  step={0.1}
+                  wide
+                />
+              </Folder>
+              <Folder title="Lighting" expanded={false}>
+                <Slider
+                  label="Above Lighting"
+                  bind:value={$Settings.scene.lighting.above}
+                  min={0}
+                  max={2}
+                  step={0.1}
+                  wide
+                />
+
+                <Slider
+                  label="Front Lighting"
+                  bind:value={$Settings.scene.lighting.front}
+                  min={0}
+                  max={2}
+                  step={0.1}
+                  wide
+                />
+
+                <Slider
+                  label="Side Lighting"
+                  bind:value={$Settings.scene.lighting.side}
+                  min={0}
+                  max={2}
+                  step={0.1}
+                  wide
+                />
+              </Folder>
+            </Pane>
+          </div>
+        {:else}
+          <h2
+            in:fade|global={{ duration: 1000, delay: 500 }}
+            out:fade|global={{ duration: 200 }}
+          >
+            {summary}
+          </h2>
+        {/if}
       </HTML>
     {/if}
   </Box>
@@ -562,11 +680,11 @@
           <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 0.5, 1]} />
           <T.MeshStandardMaterial
             color={$Device.connected
-              ? new Color("rgb(22, 55, 11)")
-              : new Color("rgb(66,11,77)")}
+              ? new ThreeColor("rgb(22, 55, 11)")
+              : new ThreeColor("rgb(66,11,77)")}
             emissive={$Device.connected
-              ? new Color("rgb(22, 55, 11)")
-              : new Color("rgb(66,11,77)")}
+              ? new ThreeColor("rgb(22, 55, 11)")
+              : new ThreeColor("rgb(66,11,77)")}
             emissiveIntensity={0.4}
           />
         </T.Mesh>
@@ -579,18 +697,9 @@
         position.y={MIDIConnectedScenePosition.current}
         onpointerenter={onPointerEnter}
         onpointerleave={onPointerLeave}
-        onclick={(event: MouseEvent) => {
-          event.stopPropagation();
-          cubeClicked = true;
-          $Settings.notes.colours.key = notesColours[notesIndex].key;
-          $Settings.notes.colours.expression =
-            notesColours[notesIndex].expression;
-
-          if (notesIndex >= notesColours.length - 1) {
-            notesIndex = 0;
-          } else {
-            notesIndex++;
-          }
+        scale={sceneScale.current}
+        onclick={() => {
+          sceneClicked();
         }}
       >
         <Align auto precise>
@@ -665,7 +774,11 @@
       <T.Group position.y={MIDIConnectedScenePosition.current + 1.5}>
         {#if cubeClicked}
           <HTML center>
-            <div class="nav-bar">
+            <div
+              class="nav-bar"
+              in:fade|global={{ duration: 1000, delay: 500 }}
+              out:fade|global={{ duration: 200 }}
+            >
               <button
                 onpointerdown={(event: MouseEvent) => {
                   event.stopPropagation();
@@ -742,7 +855,9 @@
                 />
               </svg>
 
-              <span>To shuffle colours tap the scene</span>
+              <span id="tips"
+                >To edit tap the scene and click a setting page</span
+              >
             </div>
           </HTML>
         {/if}

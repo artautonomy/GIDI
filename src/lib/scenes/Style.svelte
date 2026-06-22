@@ -42,7 +42,7 @@
   const title = "Style";
 
   const summary =
-    "Play your MIDI device to sample styles.\n\nTo confirm your style select it";
+    "Play your MIDI device to sample styles.\n\nTo confirm your style click 'Select'.";
 
   const MIDIConnectedButtonScale = new Spring(
     window.innerWidth < 475
@@ -108,11 +108,16 @@
     $Settings.styleReset = true;
   }
 
-  function setupScene(choice: string) {
-    $Settings.sceneSelected = choice;
-    clearScene = true;
+  function setupScene(choice: string, e: MouseEvent) {
+    const target = e.currentTarget as HTMLButtonElement;
+
+    target.style.backgroundColor = "rgb(22, 55, 11)";
 
     selected = true;
+
+    clearScene = true;
+
+    $Settings.sceneSelected = choice;
 
     highlighted = { r: 77, g: 144, b: 57 };
 
@@ -180,6 +185,7 @@
 >
   <OrbitControls
     enableDamping
+    enableZoom={false}
     autoRotate={$Settings.camera.autoRotate.enabled}
     autoRotateSpeed={$Settings.camera.autoRotate.speed}
     maxPolarAngle={Math.PI / 3}
@@ -219,7 +225,6 @@
           position.y={-2}
           onpointerenter={onPointerEnterStyle}
           onpointerleave={onPointerLeaveStyle}
-          onclick={() => setupScene(styles[styleIndex])}
         >
           {#key $Settings.styleReset}
             <InstancedMesh>
@@ -366,7 +371,7 @@
         <div
           class="nav-bar"
           in:fade|global={{ duration: 1000, delay: 500 }}
-          out:fade|global={{ duration: 200 }}
+          out:fade|global={{ duration: 200, delay: 400 }}
         >
           <button
             onpointerdown={(event: MouseEvent) => {
@@ -402,7 +407,10 @@
             </span>
 
             <button
-              onpointerdown={() => setupScene(styles[styleIndex])}
+              onpointerenter={(e) =>
+                (e.currentTarget.style.color = "rgb(185, 249, 169)")}
+              onpointerleave={(e) => (e.currentTarget.style.color = "white")}
+              onpointerdown={(e) => setupScene(styles[styleIndex], e)}
               aria-label="Setup Scene"
               class="icon-btn"
               id="select">Select</button
@@ -439,43 +447,13 @@
 </Flex>
 
 <style>
-  .styleDescription {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 2px;
-  }
-
-  .icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: inherit;
-    opacity: 0;
-
-    animation: 2s fadeIn 0.5s forwards;
-  }
-
   .icon-btn#select {
-    background-color: rgb(90, 187, 66);
     font-size: 1em;
     padding: 20px;
     width: 20%;
     height: 20px;
     margin: 0.75vh;
-    color: black;
+    color: white;
     font-weight: bolder;
-  }
-
-  @keyframes fadeIn {
-    100% {
-      opacity: 1;
-    }
   }
 </style>
