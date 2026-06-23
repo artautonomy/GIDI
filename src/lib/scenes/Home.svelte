@@ -39,13 +39,14 @@
     ...ThemeUtils.presets.jetblack,
     baseFontFamily: "'Oxanium', sans-serif",
     baseBackgroundColor: "hsla(289, 77%, 17%, 0.5)",
+    baseShadowColor: "rgba(255, 165, 0,0.5)",
     labelForegroundColor: "rgba(255,255,255,1)",
-    containerUnitSpacing: "5px",
     bladeValueWidth: "60%",
     grooveForegroundColor: "hsl(230, 80%, 55%)",
     inputBackgroundColor: "rgba(0, 0, 0, 0.5)",
     inputForegroundColor: "rgba(255, 255, 255, 1)",
     containerForegroundColor: "rgba(255, 255, 255, 1)",
+    buttonBackgroundColor: "rgba(255, 255, 255, 1)",
   };
 
   interactivity();
@@ -461,7 +462,7 @@
 
   function sceneClicked() {
     cubeClicked = true;
-    sceneScale.target = [1.3, 1.3, 1.3];
+    sceneScale.target = [1.1, 1.1, 1.1];
 
     setInterval(function () {
       sceneScale.target = [1, 1, 1];
@@ -521,7 +522,7 @@
   height={window.innerHeight / 40}
   flexDirection="Column"
 >
-  <Box flex={8} width="100%" height="100%">
+  <Box flex={2} width="100%" height="100%">
     {#if !clearScene}
       <HTML center>
         <h1
@@ -530,7 +531,12 @@
         >
           {title}
         </h1>
-
+        <h2
+          in:fade|global={{ duration: 1000, delay: 500 }}
+          out:fade|global={{ duration: 200 }}
+        >
+          {summary}
+        </h2>
         {#if cubeClicked}
           <div
             role="button"
@@ -545,7 +551,7 @@
             }}
           >
             <Pane theme={customizedTheme} position="inline">
-              <Folder title="Colours" expanded={false}>
+              <Folder title="Colours">
                 <Color
                   bind:value={$Settings.notes.colours.key}
                   label="Key Colour"
@@ -603,13 +609,6 @@
               </Folder>
             </Pane>
           </div>
-        {:else}
-          <h2
-            in:fade|global={{ duration: 1000, delay: 500 }}
-            out:fade|global={{ duration: 200 }}
-          >
-            {summary}
-          </h2>
         {/if}
       </HTML>
     {/if}
@@ -691,7 +690,7 @@
       {/if}
     </Box>
   </Billboard>
-  <Box flex={9} width="100%" height="100%">
+  <Box flex={2} width="100%" height="100%">
     {#if !clearScene}
       <T.Group
         position.y={MIDIConnectedScenePosition.current}
@@ -769,99 +768,95 @@
     {/if}
   </Box>
 
-  <Box flex={3} width="100%" height="100%">
+  <Box flex={1} width="100%" height="100%">
     {#if !clearScene}
-      <T.Group position.y={MIDIConnectedScenePosition.current + 1.5}>
-        {#if cubeClicked}
-          <HTML center>
-            <div
-              class="nav-bar"
-              in:fade|global={{ duration: 1000, delay: 500 }}
-              out:fade|global={{ duration: 200 }}
+      {#if cubeClicked}
+        <HTML center>
+          <div
+            class="nav-bar"
+            in:fade|global={{ duration: 1000, delay: 500 }}
+            out:fade|global={{ duration: 200 }}
+          >
+            <button
+              onpointerdown={(event: MouseEvent) => {
+                event.stopPropagation();
+                styleBack();
+              }}
+              aria-label="Back"
+              class="icon-btn"
             >
-              <button
-                onpointerdown={(event: MouseEvent) => {
-                  event.stopPropagation();
-                  styleBack();
-                }}
-                aria-label="Back"
-                class="icon-btn"
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15 18L9 12L15 6"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg></button
-              >
-              <div class="styleDescription">
-                <h2>{styles[styleIndex]}</h2>
-
-                <span>
-                  {styles[styleIndex] === "Piano"
-                    ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
-                    : "Recommended for pads and samplers."}
-                </span>
-              </div>
-              <button
-                onpointerdown={(event: MouseEvent) => {
-                  event.stopPropagation();
-                  styleNext();
-                }}
-                aria-label="Forward"
-                class="icon-btn"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 18L15 12L9 6"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg></button
-              >
-            </div>
-          </HTML>
-        {:else}
-          <HTML center>
-            <div
-              class="hint"
-              in:fade|global={{ duration: 1000, delay: 500 }}
-              out:fade|global={{ duration: 200 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path
-                  d="M6 15L12 9L18 15"
+                  d="M15 18L9 12L15 6"
                   stroke="currentColor"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
-              </svg>
+              </svg></button
+            >
+            <div class="styleDescription">
+              <h2>{styles[styleIndex]}</h2>
 
-              <span id="tips"
-                >To edit tap the scene and click a setting page</span
-              >
+              <span>
+                {styles[styleIndex] === "Piano"
+                  ? "Recommended for keyboards and synthesizers.\nAutomapping enabled."
+                  : "Recommended for pads and samplers."}
+              </span>
             </div>
-          </HTML>
-        {/if}
-      </T.Group>
+            <button
+              onpointerdown={(event: MouseEvent) => {
+                event.stopPropagation();
+                styleNext();
+              }}
+              aria-label="Forward"
+              class="icon-btn"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 18L15 12L9 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg></button
+            >
+          </div>
+        </HTML>
+      {:else}
+        <HTML center>
+          <div
+            class="hint"
+            in:fade|global={{ duration: 1000, delay: 500 }}
+            out:fade|global={{ duration: 200 }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M6 15L12 9L18 15"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+            <span id="tips">Tap the scene to edit</span>
+          </div>
+        </HTML>
+      {/if}
     {/if}
   </Box>
 </Flex>
