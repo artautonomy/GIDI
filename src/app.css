@@ -17,10 +17,12 @@ threlte {
 h1,
 h2,
 label,
-span {
+span,
+svg {
   font-family: "Oxanium", sans-serif;
   color: white;
   text-align: center;
+  text-shadow: 1px 1px 1px black;
 }
 
 h1 {
@@ -42,7 +44,6 @@ span {
 label {
   display: block;
   text-align: center;
-  margin-top: 1vh;
   font-weight: bolder;
 }
 
@@ -187,7 +188,7 @@ socials {
   }
 
   h1 {
-    color: orange;
+    color: rgb(255, 165, 0);
     font-size: 1.5em;
     width: 75vw;
   }

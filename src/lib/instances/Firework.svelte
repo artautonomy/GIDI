@@ -63,35 +63,43 @@
 
   const points = curve.getPoints(75);
 
-  let color = $state(new Color());
-
-  let key = new Color(
-    `rgb(${Math.floor(keyColour.r)},${Math.floor(keyColour.g)},${Math.floor(keyColour.b)})`
-  );
+  let key = new Color(keyColour.r / 255, keyColour.g / 255, keyColour.b / 255);
 
   let expression = new Color(
-    `rgb(${Math.floor(expressionColour.r)},${Math.floor(expressionColour.g)},${Math.floor(expressionColour.b)})`
+    expressionColour.r / 255,
+    expressionColour.g / 255,
+    expressionColour.b / 255,
   );
 
   $effect(() => {
-    key = new Color(
-      `rgb(${Math.floor(keyColour.r)},${Math.floor(keyColour.g)},${Math.floor(keyColour.b)})`
-    );
+    key = new Color(keyColour.r / 255, keyColour.g / 255, keyColour.b / 255);
 
     expression = new Color(
-      `rgb(${Math.floor(expressionColour.r)},${Math.floor(expressionColour.g)},${Math.floor(expressionColour.b)})`
+      expressionColour.r / 255,
+      expressionColour.g / 255,
+      expressionColour.b / 255,
     );
   });
+  let color = $state(new Color());
+
+  const from = new Color();
+  const to = new Color();
+  const current = new Color();
 
   $effect(() => {
     if (velocity > 0) {
+      from.copy(key);
+      to.copy(expression);
+
       useTask((delta) => {
         offset -= delta * ((4000 - attack) / 1000 + 0.25);
 
         dashOffset.set(offset);
-      });
 
-      color.lerpColors(expression, key, Math.sin(offset * 2) / 2 + 0.5);
+        current.lerpColors(from, to, offset + 1.5);
+
+        color = current.clone();
+      });
     } else {
       dashOffset.set(-0.1, {
         duration: release + 150,
@@ -99,7 +107,7 @@
 
       offset = -0.1;
 
-      color = new Color(key);
+      color = key.clone();
     }
   });
 </script>

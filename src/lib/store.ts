@@ -17,7 +17,7 @@ interface MIDIMessage {
 
 type DeviceInput = { id: string; name: string; velocity: number };
 
-type Channel = { setting: string | null; id: number; value: number };
+type Channel = { setting: number | null; id: number; value: number };
 
 interface Device {
     enableSearch: boolean;
@@ -74,10 +74,12 @@ export let Settings = writable({
     scene: {
         colours: {
             background: {
+                
+                r: 5, 
+                g: 2, 
+                b: 10
 
-                r: 4,
-                g: 2,
-                b: 25
+
             }
         },
         lighting: {

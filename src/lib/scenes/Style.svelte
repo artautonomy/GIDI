@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T } from "@threlte/core";
+  import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
   import {
     Align,
@@ -24,6 +24,18 @@
   import Piano from "../instances/Piano.svelte";
   import Firework from "../instances/Firework.svelte";
   import Swirl from "../instances/Swirl.svelte";
+
+  const { scene } = $state(useThrelte());
+
+  $effect(() => {
+    if (scene) {
+      scene.background = new Color(
+        $Settings.scene.colours.background.r / 255,
+        $Settings.scene.colours.background.g / 255,
+        $Settings.scene.colours.background.b / 255,
+      );
+    }
+  });
 
   type MIDIMessage = {
     note: number;

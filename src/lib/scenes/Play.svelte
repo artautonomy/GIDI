@@ -10,12 +10,14 @@
     OrbitControls,
     useCursor,
   } from "@threlte/extras";
+
   import { Box, Flex } from "@threlte/flex";
   import { fade } from "svelte/transition";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
   import { MIDI, Settings } from "../store";
   import { onDestroy } from "svelte";
+  import Menu from "../Menu.svelte";
   import Lighting from "./Lighting.svelte";
   import Cube from "../instances/Cube.svelte";
   import Piano from "../instances/Piano.svelte";
@@ -161,7 +163,9 @@
   $effect(() => {
     if (scene) {
       scene.background = new Color(
-        `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`,
+        $Settings.scene.colours.background.r / 255,
+        $Settings.scene.colours.background.g / 255,
+        $Settings.scene.colours.background.b / 255,
       );
     }
 
@@ -224,18 +228,7 @@
 
   function recordEndCoords() {
     if ($Settings.camera.sequence.recording) {
-      tips =
-        "Angle " +
-        (recordCords.length + 1) +
-        "\n\n" +
-        "X = " +
-        camera.current.position.x +
-        "\n" +
-        "Y = " +
-        camera.current.position.y +
-        "\n" +
-        "Z = " +
-        camera.current.position.z;
+      tips = "Step " + (recordCords.length + 1) + " captured";
 
       recordCords = [
         ...recordCords,
@@ -275,6 +268,10 @@
     {/if}
   </OrbitControls>
 </T.OrthographicCamera>
+
+{#if $Settings.edit}
+  <Menu />
+{/if}
 
 <Flex
   width={window.innerWidth / 40}

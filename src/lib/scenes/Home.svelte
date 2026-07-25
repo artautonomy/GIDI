@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { T } from "@threlte/core";
+  import { T, useThrelte } from "@threlte/core";
   import { Color as ThreeColor } from "three";
   import {
     Align,
@@ -15,7 +15,6 @@
   import { fade } from "svelte/transition";
   import { Spring, Tween } from "svelte/motion";
   import { cubicOut, cubicInOut } from "svelte/easing";
-
   import {
     Color,
     Folder,
@@ -24,7 +23,6 @@
     type Theme,
     Pane,
   } from "svelte-tweakpane-ui";
-
   import { Device, Settings } from "../store";
   import { goto } from "$app/navigation";
   import Lighting from "./Lighting.svelte";
@@ -34,6 +32,8 @@
   import Mirror from "../instances/Mirror.svelte";
   import Swirl from "../instances/Swirl.svelte";
   import { onMount } from "svelte";
+
+  const { scene } = $state(useThrelte());
 
   const customizedTheme: Theme = {
     ...ThemeUtils.presets.jetblack,
@@ -483,6 +483,16 @@
     }
   });
 
+  $effect(() => {
+    if (scene) {
+      scene.background = new ThreeColor(
+        $Settings.scene.colours.background.r / 255,
+        $Settings.scene.colours.background.g / 255,
+        $Settings.scene.colours.background.b / 255,
+      );
+    }
+  });
+
   onMount(() => {
     allowMIDIAccess = localStorage.getItem("content") === "Allow";
 
@@ -559,6 +569,10 @@
                 <Color
                   bind:value={$Settings.notes.colours.expression}
                   label="Key Expression Colour"
+                />
+                <Color
+                  bind:value={$Settings.scene.colours.background}
+                  label="Background Colour"
                 />
               </Folder>
               <Folder title="Note Weight" expanded={false}>

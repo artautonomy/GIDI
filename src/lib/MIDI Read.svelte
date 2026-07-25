@@ -99,6 +99,7 @@
       pianoNotes = [];
       padNotes = [];
       notes = [];
+      $Map.inputs = [];
       MIDI.set(notes);
       $Settings.notes.remap = false;
     }
@@ -451,32 +452,33 @@
           const getChannel = $Map.inputs.find((key) => key.id === status);
 
           switch (getChannel?.setting) {
-            case "rise":
+            //rise
+            case 1:
               $Settings.notes.attack = velocity * 31.496063;
               break;
-
-            case "fall":
+            //fall
+            case 2:
               $Settings.notes.release = velocity * 31.496063;
               break;
-
-            case "autorotate":
+            //Autorotate
+            case 3:
               $Settings.camera.autoRotate.enabled =
                 velocity == 127 ? true : false;
               break;
-
-            case "frontLight":
-              $Settings.scene.lighting.front = velocity * 0.0401574803;
+            //Front Light
+            case 4:
+              $Settings.scene.lighting.front = velocity * 0.015748031;
               break;
-
-            case "sideLight":
-              $Settings.scene.lighting.side = velocity * 0.0401574803;
+            //Side Light
+            case 5:
+              $Settings.scene.lighting.side = velocity * 0.015748031;
               break;
-
-            case "aboveLight":
-              $Settings.scene.lighting.above = velocity * 0.0401574803;
+            //Above Light
+            case 6:
+              $Settings.scene.lighting.above = velocity * 0.015748031;
               break;
-
-            case "sequenceStepSpeed":
+            //Sequence Step Speed
+            case 7:
               $Settings.camera.sequence.speed = velocity * 31.496063;
               break;
           }

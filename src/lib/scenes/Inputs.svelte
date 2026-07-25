@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { T } from "@threlte/core";
+  import { T, useThrelte } from "@threlte/core";
+  import { Color } from "three";
+
   import { HTML, OrbitControls } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { Tween } from "svelte/motion";
@@ -8,6 +10,18 @@
   import { Device, Settings } from "../store";
   import Lighting from "./Lighting.svelte";
   import { goto } from "$app/navigation";
+
+  const { scene } = $state(useThrelte());
+
+  $effect(() => {
+    if (scene) {
+      scene.background = new Color(
+        $Settings.scene.colours.background.r / 255,
+        $Settings.scene.colours.background.g / 255,
+        $Settings.scene.colours.background.b / 255,
+      );
+    }
+  });
 
   const title = "MIDI inputs found";
 
