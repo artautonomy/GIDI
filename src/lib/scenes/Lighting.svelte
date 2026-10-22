@@ -1,12 +1,11 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
   import { Color } from "three";
-  import { Settings } from "../store";
-
+  import { Settings } from "../stores/settings";
   const { scene } = $state(useThrelte());
 
   scene.background = new Color(
-    `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`
+    `rgb(${$Settings.scene.colours.background.r},${$Settings.scene.colours.background.g},${$Settings.scene.colours.background.b})`,
   );
 </script>
 

@@ -45,86 +45,89 @@
     easing: cubicOut,
   });
 
-  let offset = $state(0);
+  let offset = $state(-0.1);
 
-  const randCurve = Math.random() - 0.5;
+  // Keep the random shape stable for this component instance.
+  const randCurve = Math.random() - 1;
+  const randCurve2 = Math.random() + 1;
 
-  const randCurve2 = Math.random() - 0.5;
+  // Rebuild the curve when the supplied position changes.
+  let points = $derived.by(() => {
+    const x = position.x;
+    const y = position.y;
+    const z = position.z;
 
-  const curve = new CatmullRomCurve3([
-    new Vector3(position.x, 0, 0),
-    new Vector3(position.x, 1, 0),
-    new Vector3(position.x, 2, 0),
-    new Vector3(position.x + randCurve * 1, 2, randCurve * 2),
-    new Vector3(position.x + randCurve * 1.2, 3, randCurve * 2),
-    new Vector3(position.x + -randCurve2, 4, randCurve2),
-    new Vector3(position.x + -randCurve2, 5, randCurve2),
-  ]);
+    const curve = new CatmullRomCurve3([
+      new Vector3(x, y, z),
+      new Vector3(x, y + 1, z),
+      new Vector3(x, y + 2, z),
+      new Vector3(x + randCurve, y + 2, z + randCurve * 2),
+      new Vector3(x + randCurve * 1.2, y + 3, z + randCurve * 2),
+      new Vector3(x - randCurve2, y + 4, z + randCurve2),
+      new Vector3(x - randCurve2, y + 5, z + randCurve2),
+    ]);
 
-  const points = curve.getPoints(75);
+    return curve.getPoints(75);
+  });
 
-  let key = new Color(keyColour.r / 255, keyColour.g / 255, keyColour.b / 255);
-
-  let expression = new Color(
-    expressionColour.r / 255,
-    expressionColour.g / 255,
-    expressionColour.b / 255,
+  let key = $derived(
+    new Color(keyColour.r / 255, keyColour.g / 255, keyColour.b / 255),
   );
 
-  $effect(() => {
-    key = new Color(keyColour.r / 255, keyColour.g / 255, keyColour.b / 255);
-
-    expression = new Color(
+  let expression = $derived(
+    new Color(
       expressionColour.r / 255,
       expressionColour.g / 255,
       expressionColour.b / 255,
-    );
-  });
+    ),
+  );
+
   let color = $state(new Color());
 
   const from = new Color();
   const to = new Color();
   const current = new Color();
 
+  // Animate the line while the MIDI note is active.
   $effect(() => {
     if (velocity > 0) {
       from.copy(key);
       to.copy(expression);
 
-      useTask((delta) => {
-        offset -= delta * ((4000 - attack) / 1000 + 0.25);
-
-        dashOffset.set(offset);
-
-        current.lerpColors(from, to, offset + 1.5);
-
-        color = current.clone();
+      dashOffset.set(offset, {
+        duration: attack,
+        easing: cubicOut,
       });
     } else {
       dashOffset.set(-0.1, {
         duration: release + 150,
       });
-
-      offset = -0.1;
-
+      offset = 0;
       color = key.clone();
     }
   });
+
+  useTask((delta) => {
+    if (velocity <= 0) return;
+
+    offset -= delta * ((4000 - attack) / 1000 + 0.25);
+
+    dashOffset.set(offset);
+
+    current.lerpColors(from, to, offset + 1.5);
+    color = current.clone();
+  });
 </script>
 
-<T.Mesh position.x={position.x / 4} position.y={position.y}>
-  <MeshLineGeometry {points} shape={"none"} />
+<T.Mesh position={[0, 0, 0]}>
+  <MeshLineGeometry {points} shape="none" />
   <MeshLineMaterial
-    width={0.05}
+    width={0.075}
     {color}
-    dashArray={1}
-    dashRatio={0.9}
+    dashArray={2}
+    dashRatio={0.5}
     dashOffset={dashOffset.current}
-    scaleDown={0.8}
+    scaleDown={1}
     transparent
   />
-  <T.Mesh position.x={position.x} position.y={position.y + 0.2}>
-    <T.SphereGeometry args={[0.33]} />
-    <T.MeshBasicMaterial opacity={0} transparent />
-  </T.Mesh>
 </T.Mesh>

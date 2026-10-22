@@ -1,6 +1,6 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
-  import { Color } from "three";
+  import { Color, SRGBColorSpace } from "three";
   import {
     Align,
     Gizmo,
@@ -8,6 +8,7 @@
     InstancedMesh,
     interactivity,
     OrbitControls,
+    Text,
     useCursor,
   } from "@threlte/extras";
 
@@ -15,9 +16,13 @@
   import { fade } from "svelte/transition";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { MIDI } from "../stores/midiDeviceStore";
+  import { Settings } from "../stores/settings";
+  import { midiFileData } from "../stores/midiFileStore";
+  import { createNoteLayout } from "../midi/noteLayout";
+  import * as ToneMidi from "@tonejs/midi";
   import { onDestroy } from "svelte";
-  import Menu from "../Menu.svelte";
+  import Menu from "../ui/Menu.svelte";
   import Lighting from "./Lighting.svelte";
   import Cube from "../instances/Cube.svelte";
   import Piano from "../instances/Piano.svelte";
@@ -26,6 +31,7 @@
   import Swirl from "../instances/Swirl.svelte";
 
   const { scene, camera } = $state(useThrelte());
+  const { size } = useThrelte();
 
   type Vec3 = [number, number, number];
 
@@ -44,23 +50,167 @@
     };
   };
 
+  // Final camera zoom. The intro tween animates towards this value, and the
+  // Flex size is calculated for it, so the layout doesn't resize during the intro.
+  const FINAL_ZOOM = 50;
+
+  // The orthographic frustum matches the canvas size in pixels, so the visible
+  // size in world units is canvasSizePx / zoom.
+  const flexWidth = $derived($size.width / FINAL_ZOOM);
+  const flexHeight = $derived($size.height / FINAL_ZOOM);
+
   let midiMessages = $state<MIDIMessage[]>([]);
+
+  let importedPitches = $state<number[]>([]);
+
+  const activeImportedNotes = new Map<number, Map<number, number>>();
 
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
   });
-  onDestroy(unsubscribe);
+
+  // Imported MIDI playback timers are cleared whenever another file is loaded
+  // or this scene is destroyed.
+  let playbackTimeouts: ReturnType<typeof setTimeout>[] = [];
+
+  function stopImportedMidi() {
+    for (const timer of playbackTimeouts) {
+      clearTimeout(timer);
+    }
+
+    playbackTimeouts = [];
+    activeImportedNotes.clear();
+  }
+
+  function publishImportedLayout() {
+    if (importedPitches.length === 0) return;
+
+    const layout = createNoteLayout(
+      importedPitches,
+      $Settings.sceneSelected,
+    ).map((note) => ({
+      ...note,
+      velocity: Math.max(
+        0,
+        ...(activeImportedNotes.get(note.note)?.values() ?? []),
+      ),
+    }));
+
+    MIDI.set(layout);
+  }
+  function startImportedMidi(data: ArrayBuffer) {
+    stopImportedMidi();
+
+    try {
+      // Namespace import supports the CommonJS/ESM packaging used by Vite.
+      const Midi = (ToneMidi as any).Midi ?? (ToneMidi as any).default?.Midi;
+      if (!Midi) {
+        console.error("Could not load the MIDI parser from @tonejs/midi.");
+        return;
+      }
+
+      const midi = new Midi(data.slice(0));
+      const fileNotes = midi.tracks.flatMap((track: any) => track.notes);
+
+      if (fileNotes.length === 0) {
+        console.warn("The imported MIDI file contains no notes.");
+        MIDI.set([]);
+        return;
+      }
+      importedPitches = [];
+      importedPitches = [
+        ...new Set<number>(fileNotes.map((note: any) => note.midi)),
+      ].sort((a, b) => a - b);
+
+      publishImportedLayout();
+
+      type PlaybackEvent = {
+        time: number;
+        type: "on" | "off";
+        pitch: number;
+        velocity: number;
+        noteId: number;
+      };
+
+      const events: PlaybackEvent[] = [];
+      let noteId = 0;
+
+      for (const note of fileNotes) {
+        const id = noteId++;
+        const pitch = note.midi as number;
+        const velocity = Math.max(
+          1,
+          Math.min(127, Math.round((note.velocity ?? 1) * 127)),
+        );
+        const start = Math.max(0, note.time as number);
+        const end = start + Math.max(0, note.duration as number);
+
+        events.push({ time: start, type: "on", pitch, velocity, noteId: id });
+        events.push({ time: end, type: "off", pitch, velocity: 0, noteId: id });
+      }
+
+      // At identical timestamps, release old notes before starting new ones.
+      events.sort((a, b) => a.time - b.time || (a.type === "off" ? -1 : 1));
+
+      const activeNotes = new Map<number, Map<number, number>>();
+      const playbackStartedAt = performance.now();
+
+      for (const event of events) {
+        const timer = setTimeout(
+          () => {
+            let activeForPitch = activeImportedNotes.get(event.pitch);
+
+            if (event.type === "on") {
+              if (!activeForPitch) {
+                activeForPitch = new Map<number, number>();
+                activeImportedNotes.set(event.pitch, activeForPitch);
+              }
+
+              activeForPitch.set(event.noteId, event.velocity);
+            } else {
+              activeForPitch?.delete(event.noteId);
+
+              if (activeForPitch?.size === 0) {
+                activeImportedNotes.delete(event.pitch);
+              }
+            }
+
+            publishImportedLayout();
+          },
+          Math.max(
+            0,
+            event.time * 1000 - (performance.now() - playbackStartedAt),
+          ),
+        );
+
+        playbackTimeouts.push(timer);
+      }
+    } catch (error) {
+      console.error("Unable to play the imported MIDI file:", error);
+    }
+  }
+
+  // The subscription fires immediately if a file was imported before this
+  // scene mounted, and again whenever the importer stores a new file.
+  const unsubscribeImportedMidi = midiFileData.subscribe((data) => {
+    if (data) {
+      startImportedMidi(data);
+    }
+  });
+
+  onDestroy(() => {
+    unsubscribe();
+    unsubscribeImportedMidi();
+    stopImportedMidi();
+  });
 
   const { hovering, onPointerEnter, onPointerLeave } = useCursor();
 
   interactivity();
 
-  let zoom = 50;
   let menuOpened = $state(false);
 
   let selected = $state($Settings.notes.colours.key);
-
-  let tips = $state("Press and hold the mouse to rotate the scene");
 
   let cameraCord: Vec3 = $state([5, 10, 15]);
 
@@ -73,24 +223,10 @@
 
   let coordIndex = 0;
 
-  setTimeout(() => {
-    if (tips == "Press and hold the mouse to rotate the scene") {
-      tips = "To zoom in and out use the mousewheel";
-    }
-  }, 4000);
-
   const introZoom = new Tween(0, {
     duration: 1000,
     easing: cubicIn,
   });
-
-  const noteScale = new Tween(
-    1 - Math.log(midiMessages.length) / Math.log(window.innerWidth),
-    {
-      duration: 750,
-      easing: cubicInOut,
-    },
-  );
 
   const fadeIn = new Tween(0, {
     duration: 1000,
@@ -98,19 +234,14 @@
   });
 
   fadeIn.target = 85;
-  introZoom.target = zoom;
+  introZoom.target = FINAL_ZOOM;
 
   function openMenu() {
-    $Settings.edit = true;
-
     selected = $Settings.notes.colours.key;
 
-    noteScale.target =
-      1 - Math.log(midiMessages.length) / Math.log(window.innerWidth) - 0.2;
+    menuOpened = !menuOpened;
 
-    setTimeout(() => {
-      menuOpened = true;
-    }, 2000);
+    $Settings.edit = true;
   }
 
   function onKeyDown(e: KeyboardEvent) {
@@ -134,15 +265,8 @@
   }
 
   $effect(() => {
-    if (!$Settings.edit) {
-      noteScale.target =
-        1 - Math.log(midiMessages.length) / Math.log(window.innerWidth);
-    }
-  });
-
-  $effect(() => {
     if ($Settings.camera.sequence.reset) {
-      tips = "Recording reset";
+      //tips = "Recording reset";
 
       recordCords = [];
 
@@ -161,13 +285,15 @@
   });
 
   $effect(() => {
-    if (scene) {
-      scene.background = new Color(
-        $Settings.scene.colours.background.r / 255,
-        $Settings.scene.colours.background.g / 255,
-        $Settings.scene.colours.background.b / 255,
-      );
-    }
+    if (!scene) return;
+
+    const { r, g, b } = $Settings.scene.colours.background;
+    scene.background = new Color().setRGB(
+      r / 255,
+      g / 255,
+      b / 255,
+      SRGBColorSpace,
+    );
 
     if ($hovering) {
       selected = {
@@ -177,6 +303,18 @@
       };
     } else {
       selected = $Settings.notes.colours.key;
+    }
+  });
+
+  $effect(() => {
+    const style = $Settings.sceneSelected;
+
+    const pitches = importedPitches;
+
+    if (pitches.length > 0) {
+      // Depend on the selected style so the layout rebuilds when it changes.
+      void style;
+      publishImportedLayout();
     }
   });
 
@@ -228,7 +366,7 @@
 
   function recordEndCoords() {
     if ($Settings.camera.sequence.recording) {
-      tips = "Step " + (recordCords.length + 1) + " captured";
+      //tips = "Step " + (recordCords.length + 1) + " captured";
 
       recordCords = [
         ...recordCords,
@@ -253,14 +391,8 @@
 >
   <OrbitControls
     enableDamping
-    enableZoom={!$Settings.edit}
     autoRotate={$Settings.camera.autoRotate.enabled}
     autoRotateSpeed={$Settings.camera.autoRotate.speed}
-    onstart={() => {
-      if (!menuOpened && !$Settings.camera.sequence.recording) {
-        tips = "To edit select the style or press 'e'";
-      }
-    }}
     onend={recordEndCoords}
   >
     {#if $Settings.scene.gizmo}
@@ -269,22 +401,21 @@
   </OrbitControls>
 </T.OrthographicCamera>
 
-{#if $Settings.edit}
+{#if menuOpened}
   <Menu />
 {/if}
 
-<Flex
-  width={window.innerWidth / 40}
-  height={window.innerHeight / 40}
-  flexDirection="Column"
->
+<Flex width={flexWidth} height={flexHeight} flexDirection="Column">
   <Box flex={2} width="100%" height="100%">
-    <Align scale={noteScale.current} y={false} auto precise>
+    <Align y={false} auto>
       <T.Group
-        position.y={-6}
+        position.y={-2.5}
         onpointerenter={onPointerEnter}
         onpointerleave={onPointerLeave}
-        onclick={() => openMenu()}
+        onclick={(e: Event) => {
+          e.stopPropagation();
+          openMenu();
+        }}
       >
         <InstancedMesh>
           <T.BoxGeometry />
@@ -350,29 +481,6 @@
         {/each}
       </T.Group>
     </Align>
-  </Box>
-  <Box flex={1} width="100%" height="100%">
-    {#if !menuOpened || $Settings.camera.sequence.recording || $Settings.camera.sequence.reset}
-      <HTML center>
-        <div
-          class="hint"
-          in:fade|global={{ duration: 750, delay: 250 }}
-          out:fade|global={{ duration: 900, delay: 100 }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M6 15L12 9L18 15"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-
-          <span id="tips">{tips}</span>
-        </div>
-      </HTML>
-    {/if}
   </Box>
 </Flex>
 

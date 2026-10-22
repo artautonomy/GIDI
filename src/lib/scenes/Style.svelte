@@ -1,6 +1,6 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
-  import { Color } from "three";
+  import { Color, SRGBColorSpace } from "three";
   import {
     Align,
     Billboard,
@@ -14,7 +14,8 @@
   import { fade } from "svelte/transition";
   import { Tween, Spring } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
-  import { MIDI, Settings } from "../store";
+  import { MIDI } from "../stores/midiDeviceStore";
+  import { Settings } from "../stores/settings";
   import { onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import { Box, Flex } from "@threlte/flex";
@@ -25,16 +26,24 @@
   import Firework from "../instances/Firework.svelte";
   import Swirl from "../instances/Swirl.svelte";
 
-  const { scene } = $state(useThrelte());
+  const { scene, size } = $state(useThrelte());
+
+  // Final camera zoom. The intro tween animates towards this value, and the
+  // Flex height is sized for it, so the layout doesn't resize during the intro.
+  const FINAL_ZOOM = 35;
+
+  // The orthographic frustum matches the canvas size in pixels, so the visible
+  // height in world units is canvasHeightPx / zoom.
+  const flexHeight = $derived($size.height / FINAL_ZOOM);
 
   $effect(() => {
-    if (scene) {
-      scene.background = new Color(
-        $Settings.scene.colours.background.r / 255,
-        $Settings.scene.colours.background.g / 255,
-        $Settings.scene.colours.background.b / 255,
-      );
-    }
+    const { r, g, b } = $Settings.scene.colours.background;
+    scene.background = new Color().setRGB(
+      r / 255,
+      g / 255,
+      b / 255,
+      SRGBColorSpace,
+    );
   });
 
   type MIDIMessage = {
@@ -51,28 +60,6 @@
       z: number;
     };
   };
-  const title = "Style";
-
-  const summary =
-    "Play your MIDI device to sample styles.\n\nTo confirm your style click 'Select'.";
-
-  const MIDIConnectedButtonScale = new Spring(
-    window.innerWidth < 475
-      ? window.innerWidth / 37.5
-      : window.innerWidth / 150,
-  );
-
-  const MIDIConnectedButtonRotation = new Tween(0, {
-    delay: 500,
-    duration: 1250,
-    easing: cubicInOut,
-  });
-
-  const MIDIConnectedButtonPosition = new Tween(-1, {
-    delay: 750,
-    duration: 750,
-    easing: cubicIn,
-  });
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
@@ -169,9 +156,6 @@
 
   $effect(() => {
     if (midiMessages.length > 0 && !noteTriggered) {
-      MIDIConnectedButtonPosition.target = window.innerHeight * -0.017;
-      MIDIConnectedButtonRotation.target = 4.712389;
-
       noteTriggered = true;
 
       setTimeout(() => {
@@ -182,8 +166,6 @@
         1 - Math.log(midiMessages.length) / Math.log(window.innerWidth);
     }
   });
-
-  $Settings.camera.autoRotate.enabled = false;
 </script>
 
 <Lighting />
@@ -205,36 +187,11 @@
   ></OrbitControls>
 </T.OrthographicCamera>
 
-<Flex
-  width={window.innerWidth / 50}
-  height={window.innerHeight / 40}
-  gap={window.innerHeight / 300}
-  flexDirection="Column"
->
-  <Box flex={1} width="100%" height="100%">
-    {#if !clearScene}
-      <HTML center>
-        <h1
-          in:fade|global={{ duration: 1000, delay: 500 }}
-          out:fade|global={{ duration: 200 }}
-        >
-          {title}
-        </h1>
-        <h2
-          in:fade|global={{ duration: 1000, delay: 500 }}
-          out:fade|global={{ duration: 200 }}
-        >
-          {summary}
-        </h2>
-      </HTML>
-    {/if}
-  </Box>
-
-  <Box flex={1} width="100%" height="100%">
+<Flex width={0} height={flexHeight} flexDirection="Column">
+  <Box flex={5} width="100%" height="100%">
     {#if notePlayed}
       <Align scale={noteScale.current} auto precise>
         <T.Group
-          position.y={-2}
           onpointerenter={onPointerEnterStyle}
           onpointerleave={onPointerLeaveStyle}
         >
@@ -304,76 +261,6 @@
           {/key}
         </T.Group>
       </Align>
-    {:else}
-      <Billboard follow={true}>
-        <T.Mesh
-          position={[0, MIDIConnectedButtonPosition.current, 0]}
-          rotation={[MIDIConnectedButtonRotation.current, 0, 0]}
-        >
-          <Text
-            text={"Creating styles"}
-            font={$Settings.font}
-            fontSize={0.5}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, 0.505, 0]}
-            rotation={[-1.553343, 0, 0]}
-            outlineBlur={0.06}
-          />
-          <Text
-            text={midiMessages.length != 0
-              ? "Initializing styles"
-              : "Play a note"}
-            font={$Settings.font}
-            fontSize={0.5}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, 0, 0.505]}
-            outlineBlur={0.06}
-          />
-
-          <Text
-            text={"Note read"}
-            font={$Settings.font}
-            fontSize={0.5}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, 0, -0.505]}
-            rotation={[0, 3.14, -3.14]}
-            outlineBlur={0.06}
-          />
-
-          <Text
-            text={"Note read"}
-            font={$Settings.font}
-            fontSize={0.5}
-            textAlign={"center"}
-            smooth={1}
-            anchorX={"center"}
-            anchorY={"middle"}
-            position={[0, -0.505, 0]}
-            rotation.x={1.553343}
-            outlineBlur={0.06}
-          />
-
-          <T.BoxGeometry args={[MIDIConnectedButtonScale.current, 1, 1]} />
-          <T.MeshStandardMaterial
-            color={midiMessages.length != 0
-              ? new Color("rgb(22, 55, 11)")
-              : new Color("rgb(66,11,77)")}
-            emissive={midiMessages.length != 0
-              ? new Color("rgb(22, 55, 11)")
-              : new Color("rgb(66,11,77)")}
-            emissiveIntensity={0.6}
-          />
-        </T.Mesh>
-      </Billboard>
     {/if}
   </Box>
 
@@ -459,6 +346,9 @@
 </Flex>
 
 <style>
+  .nav-bar {
+    width: 30vw;
+  }
   .icon-btn#select {
     font-size: 1em;
     padding: 20px;

@@ -13,28 +13,49 @@ threlte {
   overflow: hidden;
 }
 
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 /* --- Typography --- */
 h1,
 h2,
+h3,
 label,
 span,
-svg {
+svg,ul,li,p {
   font-family: "Oxanium", sans-serif;
   color: white;
-  text-align: center;
   text-shadow: 1px 1px 1px black;
 }
 
-h1 {
-  color: orange;
-  margin-bottom: 3.33vh;
-  width: 32vw;
+h1,
+h2,
+h3,
+label,
+span,
+svg{
 
+  text-align: center;
+}
+
+
+h1 {
+  margin: 0;
+  color: orange;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: block;
 }
 
 h2 {
   font-size: 1.1em;
-  width: 32vw;
 }
 
 span {
@@ -131,25 +152,28 @@ img {
   display: block;
 }
 
+
+
 /* --- Socials (custom element) --- */
+/* In normal flow (no absolute positioning) so the flex column in
+   +layout.svelte reserves space for it and the canvas sits above it. */
 socials {
   opacity: var(--opacity, 1);
   transition: opacity 3s 750ms ease;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 /* Desktop socials */
 @media (min-width: 600px) {
   socials {
-    position: absolute;
-    right: 0;
-    bottom: 0;
+    align-self: flex-end;
     height: 2.75vh;
     width: 175px;
-    display: flex;
-    align-items: center;
     justify-content: space-around;
-    flex-direction: row;
-    flex-wrap: nowrap;
   }
 
   a {
@@ -160,16 +184,9 @@ socials {
 /* Mobile socials */
 @media (max-width: 600px) {
   socials {
-    position: absolute;
-    right: 0;
-    bottom: 0;
     height: 3.75vh;
     width: 100vw;
-    display: flex;
-    align-items: center;
     justify-content: space-evenly;
-    flex-direction: row;
-    flex-wrap: nowrap;
   }
 
   a {
@@ -190,13 +207,8 @@ socials {
   h1 {
     color: rgb(255, 165, 0);
     font-size: 1.5em;
-    width: 75vw;
   }
 
-  h2 {
-    font-size: 0.9em;
-    width: 75vw;
-  }
 
   span {
     font-size: 0.8em;
