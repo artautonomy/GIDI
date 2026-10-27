@@ -1,13 +1,13 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { Device } from "$lib/stores/midiDeviceStore";
-  import { Settings } from "$lib/stores/settings";
+  import { Device } from "#lib/stores/midiDeviceStore.ts";
+  import { Settings } from "#lib/stores/settings.ts";
   import { goto } from "$app/navigation";
   import { Canvas } from "@threlte/core";
-  import Scene from "$lib/scenes/Home.svelte";
+  import Scene from "#lib/scenes/Home.svelte";
   import { onMount } from "svelte";
-  import { fadeIn, fadeOut } from "$lib/stores/app";
-  import midiAllow from "$lib/assets/setup/midiAllow.jpg";
+  import { fadeIn, fadeOut } from "#lib/stores/app.ts";
+  import midiAllow from "#lib/assets/setup/midiAllow.jpg";
 
   const bg = $derived($Settings.scene.colours.background);
   const inv = $derived({ r: 255 - bg.r, g: 255 - bg.g, b: 255 - bg.b });

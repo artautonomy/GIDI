@@ -1,17 +1,15 @@
-import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import { sveltekit } from '@sveltejs/kit/vite';
+import adapter from '@sveltejs/adapter-static';
 
 export default defineConfig({
-	build:{
-		target: "esnext", // or "es2019",
-	  },
-	  esbuild:{
-		target: "esnext", // or "es2019",
-	  },
-	  optimizeDeps:{
-		esbuildOptions: {
-		  target: "esnext",
-		}
-	  },
-	plugins: [sveltekit()]
+	plugins: [
+		sveltekit({
+			compilerOptions: { experimental: { async: true } },
+			adapter: adapter(),
+			alias: {
+				$lib: 'src/lib'
+			}
+		})
+	]
 });

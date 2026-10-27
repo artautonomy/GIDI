@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Device } from "$lib/stores/midiDeviceStore";
-  import { fadeIn, fadeOut } from "$lib/stores/app";
+  import { Device } from "#lib/stores/midiDeviceStore.ts";
+  import { fadeIn, fadeOut } from "#lib/stores/app.ts";
   import { fade } from "svelte/transition";
   import { goto } from "$app/navigation";
   import { onDestroy } from "svelte";
-  import Back from "$lib/ui/Back.svelte";
+  import Back from "#lib/ui/Back.svelte";
 
   const title = "MIDI inputs found";
 

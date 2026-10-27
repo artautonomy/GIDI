@@ -1,10 +1,10 @@
 <script>
   import { Canvas } from "@threlte/core";
-  import Scene from "$lib/scenes/Play.svelte";
+  import Scene from "#lib/scenes/Play.svelte";
   import { onMount } from "svelte";
-  import { fadeIn, fadeOut } from "$lib/stores/app";
+  import { fadeIn, fadeOut } from "#lib/stores/app.ts";
   import { fade } from "svelte/transition";
-  import { Settings } from "$lib/stores/settings";
+  import { Settings } from "#lib/stores/settings.ts";
 
   let loaded = $state(false);
 

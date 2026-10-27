@@ -1,11 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { Settings } from "$lib/stores/settings";
-  import { midiFileData, midiFileName } from "$lib/stores/midiFileStore";
+  import { Settings } from "#lib/stores/settings.ts";
+  import { midiFileData, midiFileName } from "#lib/stores/midiFileStore.ts";
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
-  import { fadeIn, fadeOut } from "$lib/stores/app";
-  import Back from "$lib/ui/Back.svelte";
+  import { fadeIn, fadeOut } from "#lib/stores/app.ts";
+  import Back from "#lib/ui/Back.svelte";
 
   let {
     disabled = false,

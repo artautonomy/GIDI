@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { colord } from "colord";
-  import { Settings } from "$lib/stores/settings";
+  import { Settings } from "#lib/stores/settings.ts";
 
-  import MIDIRead from "$lib/midi/MIDI Read.svelte";
-  import MIDIImport from "$lib/midi/MIDI Import.svelte";
-  import github from "$lib/assets/socials/github.png";
-  import paypal from "$lib/assets/socials/paypal.png";
-  import instagram from "$lib/assets/socials/instagram.png";
+  import MIDIRead from "#lib/midi/MIDI Read.svelte";
+  import MIDIImport from "#lib/midi/MIDI Import.svelte";
+  import github from "#lib/assets/socials/github.png";
+  import paypal from "#lib/assets/socials/paypal.png";
+  import instagram from "#lib/assets/socials/instagram.png";
   import "../app.css";
 
   let { children } = $props();
