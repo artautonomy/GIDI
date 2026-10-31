@@ -56,12 +56,6 @@
   let notes = $state<VisualNote[]>([]);
   const introZoom = new Tween(0);
 
-  const MIDIConnectedScenePosition = new Tween(-1.5, {
-    delay: 500,
-    duration: 1250,
-    easing: cubicInOut,
-  });
-
   let editing = $state(false);
 
   const styles = $Settings.notes.styles;
@@ -196,55 +190,15 @@
     </Billboard>
   </Box>
 
-  <Box flex={2} height="auto">
-    <T.Group
-      position.y={MIDIConnectedScenePosition.current}
-      onpointerenter={onPointerEnter}
-      onpointerleave={onPointerLeave}
-    >
-      <T.Group position={[-offset.x, -offset.y, -offset.z]}>
-        <InstancedMesh>
-          <T.BoxGeometry />
-          <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
-
-          {#each notes as noteNumber}
-            {#if styles[styleIndex] === "Piano"}
-              <Piano
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$Settings.notes.attack}
-                release={$Settings.notes.release}
-                keyColour={$Settings.notes.colours.key}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {:else if styles[styleIndex] === "Mirror"}
-              <Mirror
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$Settings.notes.attack}
-                release={$Settings.notes.release}
-                keyColour={$Settings.notes.colours.key}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {:else if styles[styleIndex] === "Cube"}
-              <Cube
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$Settings.notes.attack}
-                release={$Settings.notes.release}
-                keyColour={$Settings.notes.colours.key}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {/if}
-          {/each}
-        </InstancedMesh>
+  <Box flex={2} height="auto" width="auto">
+    <T.Group position={[-offset.x, -2, -offset.z]}>
+      <InstancedMesh>
+        <T.BoxGeometry />
+        <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
 
         {#each notes as noteNumber}
-          {#if styles[styleIndex] === "Swirl"}
-            <Swirl
+          {#if styles[styleIndex] === "Piano"}
+            <Piano
               position={noteNumber.position}
               scale={noteNumber.scale}
               velocity={noteNumber.velocity}
@@ -253,8 +207,18 @@
               keyColour={$Settings.notes.colours.key}
               expressionColour={$Settings.notes.colours.expression}
             />
-          {:else if styles[styleIndex] === "Firework"}
-            <Firework
+          {:else if styles[styleIndex] === "Mirror"}
+            <Mirror
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.notes.attack}
+              release={$Settings.notes.release}
+              keyColour={$Settings.notes.colours.key}
+              expressionColour={$Settings.notes.colours.expression}
+            />
+          {:else if styles[styleIndex] === "Cube"}
+            <Cube
               position={noteNumber.position}
               scale={noteNumber.scale}
               velocity={noteNumber.velocity}
@@ -265,7 +229,31 @@
             />
           {/if}
         {/each}
-      </T.Group>
+      </InstancedMesh>
+
+      {#each notes as noteNumber}
+        {#if styles[styleIndex] === "Swirl"}
+          <Swirl
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
+            attack={$Settings.notes.attack}
+            release={$Settings.notes.release}
+            keyColour={$Settings.notes.colours.key}
+            expressionColour={$Settings.notes.colours.expression}
+          />
+        {:else if styles[styleIndex] === "Firework"}
+          <Firework
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
+            attack={$Settings.notes.attack}
+            release={$Settings.notes.release}
+            keyColour={$Settings.notes.colours.key}
+            expressionColour={$Settings.notes.colours.expression}
+          />
+        {/if}
+      {/each}
     </T.Group>
   </Box>
 

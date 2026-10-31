@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { Device } from "#lib/stores/midiDeviceStore.ts";
   import { Settings } from "#lib/stores/settings.ts";
-  import { goto } from "$app/navigation";
+  import { goto, preloadCode } from "$app/navigation";
   import { Canvas } from "@threlte/core";
   import Scene from "#lib/scenes/Home.svelte";
   import { onMount } from "svelte";
@@ -22,6 +22,8 @@
 
   let loaded = $state(false);
 
+  let leaving = $state(false);
+
   let displayMIDIInstructions = $state(false);
 
   const title = "GIDI - a visualiser for MIDI";
@@ -29,30 +31,41 @@
   const summary =
     "A free web application to import or play MIDI live. GIDI reads MIDI note on/off messages to create animations on a web browser, no account required.";
 
+  const routes: Record<string, string> = {
+    "Play MIDI": "./inputs",
+    "Import MIDI": "./import",
+    Demo: "./demo",
+  };
+
+  // Load the route's code ahead of time (hover/focus) so navigation
+  // doesn't block the main thread mid-fade.
+  function preload(option: string) {
+    const path = routes[option];
+    if (path) preloadCode(path);
+  }
+
+  function leaveTo(path: string) {
+    if (leaving) return;
+    leaving = true; // triggers out:fade right now
+    setTimeout(() => {
+      goto(path);
+    }, $fadeOut.duration);
+  }
+
   function handleMenuChoice(option: string) {
     $Settings.menuSelected = option;
     switch (option) {
       case "Play MIDI":
         if ($Device.connected) {
-          setTimeout(() => {
-            goto("./inputs");
-          }, $fadeOut.duration);
+          leaveTo(routes[option]);
         } else {
           displayMIDIInstructions = true;
         }
         break;
 
       case "Import MIDI":
-        setTimeout(() => {
-          goto("./import");
-        }, $fadeOut.duration);
-
-        break;
-
       case "Demo":
-        setTimeout(() => {
-          goto("./demo");
-        }, $fadeOut.duration);
+        leaveTo(routes[option]);
         break;
     }
   }
@@ -62,12 +75,8 @@
   });
 </script>
 
-{#if loaded}
+{#if loaded && !leaving}
   <div class="stage" in:fade|global={$fadeIn} out:fade|global={$fadeOut}>
-    <div class="canvas">
-      <Canvas><Scene /></Canvas>
-    </div>
-
     <div class="overlay">
       <main>
         <section class="landing">
@@ -78,6 +87,8 @@
             <button
               class="menu-button"
               onclick={() => handleMenuChoice("Play MIDI")}
+              onmouseenter={() => preload("Play MIDI")}
+              onfocus={() => preload("Play MIDI")}
             >
               <span class="button-icon">▶</span>
               <span>Play MIDI</span>
@@ -91,6 +102,8 @@
             <button
               class="menu-button"
               onclick={() => handleMenuChoice("Import MIDI")}
+              onmouseenter={() => preload("Import MIDI")}
+              onfocus={() => preload("Import MIDI")}
             >
               <span class="button-icon">↥</span>
               <span>Import MIDI</span>
@@ -99,6 +112,8 @@
             <button
               class="menu-button"
               onclick={() => handleMenuChoice("Demo")}
+              onmouseenter={() => preload("Demo")}
+              onfocus={() => preload("Demo")}
             >
               <span class="button-icon">✦</span>
               <span>Demo</span>
@@ -106,6 +121,9 @@
           </div>
         </section>
       </main>
+    </div>
+    <div class="canvas">
+      <Canvas><Scene /></Canvas>
     </div>
 
     {#if displayMIDIInstructions}
