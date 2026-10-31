@@ -1,19 +1,15 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
-  import { Color, SRGBColorSpace } from "three";
+  import { Color, SRGBColorSpace, Box3, Vector3, Mesh } from "three";
   import {
-    Align,
     Gizmo,
-    HTML,
     InstancedMesh,
     interactivity,
     OrbitControls,
-    Text,
     useCursor,
   } from "@threlte/extras";
 
   import { Box, Flex } from "@threlte/flex";
-  import { fade } from "svelte/transition";
   import { Tween } from "svelte/motion";
   import { cubicIn, cubicInOut } from "svelte/easing";
   import { MIDI } from "../stores/midiDeviceStore";
@@ -52,12 +48,6 @@
 
   // Final camera zoom. The intro tween animates towards this value, and the
   // Flex size is calculated for it, so the layout doesn't resize during the intro.
-  const FINAL_ZOOM = 50;
-
-  // The orthographic frustum matches the canvas size in pixels, so the visible
-  // size in world units is canvasSizePx / zoom.
-  const flexWidth = $derived($size.width / FINAL_ZOOM);
-  const flexHeight = $derived($size.height / FINAL_ZOOM);
 
   let midiMessages = $state<MIDIMessage[]>([]);
 
@@ -67,6 +57,39 @@
 
   const unsubscribe = MIDI.subscribe((notes) => {
     midiMessages = notes;
+  });
+
+  let FINAL_ZOOM = midiMessages.length
+    ? Math.log(midiMessages.length) * 10
+    : 20;
+
+  // The orthographic frustum matches the canvas size in pixels, so the visible
+  // size in world units is canvasSizePx / zoom.
+  const flexWidth = $derived($size.width / FINAL_ZOOM);
+  const flexHeight = $derived($size.height / FINAL_ZOOM);
+  /**
+   * Centre of the layout on the x and z axes, computed from the note data
+   * rather than from the rendered meshes. Instanced meshes cache their
+   * bounding box, so measuring them (as Align does) goes stale. Y is left
+   * alone, matching the previous <Align y={false}> behaviour.
+   */
+  const offset = $derived.by(() => {
+    const box = new Box3();
+    for (const n of midiMessages) {
+      const hx = n.scale.x / 2;
+      const hy = n.scale.y / 2;
+      const hz = n.scale.z / 2;
+      box.expandByPoint(
+        new Vector3(n.position.x - hx, n.position.y - hy, n.position.z - hz),
+      );
+      box.expandByPoint(
+        new Vector3(n.position.x + hx, n.position.y + hy, n.position.z + hz),
+      );
+    }
+    if (box.isEmpty()) return new Vector3();
+
+    const centre = box.getCenter(new Vector3());
+    return new Vector3(centre.x, 0, centre.z);
   });
 
   // Imported MIDI playback timers are cleared whenever another file is loaded
@@ -407,68 +430,49 @@
 
 <Flex width={flexWidth} height={flexHeight} flexDirection="Column">
   <Box flex={2} width="100%" height="100%">
-    <Align y={false} auto>
-      <T.Group
-        position.y={-2.5}
-        onpointerenter={onPointerEnter}
-        onpointerleave={onPointerLeave}
-        onclick={(e: Event) => {
-          e.stopPropagation();
-          openMenu();
-        }}
-      >
-        <InstancedMesh>
+    <T.Group
+      position={[-offset.x, -2.5, -offset.z]}
+      onpointerenter={onPointerEnter}
+      onpointerleave={onPointerLeave}
+      onclick={(e: Event) => {
+        e.stopPropagation();
+        openMenu();
+      }}
+    >
+      <T.Group position={[0, 0, -5]} scale={[10, 10, 1]}>
+        <T.Mesh position={[0, 0, -5]} scale={[10, 10, 1]}>
           <T.BoxGeometry />
-          <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
+          <T.MeshStandardMaterial transparent opacity={0} /></T.Mesh
+        >
+      </T.Group>
 
-          {#each midiMessages as noteNumber}
-            {#if $Settings.sceneSelected == "Cube"}
-              <Cube
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.notes.attack}
-                release={$hovering ? 250 : $Settings.notes.release}
-                keyColour={selected}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {:else if $Settings.sceneSelected == "Piano"}
-              <Piano
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.notes.attack}
-                release={$hovering ? 250 : $Settings.notes.release}
-                keyColour={selected}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {:else if $Settings.sceneSelected == "Mirror"}
-              <Mirror
-                position={noteNumber.position}
-                scale={noteNumber.scale}
-                velocity={noteNumber.velocity}
-                attack={$hovering ? 250 : $Settings.notes.attack}
-                release={$hovering ? 250 : $Settings.notes.release}
-                keyColour={selected}
-                expressionColour={$Settings.notes.colours.expression}
-              />
-            {/if}
-          {/each}
-        </InstancedMesh>
+      <InstancedMesh>
+        <T.BoxGeometry />
+        <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
 
         {#each midiMessages as noteNumber}
-          {#if $Settings.sceneSelected === "Swirl"}
-            <Swirl
+          {#if $Settings.sceneSelected == "Cube"}
+            <Cube
               position={noteNumber.position}
               scale={noteNumber.scale}
               velocity={noteNumber.velocity}
-              attack={$Settings.notes.attack}
-              release={$Settings.notes.release}
+              attack={$hovering ? 250 : $Settings.notes.attack}
+              release={$hovering ? 250 : $Settings.notes.release}
               keyColour={selected}
               expressionColour={$Settings.notes.colours.expression}
             />
-          {:else if $Settings.sceneSelected == "Firework"}
-            <Firework
+          {:else if $Settings.sceneSelected == "Piano"}
+            <Piano
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$hovering ? 250 : $Settings.notes.attack}
+              release={$hovering ? 250 : $Settings.notes.release}
+              keyColour={selected}
+              expressionColour={$Settings.notes.colours.expression}
+            />
+          {:else if $Settings.sceneSelected == "Mirror"}
+            <Mirror
               position={noteNumber.position}
               scale={noteNumber.scale}
               velocity={noteNumber.velocity}
@@ -479,8 +483,32 @@
             />
           {/if}
         {/each}
-      </T.Group>
-    </Align>
+      </InstancedMesh>
+
+      {#each midiMessages as noteNumber}
+        {#if $Settings.sceneSelected === "Swirl"}
+          <Swirl
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
+            attack={$Settings.notes.attack}
+            release={$Settings.notes.release}
+            keyColour={selected}
+            expressionColour={$Settings.notes.colours.expression}
+          />
+        {:else if $Settings.sceneSelected == "Firework"}
+          <Firework
+            position={noteNumber.position}
+            scale={noteNumber.scale}
+            velocity={noteNumber.velocity}
+            attack={$hovering ? 250 : $Settings.notes.attack}
+            release={$hovering ? 250 : $Settings.notes.release}
+            keyColour={selected}
+            expressionColour={$Settings.notes.colours.expression}
+          />
+        {/if}
+      {/each}
+    </T.Group>
   </Box>
 </Flex>
 

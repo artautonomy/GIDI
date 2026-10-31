@@ -1,8 +1,7 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
-  import { Color as ThreeColor, SRGBColorSpace } from "three";
+  import { Color as ThreeColor, SRGBColorSpace, Box3, Vector3 } from "three";
   import {
-    Align,
     Billboard,
     HTML,
     interactivity,
@@ -12,7 +11,7 @@
   } from "@threlte/extras";
   import { Box, Flex } from "@threlte/flex";
   import { fade } from "svelte/transition";
-  import { Spring, Tween } from "svelte/motion";
+  import { Tween } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
   import Lighting from "./Lighting.svelte";
   import Piano from "../instances/Piano.svelte";
@@ -74,6 +73,28 @@
   // Sync the visualiser with notes published by the MIDI store.
   $effect(() => {
     notes = $MIDI;
+  });
+
+  /**
+   * Centre of the layout, computed from the note data rather than from
+   * the rendered meshes. Instanced meshes cache their bounding box, so
+   * measuring them (as Align does) goes stale. This re-derives whenever
+   * `notes` changes.
+   */
+  const offset = $derived.by(() => {
+    const box = new Box3();
+    for (const n of notes) {
+      const hx = n.scale.x / 2;
+      const hy = n.scale.y / 2;
+      const hz = n.scale.z / 2;
+      box.expandByPoint(
+        new Vector3(n.position.x - hx, n.position.y - hy, n.position.z - hz),
+      );
+      box.expandByPoint(
+        new Vector3(n.position.x + hx, n.position.y + hy, n.position.z + hz),
+      );
+    }
+    return box.isEmpty() ? new Vector3() : box.getCenter(new Vector3());
   });
 
   function styleBack() {
@@ -181,7 +202,7 @@
       onpointerenter={onPointerEnter}
       onpointerleave={onPointerLeave}
     >
-      <Align auto precise>
+      <T.Group position={[-offset.x, -offset.y, -offset.z]}>
         <InstancedMesh>
           <T.BoxGeometry />
           <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
@@ -244,7 +265,7 @@
             />
           {/if}
         {/each}
-      </Align>
+      </T.Group>
     </T.Group>
   </Box>
 

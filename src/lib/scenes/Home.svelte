@@ -1,8 +1,9 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
-  import { Color as ThreeColor, SRGBColorSpace } from "three";
+  import { Flex } from "@threlte/flex";
+
+  import { Color as ThreeColor, SRGBColorSpace, Box3, Vector3 } from "three";
   import {
-    Align,
     interactivity,
     OrbitControls,
     InstancedMesh,
@@ -42,6 +43,28 @@
   let clearScene = $state(false);
 
   const { onPointerEnter, onPointerLeave } = useCursor();
+
+  /**
+   * Centre of the layout, computed from the note data rather than from
+   * the rendered meshes. Instanced meshes cache their bounding box, so
+   * measuring them (as Align does) goes stale. This re-derives whenever
+   * `notes` changes, including when the style switches.
+   */
+  const offset = $derived.by(() => {
+    const box = new Box3();
+    for (const n of notes) {
+      const hx = n.scale.x / 2;
+      const hy = n.scale.y / 2;
+      const hz = n.scale.z / 2;
+      box.expandByPoint(
+        new Vector3(n.position.x - hx, n.position.y - hy, n.position.z - hz),
+      );
+      box.expandByPoint(
+        new Vector3(n.position.x + hx, n.position.y + hy, n.position.z + hz),
+      );
+    }
+    return box.isEmpty() ? new Vector3() : box.getCenter(new Vector3());
+  });
 
   /**
    * Run a fake MIDI sweep through one octave.
@@ -114,7 +137,7 @@
       60,
     );
 
-    // Change visualisation style every 5 seconds.
+    // Change visualisation style after each full sweep (12 notes).
     const styleTimer = setInterval(() => {
       styleIndex = (styleIndex + 1) % styles.length;
     }, 350 * 12);
@@ -147,15 +170,49 @@
   />
 </T.OrthographicCamera>
 
-{#if !clearScene}
-  <Align auto precise position={[0, -8, 0]} scale={0.75}>
-    <InstancedMesh>
-      <T.BoxGeometry />
-      <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
-
+<Flex>
+  {#if !clearScene}
+    <T.Group position={[-offset.x, -offset.y, -offset.z]}>
+      <InstancedMesh>
+        <T.BoxGeometry />
+        <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
+        {#each notes as noteNumber (noteNumber.note)}
+          {#if styles[styleIndex] === "Piano"}
+            <Piano
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.notes.attack}
+              release={$Settings.notes.release}
+              keyColour={$Settings.notes.colours.key}
+              expressionColour={$Settings.notes.colours.expression}
+            />
+          {:else if styles[styleIndex] === "Mirror"}
+            <Mirror
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.notes.attack}
+              release={$Settings.notes.release}
+              keyColour={$Settings.notes.colours.key}
+              expressionColour={$Settings.notes.colours.expression}
+            />
+          {:else if styles[styleIndex] === "Cube"}
+            <Cube
+              position={noteNumber.position}
+              scale={noteNumber.scale}
+              velocity={noteNumber.velocity}
+              attack={$Settings.notes.attack}
+              release={$Settings.notes.release}
+              keyColour={$Settings.notes.colours.key}
+              expressionColour={$Settings.notes.colours.expression}
+            />
+          {/if}
+        {/each}
+      </InstancedMesh>
       {#each notes as noteNumber (noteNumber.note)}
-        {#if styles[styleIndex] === "Piano"}
-          <Piano
+        {#if styles[styleIndex] === "Swirl"}
+          <Swirl
             position={noteNumber.position}
             scale={noteNumber.scale}
             velocity={noteNumber.velocity}
@@ -164,18 +221,8 @@
             keyColour={$Settings.notes.colours.key}
             expressionColour={$Settings.notes.colours.expression}
           />
-        {:else if styles[styleIndex] === "Mirror"}
-          <Mirror
-            position={noteNumber.position}
-            scale={noteNumber.scale}
-            velocity={noteNumber.velocity}
-            attack={$Settings.notes.attack}
-            release={$Settings.notes.release}
-            keyColour={$Settings.notes.colours.key}
-            expressionColour={$Settings.notes.colours.expression}
-          />
-        {:else if styles[styleIndex] === "Cube"}
-          <Cube
+        {:else if styles[styleIndex] === "Firework"}
+          <Firework
             position={noteNumber.position}
             scale={noteNumber.scale}
             velocity={noteNumber.velocity}
@@ -186,30 +233,6 @@
           />
         {/if}
       {/each}
-    </InstancedMesh>
-
-    {#each notes as noteNumber (noteNumber.note)}
-      {#if styles[styleIndex] === "Swirl"}
-        <Swirl
-          position={noteNumber.position}
-          scale={noteNumber.scale}
-          velocity={noteNumber.velocity}
-          attack={$Settings.notes.attack}
-          release={$Settings.notes.release}
-          keyColour={$Settings.notes.colours.key}
-          expressionColour={$Settings.notes.colours.expression}
-        />
-      {:else if styles[styleIndex] === "Firework"}
-        <Firework
-          position={noteNumber.position}
-          scale={noteNumber.scale}
-          velocity={noteNumber.velocity}
-          attack={$Settings.notes.attack}
-          release={$Settings.notes.release}
-          keyColour={$Settings.notes.colours.key}
-          expressionColour={$Settings.notes.colours.expression}
-        />
-      {/if}
-    {/each}
-  </Align>
-{/if}
+    </T.Group>
+  {/if}
+</Flex>

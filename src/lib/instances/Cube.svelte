@@ -82,6 +82,6 @@
   position.x={position.x}
   position.y={y.current}
   position.z={position.z}
-  scale.y={yScale.current}
+  scale={[scale.x, yScale.current, scale.z]}
   color={`rgb(${Math.floor(r.current)},${Math.floor(g.current)},${Math.floor(b.current)})`}
 />

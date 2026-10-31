@@ -239,19 +239,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 2.5px;
     width: 100%;
     padding: 5px;
     color: rgba(255, 255, 255, 0.9);
     background: rgba(35, 15, 45, 0.75);
-    border: 1px solid rgba(190, 100, 255, 0.25);
-    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.33);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.33px;
     cursor: pointer;
-    backdrop-filter: blur(12px);
     transition:
       background 180ms ease,
       border-color 180ms ease,
@@ -262,7 +260,7 @@
   .menu-button:hover {
     background: rgba(100, 35, 125, 0.65);
     border-color: rgba(210, 130, 255, 0.8);
-    box-shadow: 0 0 18px rgba(175, 70, 255, 0.15);
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
   }
 

@@ -190,7 +190,7 @@
 <Flex width={0} height={flexHeight} flexDirection="Column">
   <Box flex={5} width="100%" height="100%">
     {#if notePlayed}
-      <Align scale={noteScale.current} auto precise>
+      <Align scale={noteScale.current}>
         <T.Group
           onpointerenter={onPointerEnterStyle}
           onpointerleave={onPointerLeaveStyle}
