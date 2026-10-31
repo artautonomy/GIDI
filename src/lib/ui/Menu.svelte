@@ -394,7 +394,7 @@
   title="Settings"
   theme={customizedTheme}
   position="fixed"
-  width={window.innerWidth < 400 ? window.innerWidth : 400}
+  width={window.innerWidth < 400 ? window.innerWidth - 20 : 400}
 >
   <TabGroup theme={customizedTheme}>
     <TabPage title="Scene">

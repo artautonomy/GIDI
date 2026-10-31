@@ -318,7 +318,7 @@
 <Pane
   theme={customizedTheme}
   position="inline"
-  width={window.innerWidth < 400 ? window.innerWidth : 400}
+  width={window.innerWidth < 400 ? window.innerWidth - 20 : 400}
 >
   <Folder title="Colours">
     <Color bind:value={$Settings.notes.colours.key} label="Key Colour" />

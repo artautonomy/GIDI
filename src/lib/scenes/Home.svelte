@@ -123,7 +123,7 @@
   });
 
   onMount(() => {
-    introZoom.set(35, {
+    introZoom.set(27.5, {
       delay: 200,
       duration: 1000,
       easing: cubicInOut,
@@ -172,7 +172,7 @@
 
 <Flex>
   {#if !clearScene}
-    <T.Group position={[-offset.x, -offset.y, -offset.z]}>
+    <T.Group position={[-offset.x, -offset.y - 6.66, -offset.z]}>
       <InstancedMesh>
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />

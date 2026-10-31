@@ -49,14 +49,13 @@
 <style>
   .back {
     position: relative; /* was absolute: now takes up space in the layout */
-    margin: 12px; /* replaces top/left: 12px */
+    margin: 10px; /* replaces top/left: 12px */
     display: grid;
     place-items: center;
     width: 72px;
     height: 32.5px;
     padding: 0;
     border: none;
-    border-radius: 10px;
     cursor: pointer;
     z-index: 2;
 
