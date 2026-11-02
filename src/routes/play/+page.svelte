@@ -10,7 +10,7 @@
 
   const title = "Tip";
 
-  const summary = "Click the style to toggle settings on and off, or press 'e'";
+  const summary = "Click the scene to toggle settings on and off, or press 'e'";
 
   onMount(() => {
     loaded = true;

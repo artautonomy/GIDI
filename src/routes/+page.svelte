@@ -127,7 +127,13 @@
     </div>
 
     {#if displayMIDIInstructions}
-      <div class="guide" role="dialog" aria-labelledby="guide-title">
+      <div
+        class="guide"
+        role="dialog"
+        aria-labelledby="guide-title"
+        in:fade|global={{ duration: 250 }}
+        out:fade|global={{ duration: 250 }}
+      >
         <header>
           <h2 id="guide-title">Connect a MIDI instrument</h2>
 
@@ -230,7 +236,7 @@
   h2 {
     color: orange;
     margin: 0;
-    font-size: clamp(1.7rem, 1.5vw, 2rem);
+    font-size: clamp(1.7rem, 1.5vw, 1.7rem);
     font-weight: 600;
     letter-spacing: 0.5px;
     text-align: center;
@@ -262,7 +268,7 @@
     padding: 5px;
     color: rgba(255, 255, 255, 0.9);
     background: rgba(35, 15, 45, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.33);
+    border: 1px solid hsl(289deg 100% 14.09%);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
@@ -340,13 +346,14 @@
 
   .midiAllowImage {
     display: block;
-    width: min(50%, 14rem);
+    width: 60%;
     height: auto;
     margin: 12px auto;
+    box-shadow: 2.5px 2.5px 7.5px #000000;
   }
 
   .note {
-    font-size: 11px;
+    font-size: 12px;
     display: block;
     text-align: center;
   }
@@ -358,12 +365,6 @@
 
     p {
       font-size: clamp(0.8rem, 1.2vw, 2rem);
-    }
-
-    .guide {
-      background-image: none;
-      background-color: rgba(0, 0, 0, 0.85);
-      animation: none;
     }
 
     .midiAllowImage {

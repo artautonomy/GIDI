@@ -172,7 +172,7 @@
 
 <Flex>
   {#if !clearScene}
-    <T.Group position={[-offset.x, -offset.y - 6.66, -offset.z]}>
+    <T.Group position={[-offset.x, -offset.y - 10, -offset.z]}>
       <InstancedMesh>
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />

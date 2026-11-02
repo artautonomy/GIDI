@@ -2,6 +2,7 @@
   import { T, useThrelte } from "@threlte/core";
   import { Color, SRGBColorSpace, Box3, Vector3, Mesh } from "three";
   import {
+    Billboard,
     Gizmo,
     InstancedMesh,
     interactivity,
@@ -17,7 +18,7 @@
   import { midiFileData } from "../stores/midiFileStore";
   import { createNoteLayout } from "../midi/noteLayout";
   import * as ToneMidi from "@tonejs/midi";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import Menu from "../ui/Menu.svelte";
   import Lighting from "./Lighting.svelte";
   import Cube from "../instances/Cube.svelte";
@@ -59,9 +60,7 @@
     midiMessages = notes;
   });
 
-  let FINAL_ZOOM = midiMessages.length
-    ? Math.log(midiMessages.length) * 10
-    : 20;
+  let FINAL_ZOOM = 10;
 
   // The orthographic frustum matches the canvas size in pixels, so the visible
   // size in world units is canvasSizePx / zoom.
@@ -257,7 +256,15 @@
   });
 
   fadeIn.target = 85;
-  introZoom.target = FINAL_ZOOM;
+
+  onMount(() => {
+    const MAX_ZOOM = 100; // zoom for very few notes
+    const MIN_ZOOM = 20; // zoom for lots of notes
+    const MAX_NOTES = 80; // count at which you want MIN_ZOOM
+    const t = Math.min(Math.log(midiMessages.length) / Math.log(MAX_NOTES), 1);
+    FINAL_ZOOM = MAX_ZOOM - t * (MAX_ZOOM - MIN_ZOOM);
+    introZoom.target = FINAL_ZOOM;
+  });
 
   function openMenu() {
     selected = $Settings.notes.colours.key;
@@ -439,13 +446,20 @@
         openMenu();
       }}
     >
-      <T.Group position={[0, 0, -5]} scale={[10, 10, 1]}>
-        <T.Mesh position={[0, 0, -5]} scale={[10, 10, 1]}>
-          <T.BoxGeometry />
-          <T.MeshStandardMaterial transparent opacity={0} /></T.Mesh
+      <Billboard>
+        <T.Group
+          position={[0, 2.5, -2]}
+          scale={[Math.log(midiMessages.length * 7), 3, 1]}
         >
-      </T.Group>
-
+          <T.Mesh
+            position={[0, 0, -2]}
+            scale={[Math.log(midiMessages.length * 7), 3, 1]}
+          >
+            <T.BoxGeometry />
+            <T.MeshStandardMaterial transparent opacity={0} /></T.Mesh
+          >
+        </T.Group>
+      </Billboard>
       <InstancedMesh>
         <T.BoxGeometry />
         <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />

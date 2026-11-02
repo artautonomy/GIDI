@@ -107,21 +107,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 2.5px;
     width: 100%;
     padding: 5px;
-    color: white;
-    background: rgb(66, 11, 77);
-    border: 1px solid rgba(190, 100, 255, 0.25);
-    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(35, 15, 45, 0.75);
+    border: 1px solid hsl(289deg 100% 14.09%);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.33px;
     cursor: pointer;
     transition:
-      background-color 180ms ease,
-      color 180ms ease,
+      background 180ms ease,
       border-color 180ms ease,
       box-shadow 180ms ease,
       transform 180ms ease;
