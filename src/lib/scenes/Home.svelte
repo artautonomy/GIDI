@@ -3,12 +3,7 @@
   import { Flex } from "@threlte/flex";
 
   import { Color as ThreeColor, SRGBColorSpace, Box3, Vector3 } from "three";
-  import {
-    interactivity,
-    OrbitControls,
-    InstancedMesh,
-    useCursor,
-  } from "@threlte/extras";
+  import { interactivity, OrbitControls, InstancedMesh } from "@threlte/extras";
 
   import { Tween } from "svelte/motion";
   import { cubicInOut } from "svelte/easing";
@@ -41,8 +36,6 @@
   const styles = $derived($Settings.notes.styles);
   let styleIndex = $state(0);
   let clearScene = $state(false);
-
-  const { onPointerEnter, onPointerLeave } = useCursor();
 
   /**
    * Centre of the layout, computed from the note data rather than from

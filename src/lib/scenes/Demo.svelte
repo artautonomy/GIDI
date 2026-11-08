@@ -70,17 +70,6 @@
     styleIndex = (index + styles.length) % styles.length;
 
     $Settings.sceneSelected = styles[styleIndex];
-
-    if (styles[styleIndex] === "Piano") {
-      $Settings.notes.attack = 5;
-      $Settings.notes.release = 500;
-    } else if (styles[styleIndex] === "Firework") {
-      $Settings.notes.attack = 20;
-      $Settings.notes.release = 3500;
-    } else {
-      $Settings.notes.attack = 5;
-      $Settings.notes.release = 500;
-    }
   }
 
   // Manual navigation.
@@ -161,7 +150,7 @@
 <Lighting />
 
 <!-- Automatic MIDI demonstration -->
-<MIDISweep onNote={setVelocity} onCycle={nextStyle} interval={350} />
+<MIDISweep onNote={setVelocity} interval={350} />
 
 <T.OrthographicCamera
   makeDefault
@@ -207,7 +196,7 @@
   <!-- Visualisation -->
   <Box flex={2} height="auto" width="auto">
     {#if !clearScene}
-      <T.Group position={[-offset.x, -offset.y - 3.5, -offset.z]}>
+      <T.Group position={[-offset.x, -offset.y - 2, -offset.z]}>
         {#key style}
           <InstancedMesh>
             <T.BoxGeometry />
