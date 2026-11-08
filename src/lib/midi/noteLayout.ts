@@ -29,8 +29,6 @@ export function createNoteLayout(
     .filter((pitch) => Number.isInteger(pitch) && pitch >= 0 && pitch <= 127);
 
 
-
-
   if (uniquePitches.length === 0) {
     return [];
   }

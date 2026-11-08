@@ -73,10 +73,6 @@
   }
 
   @media (max-width: 600px) {
-    h2 {
-      font-size: clamp(1.25rem, 1.2vw, 2rem);
-    }
-
     p {
       font-size: clamp(0.8rem, 1.2vw, 2rem);
     }

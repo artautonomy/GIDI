@@ -358,4 +358,10 @@
     color: white;
     font-weight: bolder;
   }
+
+  @media (max-width: 600px) {
+    .nav-bar {
+      width: 90vw;
+    }
+  }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { T, useThrelte } from "@threlte/core";
-  import { Color, SRGBColorSpace, Box3, Vector3, Mesh } from "three";
+  import { Color, SRGBColorSpace, Box3, Vector3 } from "three";
   import {
     Billboard,
     Gizmo,
@@ -66,6 +66,13 @@
   // size in world units is canvasSizePx / zoom.
   const flexWidth = $derived($size.width / FINAL_ZOOM);
   const flexHeight = $derived($size.height / FINAL_ZOOM);
+
+  // Changes when the style changes or when the layout changes shape (item
+  // count), so the instanced mesh is rebuilt both for the stale frame after a
+  // style switch and again when the correct layout arrives.
+  const layoutKey = $derived(
+    `${$Settings.sceneSelected}:${midiMessages.length}`,
+  );
   /**
    * Centre of the layout on the x and z axes, computed from the note data
    * rather than from the rendered meshes. Instanced meshes cache their
@@ -120,6 +127,7 @@
 
     MIDI.set(layout);
   }
+
   function startImportedMidi(data: ArrayBuffer) {
     stopImportedMidi();
 
@@ -139,7 +147,7 @@
         MIDI.set([]);
         return;
       }
-      importedPitches = [];
+
       importedPitches = [
         ...new Set<number>(fileNotes.map((note: any) => note.midi)),
       ].sort((a, b) => a - b);
@@ -174,7 +182,6 @@
       // At identical timestamps, release old notes before starting new ones.
       events.sort((a, b) => a.time - b.time || (a.type === "off" ? -1 : 1));
 
-      const activeNotes = new Map<number, Map<number, number>>();
       const playbackStartedAt = performance.now();
 
       for (const event of events) {
@@ -336,12 +343,12 @@
     }
   });
 
+  // Imported files: rebuild the layout when the style changes.
+  // (Live playing is handled by the device component via `styleReset`.)
   $effect(() => {
     const style = $Settings.sceneSelected;
 
-    const pitches = importedPitches;
-
-    if (pitches.length > 0) {
+    if (importedPitches.length > 0) {
       // Depend on the selected style so the layout rebuilds when it changes.
       void style;
       publishImportedLayout();
@@ -460,46 +467,51 @@
           >
         </T.Group>
       </Billboard>
-      <InstancedMesh>
-        <T.BoxGeometry />
-        <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
 
-        {#each midiMessages as noteNumber}
-          {#if $Settings.sceneSelected == "Cube"}
-            <Cube
-              position={noteNumber.position}
-              scale={noteNumber.scale}
-              velocity={noteNumber.velocity}
-              attack={$hovering ? 250 : $Settings.notes.attack}
-              release={$hovering ? 250 : $Settings.notes.release}
-              keyColour={selected}
-              expressionColour={$Settings.notes.colours.expression}
-            />
-          {:else if $Settings.sceneSelected == "Piano"}
-            <Piano
-              position={noteNumber.position}
-              scale={noteNumber.scale}
-              velocity={noteNumber.velocity}
-              attack={$hovering ? 250 : $Settings.notes.attack}
-              release={$hovering ? 250 : $Settings.notes.release}
-              keyColour={selected}
-              expressionColour={$Settings.notes.colours.expression}
-            />
-          {:else if $Settings.sceneSelected == "Mirror"}
-            <Mirror
-              position={noteNumber.position}
-              scale={noteNumber.scale}
-              velocity={noteNumber.velocity}
-              attack={$hovering ? 250 : $Settings.notes.attack}
-              release={$hovering ? 250 : $Settings.notes.release}
-              keyColour={selected}
-              expressionColour={$Settings.notes.colours.expression}
-            />
-          {/if}
-        {/each}
-      </InstancedMesh>
+      <!-- Re-creating the InstancedMesh when the style or layout size changes
+           guarantees no stale instances survive. -->
+      {#key layoutKey}
+        <InstancedMesh>
+          <T.BoxGeometry />
+          <T.MeshStandardMaterial shadow roughness={0.4} metalness={0.7} />
 
-      {#each midiMessages as noteNumber}
+          {#each midiMessages as noteNumber (noteNumber.note)}
+            {#if $Settings.sceneSelected == "Cube"}
+              <Cube
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$hovering ? 250 : $Settings.notes.attack}
+                release={$hovering ? 250 : $Settings.notes.release}
+                keyColour={selected}
+                expressionColour={$Settings.notes.colours.expression}
+              />
+            {:else if $Settings.sceneSelected == "Piano"}
+              <Piano
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$hovering ? 250 : $Settings.notes.attack}
+                release={$hovering ? 250 : $Settings.notes.release}
+                keyColour={selected}
+                expressionColour={$Settings.notes.colours.expression}
+              />
+            {:else if $Settings.sceneSelected == "Mirror"}
+              <Mirror
+                position={noteNumber.position}
+                scale={noteNumber.scale}
+                velocity={noteNumber.velocity}
+                attack={$hovering ? 250 : $Settings.notes.attack}
+                release={$hovering ? 250 : $Settings.notes.release}
+                keyColour={selected}
+                expressionColour={$Settings.notes.colours.expression}
+              />
+            {/if}
+          {/each}
+        </InstancedMesh>
+      {/key}
+
+      {#each midiMessages as noteNumber (noteNumber.note)}
         {#if $Settings.sceneSelected === "Swirl"}
           <Swirl
             position={noteNumber.position}

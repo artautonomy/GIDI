@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy, untrack } from "svelte";
 
   import { Settings } from "$lib/stores/settings";
   import {
@@ -16,6 +16,10 @@
 
   // The notes currently shown, laid out for the selected style.
   let notes: MIDIVisualNote[] = $state([]);
+
+  // The style `notes` was laid out for. If this ever differs from the selected
+  // style, `notes` is stale and must be rebuilt before it is published.
+  let notesScene = "";
 
   // Style-independent record of what has been played. Every style is built
   // from this, so switching styles shows the same notes in the new layout
@@ -85,6 +89,8 @@
   // Lay out everything played so far for the given style, keeping the
   // velocities of any notes that are currently held.
   function buildNotes(scene: string): MIDIVisualNote[] {
+    notesScene = scene;
+
     return createNoteLayout(playedPitches, scene).map((note) => ({
       ...note,
       velocity: activeVelocities[note.note] ?? 0,
@@ -109,8 +115,10 @@
       playedPitches = [...playedPitches, pitch];
     }
 
-    if (!existing) {
-      // New note: re-layout (Piano fills in the keys between the extremes).
+    if (!existing || notesScene !== scene) {
+      // New note, or the style changed since `notes` was built: re-layout
+      // (Piano fills in the keys between the extremes). This also applies the
+      // new velocity, because activeVelocities was updated above.
       notes = buildNotes(scene);
     } else {
       notes = setNoteVelocity(notes, pitch, velocity);
@@ -132,16 +140,9 @@
     if (status >= 128 && status <= 159) {
       note = handleMIDIStatus(status, note);
 
-      if ($Device.selected && $Device.id === device) {
-        // A note-on message with velocity zero is also note-off.
-        const isNoteOn = status >= 144 && velocity > 0;
-        updateLiveNote(note, isNoteOn ? velocity : 0);
-      } else {
-        // Update the displayed velocity for other input devices.
-        $Device.inputs = $Device.inputs.map((input) =>
-          input.id === device ? { ...input, velocity } : input,
-        );
-      }
+      // A note-on message with velocity zero is also note-off.
+      const isNoteOn = status >= 144 && velocity > 0;
+      updateLiveNote(note, isNoteOn ? velocity : 0);
 
       return;
     }
@@ -198,18 +199,8 @@
       $Device.connected = false;
     }
 
+    //process all MIDI messages
     for (const input of inputs) {
-      if (!$Device.inputs.some((item) => item.id === input.id)) {
-        $Device.inputs = [
-          ...$Device.inputs,
-          {
-            id: input.id,
-            name: input.name ?? "MIDI input",
-            velocity: 0,
-          },
-        ];
-      }
-
       input.onmidimessage = (event) => handleMIDIMessage(event, input.id);
     }
   }
@@ -236,6 +227,7 @@
       playedPitches = [];
       activeVelocities = {};
       notes = [];
+      notesScene = "";
       $MIDIChannels.inputs = [];
       MIDI.set([]);
 
@@ -244,19 +236,30 @@
   });
 
   // Style changed: rebuild the same played notes in the new style's layout.
+  // This depends on the selected style itself rather than only on the
+  // `styleReset` flag, so the layout can't be left behind if the flag is set
+  // and consumed before the style actually changes.
   $effect(() => {
-    if ($Settings.styleReset) {
-      notes = buildNotes($Settings.sceneSelected);
+    const scene = $Settings.sceneSelected;
 
+    untrack(() => {
+      // Nothing played live yet (e.g. an imported file is driving the scene).
+      if (playedPitches.length === 0) return;
+
+      notes = buildNotes(scene);
       MIDI.set(notes);
-      $Settings.styleReset = false;
-    }
+    });
   });
 
+  // Keep clearing the flag so other code that sets it still works.
   $effect(() => {
-    if ($Device.enableSearch) {
-      init();
-      $Device.enableSearch = false;
+    if ($Settings.styleReset) {
+      if (playedPitches.length > 0) {
+        notes = buildNotes($Settings.sceneSelected);
+        MIDI.set(notes);
+      }
+
+      $Settings.styleReset = false;
     }
   });
 

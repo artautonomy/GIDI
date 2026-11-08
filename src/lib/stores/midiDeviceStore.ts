@@ -15,18 +15,10 @@ export interface MIDIMessage {
     };
 }
 
-type DeviceInput = {
-    id: string;
-    name: string;
-    velocity: number;
-};
 
 interface Device {
-    enableSearch: boolean;
     connected: boolean;
-    selected: boolean;
     id: string | null;
-    inputs: DeviceInput[];
 }
 
 type Channel = {
@@ -42,11 +34,8 @@ interface Channels {
 export const MIDI = writable<MIDIMessage[]>([]);
 
 export const Device = writable<Device>({
-    enableSearch: false,
     connected: false,
-    selected: false,
-    id: null,
-    inputs: [],
+    id: null
 });
 
 export function storeMIDIPermission(data: string) {

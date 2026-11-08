@@ -32,7 +32,7 @@
     "A free web application to import or play MIDI live. GIDI reads MIDI note on/off messages to create animations on a web browser, no account required.";
 
   const routes: Record<string, string> = {
-    "Play MIDI": "./inputs",
+    "Play MIDI": "./style",
     "Import MIDI": "./import",
     Demo: "./demo",
   };

@@ -39,27 +39,20 @@
     expressionColour,
   }: Props = $props();
 
-  const positionY = new Tween(1);
-  const scaleY = new Tween(1);
-  let r = $state(new Tween(0));
-  let g = $state(new Tween(0));
-  let b = $state(new Tween(0));
-
-  if (scale.x === 0.5) {
-    if (keyColour.r + keyColour.g + keyColour.b > 200) {
-      r = new Tween(0);
-      g = new Tween(0);
-      b = new Tween(0);
-    } else {
-      r = new Tween(255);
-      g = new Tween(255);
-      b = new Tween(255);
+  function restColour() {
+    if (scale.x === 0.5) {
+      const v = keyColour.r + keyColour.g + keyColour.b > 200 ? 0 : 255;
+      return { r: v, g: v, b: v };
     }
-  } else {
-    r = new Tween(keyColour.r);
-    g = new Tween(keyColour.g);
-    b = new Tween(keyColour.b);
+    return { r: keyColour.r, g: keyColour.g, b: keyColour.b };
   }
+
+  const initial = restColour();
+  const positionY = new Tween(position.y);
+  const scaleY = new Tween(scale.y);
+  const r = new Tween(initial.r);
+  const g = new Tween(initial.g);
+  const b = new Tween(initial.b);
 
   $effect(() => {
     if (velocity > 0) {
@@ -77,6 +70,8 @@
       g.set(expressionColour.g, { duration: attack });
       b.set(expressionColour.b, { duration: attack });
     } else {
+      const rest = restColour();
+
       positionY.set(position.y, {
         duration: release,
         easing: cubicOut,
@@ -86,30 +81,9 @@
         easing: cubicOut,
       });
 
-      r.set(
-        scale.x === 0.5
-          ? keyColour.r + keyColour.g + keyColour.b > 200
-            ? 0
-            : 255
-          : keyColour.r,
-        { duration: release },
-      );
-      g.set(
-        scale.x === 0.5
-          ? keyColour.r + keyColour.g + keyColour.b > 200
-            ? 0
-            : 255
-          : keyColour.g,
-        { duration: release },
-      );
-      b.set(
-        scale.x === 0.5
-          ? keyColour.r + keyColour.g + keyColour.b > 200
-            ? 0
-            : 255
-          : keyColour.b,
-        { duration: release },
-      );
+      r.set(rest.r, { duration: release });
+      g.set(rest.g, { duration: release });
+      b.set(rest.b, { duration: release });
     }
   });
 </script>
