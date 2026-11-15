@@ -13,7 +13,6 @@
     Slider,
     TabGroup,
     TabPage,
-    Text,
     ThemeUtils,
     type Theme,
     Pane,
@@ -67,7 +66,7 @@
     noteId: number;
   };
 
-  let playbackEvents: PlaybackEvent[] = [];
+  let playbackEvents: PlaybackEvent[] = $state([]);
   let playbackDuration = $state(0);
   let playbackPosition = $state(0);
   let playbackState = $state<"stopped" | "playing" | "paused">("stopped");
@@ -81,6 +80,8 @@
   let loadedFileName = $state("");
   let isDraggingMIDI = $state(false);
   let midiFileInput: HTMLInputElement;
+
+  let sequenceLabel = $state("Press record to start");
 
   function importMIDIFile(file: File | undefined) {
     if (!file) return;
@@ -396,7 +397,7 @@
   position="fixed"
   width={window.innerWidth < 400 ? window.innerWidth - 20 : 400}
 >
-  <TabGroup theme={customizedTheme}>
+  <TabGroup>
     <TabPage title="Scene">
       <List label="Styles" options={sceneStyles} bind:value={styleSelection}
       ></List>
@@ -478,11 +479,25 @@
       <Folder title="Camera Sequences">
         <Element>
           <span class="summary"
-            >Create camera sequences, these can then be played back with the
-            trigger either being for a MIDI on message, or a specific time
-            interval<br /><br />Keyboard shortcuts are 'R' to record a camera
-            sequence and the space bar to play</span
+            >Create timed camera sequences for your scene, select the transition
+            trigger: the MIDI note down or a specific time interval</span
           >
+        </Element>
+
+        <List
+          label="Trigger"
+          options={playbackMethod}
+          bind:value={playbackSelection}
+        ></List>
+        <Slider
+          label="Transition Speed"
+          bind:value={$Settings.camera.sequence.speed}
+          format={(v) => (v / 1000).toString() + " Seconds"}
+          min={0}
+          max={4000}
+          step={100}
+        />
+        <Element>
           <controls>
             {#if !$Settings.camera.sequence.recording}
               <button
@@ -491,6 +506,7 @@
                 onclick={() => {
                   $Settings.camera.sequence.recording = true;
                   $Settings.camera.sequence.playing = false;
+                  $Settings.camera.autoRotate.enabled = false;
                 }}
                 onmouseenter={() => {
                   recordControlHover.record = true;
@@ -510,7 +526,7 @@
                     cx="32"
                     cy="32"
                     r="20"
-                    fill={recordControlHover.record ? "#ff6262" : "white"}
+                    fill={recordControlHover.record ? "#ff1616" : "#ff6262"}
                   />
                 </svg>
               </button>
@@ -548,50 +564,22 @@
             {/if}
 
             {#if $Settings.camera.sequence.selected == "Time interval"}
-              {#if !$Settings.camera.sequence.playing}
-                <button
-                  class="recordHiddenButton"
-                  aria-label="play"
-                  onclick={() => {
-                    $Settings.camera.sequence.playing = true;
-                  }}
-                  onmouseenter={() => {
-                    recordControlHover.play = true;
-                  }}
-                  onmouseleave={() => {
-                    recordControlHover.play = false;
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="recordControls"
-                    viewBox="0 0 64 64"
-                  >
-                    <polygon
-                      aria-hidden="true"
-                      id="play"
-                      points="24,16 24,48 48,32"
-                      fill={$Settings.camera.sequence.playing ||
-                      recordControlHover.play
-                        ? "green"
-                        : "white"}
-                    />
-                  </svg>
-                </button>
-              {:else}
-                <button
-                  class="recordHiddenButton"
-                  aria-label="pause"
-                  onclick={() => {
-                    $Settings.camera.sequence.playing = false;
-                  }}
-                  onmouseenter={() => {
-                    recordControlHover.play = true;
-                  }}
-                  onmouseleave={() => {
-                    recordControlHover.play = false;
-                  }}
-                >
+              <button
+                class="recordHiddenButton"
+                aria-label="play"
+                onclick={() => {
+                  $Settings.camera.sequence.playing =
+                    !$Settings.camera.sequence.playing;
+                  $Settings.camera.autoRotate.enabled = false;
+                }}
+                onmouseenter={() => {
+                  recordControlHover.play = true;
+                }}
+                onmouseleave={() => {
+                  recordControlHover.play = false;
+                }}
+              >
+                {#if recordControlHover.play && $Settings.camera.sequence.playing}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="recordControls"
@@ -608,8 +596,8 @@
                       rx="1"
                       fill={!$Settings.camera.sequence.playing ||
                       recordControlHover.play
-                        ? "black"
-                        : "white"}
+                        ? "white"
+                        : "green"}
                     />
                     <!-- Right bar -->
                     <rect
@@ -622,12 +610,28 @@
                       rx="1"
                       fill={!$Settings.camera.sequence.playing ||
                       recordControlHover.play
-                        ? "black"
+                        ? "white"
+                        : "green"}
+                    />
+                  </svg>
+                {:else}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="recordControls"
+                    viewBox="0 0 64 64"
+                  >
+                    <polygon
+                      aria-hidden="true"
+                      id="play"
+                      points="24,16 24,48 48,32"
+                      fill={$Settings.camera.sequence.playing ||
+                      recordControlHover.play
+                        ? "green"
                         : "white"}
                     />
                   </svg>
-                </button>
-              {/if}
+                {/if}
+              </button>
             {/if}
             <button
               type="button"
@@ -636,6 +640,8 @@
               onclick={() => {
                 $Settings.camera.sequence.playing = false;
                 $Settings.camera.sequence.reset = true;
+                sequenceLabel = "Deleted sequence";
+                $Settings.camera.sequence.index = 0;
               }}
               onmouseenter={() => {
                 recordControlHover.reset = true;
@@ -657,8 +663,8 @@
                   r="20"
                   fill={$Settings.camera.sequence.reset ||
                   recordControlHover.reset
-                    ? "black"
-                    : "white"}
+                    ? "red"
+                    : "black"}
                 />
                 <line
                   x1="22"
@@ -667,8 +673,8 @@
                   y2="42"
                   stroke={$Settings.camera.sequence.reset ||
                   recordControlHover.reset
-                    ? "white"
-                    : "black"}
+                    ? "black"
+                    : "white"}
                   stroke-width="4"
                   stroke-linecap="round"
                 />
@@ -679,28 +685,25 @@
                   y2="42"
                   stroke={$Settings.camera.sequence.reset ||
                   recordControlHover.reset
-                    ? "white"
-                    : "black"}
+                    ? "black"
+                    : "white"}
                   stroke-width="4"
                   stroke-linecap="round"
                 />
               </svg>
             </button>
           </controls>
+
+          {#if $Settings.camera.sequence.reset || ($Settings.camera.sequence.recording && $Settings.camera.sequence.index > 0)}
+            <span class="sequenceLabel"
+              >{$Settings.camera.sequence.reset
+                ? "Sequence deleted"
+                : "Sequence " +
+                  $Settings.camera.sequence.index.toString() +
+                  " captured"}</span
+            >
+          {/if}
         </Element>
-        <List
-          label="Playback Method"
-          options={playbackMethod}
-          bind:value={playbackSelection}
-        ></List>
-        <Slider
-          label="Sequence Speed"
-          bind:value={$Settings.camera.sequence.speed}
-          format={(v) => (v / 1000).toString() + " Seconds"}
-          min={0}
-          max={4000}
-          step={100}
-        />
       </Folder>
     </TabPage>
     <TabPage title="MIDI Configuration">
@@ -843,9 +846,17 @@
     font-weight: bold;
     color: rgba(255, 165, 0, 0.8);
   }
+  .sequenceLabel {
+    display: block;
+    padding-top: 2.56%;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgba(255, 165, 0, 0.8);
+    text-align: center;
+  }
 
   controls {
-    display: block;
+    display: flex;
     padding-top: 5%;
     text-align: center;
   }
@@ -857,9 +868,8 @@
   }
 
   .recordControls {
-    width: 27.5px;
-    height: 27.5px;
-    display: block;
+    width: 25%;
+    height: auto;
   }
 
   .midiPlayer {

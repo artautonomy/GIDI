@@ -303,8 +303,6 @@
 
   $effect(() => {
     if ($Settings.camera.sequence.reset) {
-      //tips = "Recording reset";
-
       recordCords = [];
 
       recordCordsTransition.target = cameraCord;
@@ -403,7 +401,7 @@
 
   function recordEndCoords() {
     if ($Settings.camera.sequence.recording) {
-      //tips = "Step " + (recordCords.length + 1) + " captured";
+      $Settings.camera.sequence.index = recordCords.length + 1;
 
       recordCords = [
         ...recordCords,

@@ -1,6 +1,5 @@
 import { writable } from "svelte/store";
 
-
 export const Settings = writable({
     edit: false,
     styleReset: false,
@@ -47,6 +46,7 @@ export const Settings = writable({
             speed: 1.1,
         },
         sequence: {
+            index: 0,
             triggers: ["Note down", "Time interval"],
             selected: "Note down",
             recording: false,
