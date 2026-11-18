@@ -8,6 +8,7 @@
   import { onMount } from "svelte";
   import { fadeIn, fadeOut } from "#lib/stores/app.ts";
   import midiAllow from "#lib/assets/setup/midiAllow.jpg";
+  import midiConnected from "#lib/assets/setup/midiConnected.png";
 
   const bg = $derived($Settings.scene.colours.background);
   const inv = $derived({ r: 255 - bg.r, g: 255 - bg.g, b: 255 - bg.b });
@@ -76,10 +77,87 @@
 </script>
 
 {#if loaded && !leaving}
+  {#if displayMIDIInstructions}
+    <div
+      class="guide"
+      role="dialog"
+      aria-labelledby="guide-title"
+      in:fade|global={{ delay: 100, duration: 750 }}
+      out:fade|global={{ duration: 250 }}
+    >
+      <header>
+        <h2 id="guide-title">Connect a MIDI instrument</h2>
+
+        <button
+          class="close"
+          aria-label="Close"
+          onclick={() => {
+            displayMIDIInstructions = false;
+          }}
+          style:--bg="rgb({inv.r}, {inv.g}, {inv.b})"
+          style:--fg-a={fgA}
+          style:--fg-b={fgB}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </header>
+
+      <p>
+        When first loading the webpage a popup should appear by the search bar
+        (or by clicking the setting icon by the URL) like below which you need
+        to 'Allow':
+      </p>
+      <div class="instructionImage">
+        <img
+          alt="Instruction on how to allow MIDI on your browser"
+          src={midiAllow}
+          class="midiAllowImage"
+        />
+
+        <span class="note"
+          >Do not be alarmed by the permission message, GIDI only reads MIDI
+          messages. GIDI is open source, so if in doubt check for yourself <a
+            href="https://github.com/artautonomy/GIDI">here</a
+          >.</span
+        >
+      </div>
+      <p>
+        Following this connect your MIDI instrument using a USB cable to your
+        device. If connected you should see the below confirming the device is
+        found:
+      </p>
+      <div class="instructionImage">
+        <img
+          alt="Instruction on how to allow MIDI on your browser"
+          src={midiConnected}
+          class="midiAllowImage"
+        />
+
+        <span class="note"
+          >Confirmation that your MIDI device is connected and you can play
+          MIDI.</span
+        >
+      </div>
+    </div>
+  {/if}
   <div class="stage" in:fade|global={$fadeIn} out:fade|global={$fadeOut}>
     <div class="overlay">
       <main>
-        <section class="landing">
+        <section
+          class="landing"
+          style={displayMIDIInstructions
+            ? "filter: blur(1.5rem)"
+            : "filter:blur(0)"}
+        >
           <h1>{title}</h1>
           <p class="summary">{summary}</p>
 
@@ -125,65 +203,6 @@
     <div class="canvas">
       <Canvas><Scene /></Canvas>
     </div>
-
-    {#if displayMIDIInstructions}
-      <div
-        class="guide"
-        role="dialog"
-        aria-labelledby="guide-title"
-        in:fade|global={{ duration: 250 }}
-        out:fade|global={{ duration: 250 }}
-      >
-        <header>
-          <h2 id="guide-title">Connect a MIDI instrument</h2>
-
-          <button
-            class="close"
-            aria-label="Close"
-            onclick={() => {
-              displayMIDIInstructions = false;
-            }}
-            style:--bg="rgb({inv.r}, {inv.g}, {inv.b})"
-            style:--fg-a={fgA}
-            style:--fg-b={fgB}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
-        </header>
-
-        <p>
-          You will need to allow MIDI on your browser, a popup will appear on
-          first loading GIDI by the search bar (or by clicking the setting icon
-          by the URL):
-        </p>
-
-        <img
-          alt="Instruction on how to allow MIDI on your browser"
-          src={midiAllow}
-          class="midiAllowImage"
-        />
-
-        <span class="note"
-          >Do not be alarmed by the permission message, GIDI only reads MIDI
-          messages. GIDI is open source, so if in doubt check for yourself <a
-            href="https://github.com/artautonomy/GIDI">here</a
-          >.</span
-        >
-
-        <p>
-          Next connect your MIDI instrument using a USB cable to your device.
-        </p>
-      </div>
-    {/if}
   </div>
 {/if}
 
@@ -346,16 +365,27 @@
 
   .midiAllowImage {
     display: block;
-    width: 60%;
+    width: 75%;
     height: auto;
     margin: 12px auto;
     box-shadow: 2.5px 2.5px 7.5px #000000;
   }
 
+  .instructionImage {
+    display: flex;
+    text-align: center;
+    width: 90%;
+    margin-left: 5%;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
   .note {
     font-size: 12px;
-    display: block;
-    text-align: center;
+    width: 75%;
   }
 
   @media (max-width: 600px) {
@@ -368,7 +398,11 @@
     }
 
     .midiAllowImage {
-      width: 80%;
+      width: 100%;
+    }
+
+    .note {
+      width: 100%;
     }
   }
 
